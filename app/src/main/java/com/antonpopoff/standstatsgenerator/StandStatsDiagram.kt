@@ -4,22 +4,20 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.util.AttributeSet
 import android.view.View
 
-class StandDiagram @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-    }
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context) : this(context, null)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // Common coordinates
         val availableWidth = (width - paddingLeft - paddingRight).toFloat()
         val availableHeight = (height - paddingTop - paddingBottom).toFloat()
         val circleCenterX = availableWidth / 2 + paddingRight
@@ -28,21 +26,9 @@ class StandDiagram @JvmOverloads constructor(
         val innerCircleRadius = outerCircleRadius * 0.9f
 
         drawBorderRings(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
-
-        val fatLinePath = Path()
-        val angle = (360 - 30) % 360
-        val angleRadians = (angle * Math.PI) / 180
-        val bottomArcX = innerCircleRadius * Math.cos(angleRadians).toFloat() + circleCenterX
-        val bottomArcY = innerCircleRadius * Math.sin(angleRadians).toFloat() + circleCenterY
-
-        fatLinePath.moveTo(circleCenterX, circleCenterY)
-        fatLinePath.lineTo(bottomArcX, bottomArcY)
-
-        paint.color = Color.BLUE
-        canvas.drawPath(fatLinePath, paint)
     }
 
-    private fun drawBorderRings(canvas: Canvas, ringCenterX: Float, ringCenterY: Float,
+    private fun drawBorderRings(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
                                 outerRingRadius: Float, innerRingRadius: Float) {
         val circleWidth = resources.displayMetrics.density * OUTER_RING_WIDTH
 
@@ -53,17 +39,13 @@ class StandDiagram @JvmOverloads constructor(
         }
 
         canvas.apply {
-            drawCircle(ringCenterX, ringCenterY, outerRingRadius, paint)
-            drawCircle(ringCenterX, ringCenterY, innerRingRadius, paint)
+            drawCircle(circleCenterX, circleCenterY, outerRingRadius, paint)
+            drawCircle(circleCenterX, circleCenterY, innerRingRadius, paint)
         }
-    }
-
-    private fun drawFatRects() {
-        
     }
 
     companion object {
 
-        private const val OUTER_RING_WIDTH = 4
+        private const val OUTER_RING_WIDTH = 3
     }
 }
