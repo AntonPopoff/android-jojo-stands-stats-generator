@@ -17,29 +17,29 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val circleWidth = pxToDp(OUTER_RING_WIDTH)
-        val availableWidth = (width - paddingLeft - paddingRight - circleWidth)
-        val availableHeight = (height - paddingTop - paddingBottom - circleWidth)
-        val circleCenterX = availableWidth / 2 + paddingLeft + circleWidth / 2
-        val circleCenterY = availableHeight / 2 + paddingTop + circleWidth / 2
+        val outerCircleWidth = pxToDp(OUTER_BORDER_RING_WIDTH)
+        val innerCircleWidth = pxToDp(INNER_BORDER_RING_WIDTH)
+        val availableWidth = (width - paddingLeft - paddingRight - outerCircleWidth)
+        val availableHeight = (height - paddingTop - paddingBottom - outerCircleWidth)
+        val circleCenterX = availableWidth / 2 + paddingLeft + outerCircleWidth / 2
+        val circleCenterY = availableHeight / 2 + paddingTop + outerCircleWidth / 2
         val outerCircleRadius = minOf(availableWidth, availableHeight) / 2
         val innerCircleRadius = outerCircleRadius * 0.9f
 
-        drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius, circleWidth)
+        drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius,
+                outerCircleWidth, innerCircleWidth)
         drawBorderArcs(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
     }
 
     private fun drawBorderCircles(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
                                   outerCircleRadius: Float, innerCircleRadius: Float,
-                                  circleWidth: Float) {
-        paint.apply {
-            style = Paint.Style.STROKE
-            color = Color.BLACK
-            strokeWidth = circleWidth
-        }
+                                  outerCircleWidth: Float, innerCircleWidth: Float) {
+        paint.style = Paint.Style.STROKE
 
         canvas.apply {
+            paint.strokeWidth = outerCircleWidth
             drawCircle(circleCenterX, circleCenterY, outerCircleRadius, paint)
+            paint.strokeWidth = innerCircleWidth
             drawCircle(circleCenterX, circleCenterY, innerCircleRadius, paint)
         }
     }
@@ -92,7 +92,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     companion object {
 
-        private const val OUTER_RING_WIDTH = 3
+        private const val OUTER_BORDER_RING_WIDTH = 3f
+        private const val INNER_BORDER_RING_WIDTH = 2.75f
         private const val BIG_BORDER_ARC_ANGLE = 3.5f
         private const val SMALL_BORDER_ARC_ANGLE = 2.5f
         private const val NUMBER_OF_SMALL_BORDER_ARCS = 10
