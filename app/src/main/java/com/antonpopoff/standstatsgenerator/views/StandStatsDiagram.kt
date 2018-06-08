@@ -9,8 +9,14 @@ import android.view.View
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val borderArcsRect = RectF()
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+    private val borderArcsRect = RectF()
+
+    private val outerCircleWidth = pxToDp(3f)
+    private val innerCircleWidth = pxToDp(2.75f)
+    private val ratingLineWidth = pxToDp(3f)
+    private val ratingLineAndLetterSpacing = pxToDp(2.5f)
+    private val statsMarkLineWidth = pxToDp(1.5f)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -19,8 +25,6 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val outerCircleWidth = pxToDp(OUTER_CIRCLE_BORDER_WIDTH)
-        val innerCircleWidth = pxToDp(INNER_CIRCLE_BORDER_WIDTH)
         val availableWidth = (width - paddingLeft - paddingRight - outerCircleWidth)
         val availableHeight = (height - paddingTop - paddingBottom - outerCircleWidth)
         val circleCenterX = availableWidth / 2 + paddingLeft + outerCircleWidth / 2
@@ -28,15 +32,13 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         val outerCircleRadius = minOf(availableWidth, availableHeight) / 2
         val innerCircleRadius = outerCircleRadius * 0.9f
 
-        drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius,
-                outerCircleWidth, innerCircleWidth)
+        drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
         drawBorderArcs(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
         drawStatsMark(canvas, circleCenterX, circleCenterY, innerCircleRadius)
     }
 
     private fun drawBorderCircles(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
-                                  outerCircleRadius: Float, innerCircleRadius: Float,
-                                  outerCircleWidth: Float, innerCircleWidth: Float) {
+                                  outerCircleRadius: Float, innerCircleRadius: Float) {
         paint.style = Paint.Style.STROKE
 
         canvas.apply {
@@ -97,12 +99,10 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         val statsCircleRadius = innerCircleRadius * 0.625f
         val statRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
         val angleBetweenStats = 60f
-        val ratingLineWidth = pxToDp(RATING_LINE_WIDTH)
         val ratingLineStartX = circleCenterX - ratingLineWidth
         val ratingLineEndX = circleCenterX + ratingLineWidth
-        val spaceBetweenLetterAndRatingLine = pxToDp(SPACE_BETWEEN_LETTER_AND_RATING_LINE)
 
-        paint.strokeWidth = pxToDp(STATS_CIRCLE_BORDER_WIDTH)
+        paint.strokeWidth = statsMarkLineWidth
         textPaint.textSize = statRatingLength
 
         canvas.drawCircle(circleCenterX, circleCenterY, statsCircleRadius, paint)
@@ -121,7 +121,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
         canvas.restore()
 
-        val ratingLetterX = circleCenterX + ratingLineWidth + spaceBetweenLetterAndRatingLine
+        val ratingLetterX = circleCenterX + ratingLineWidth + ratingLineAndLetterSpacing
 
         for (i in 0 until NUMBER_OF_RATINGS) {
             val ratingLineY = circleCenterY - statRatingLength * (i + 1)
@@ -131,17 +131,11 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     companion object {
 
-        private const val OUTER_CIRCLE_BORDER_WIDTH = 3f
-        private const val INNER_CIRCLE_BORDER_WIDTH = 2.75f
-        private const val STATS_CIRCLE_BORDER_WIDTH = 1.5f
         private const val BIG_BORDER_ARC_ANGLE = 3.5f
         private const val SMALL_BORDER_ARC_ANGLE = 2.5f
         private const val NUMBER_OF_SMALL_BORDER_ARCS = 10
         private const val NUMBER_OF_STATS = 6
         private const val NUMBER_OF_RATINGS = 5
-        private const val RATING_LINE_WIDTH = 3f
-        private const val SPACE_BETWEEN_LETTER_AND_RATING_LINE = 2.5f
-
         private val RATING_LETTER = arrayOf("E", "D", "C", "B", "A")
     }
 }
