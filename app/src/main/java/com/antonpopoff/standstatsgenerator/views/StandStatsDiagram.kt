@@ -2,13 +2,20 @@ package com.antonpopoff.standstatsgenerator.views
 
 import android.content.Context
 import android.graphics.*
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import kotlin.math.cos
+import kotlin.math.sin
 
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = 112f
+    }
     private val arcRect = RectF()
+    private val textMeasureRect = Rect()
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -17,8 +24,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val outerCircleWidth = pxToDp(OUTER_BORDER_RING_WIDTH)
-        val innerCircleWidth = pxToDp(INNER_BORDER_RING_WIDTH)
+        val outerCircleWidth = pxToDp(OUTER_CIRCLE_BORDER_WIDTH)
+        val innerCircleWidth = pxToDp(INNER_CIRCLE_BORDER_WIDTH)
         val availableWidth = (width - paddingLeft - paddingRight - outerCircleWidth)
         val availableHeight = (height - paddingTop - paddingBottom - outerCircleWidth)
         val circleCenterX = availableWidth / 2 + paddingLeft + outerCircleWidth / 2
@@ -29,6 +36,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius,
                 outerCircleWidth, innerCircleWidth)
         drawBorderArcs(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
+        drawStatsMark(canvas, circleCenterX, circleCenterY, innerCircleRadius)
     }
 
     private fun drawBorderCircles(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
@@ -90,10 +98,33 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
     }
 
+    private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
+                              innerCircleRadius: Float) {
+        val statsCircleRadius = innerCircleRadius * 0.6f
+        var angle = 270
+
+        paint.strokeWidth = pxToDp(STATS_CIRCLE_BORDER_WIDTH)
+
+        canvas.drawCircle(circleCenterX, circleCenterY, statsCircleRadius, paint)
+
+        for (i in 0 until 6) {
+            val oppositePointAngle = (angle + 180) % 360
+            val oppositeAngleRadians = Math.toRadians(oppositePointAngle.toDouble())
+            val radians = Math.toRadians(angle.toDouble())
+            val startPointX = (statsCircleRadius * cos(radians) + circleCenterX).toFloat()
+            val startPointY = (statsCircleRadius * sin(radians) + circleCenterY).toFloat()
+            val oppositePointX = (statsCircleRadius * cos(oppositeAngleRadians) + circleCenterX).toFloat()
+            val oppositePointY = (statsCircleRadius * sin(oppositeAngleRadians) + circleCenterY).toFloat()
+            canvas.drawLine(startPointX, startPointY, oppositePointX, oppositePointY, paint)
+            angle += 60
+        }
+    }
+
     companion object {
 
-        private const val OUTER_BORDER_RING_WIDTH = 3f
-        private const val INNER_BORDER_RING_WIDTH = 2.75f
+        private const val OUTER_CIRCLE_BORDER_WIDTH = 3f
+        private const val INNER_CIRCLE_BORDER_WIDTH = 2.75f
+        private const val STATS_CIRCLE_BORDER_WIDTH = 1.5f
         private const val BIG_BORDER_ARC_ANGLE = 3.5f
         private const val SMALL_BORDER_ARC_ANGLE = 2.5f
         private const val NUMBER_OF_SMALL_BORDER_ARCS = 10
