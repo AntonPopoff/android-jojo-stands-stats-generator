@@ -2,7 +2,6 @@ package com.antonpopoff.standstatsgenerator.views
 
 import android.content.Context
 import android.graphics.*
-import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import kotlin.math.cos
@@ -11,11 +10,7 @@ import kotlin.math.sin
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = 112f
-    }
-    private val arcRect = RectF()
-    private val textMeasureRect = Rect()
+    private val borderArcsRect = RectF()
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -62,7 +57,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
             paint.strokeWidth = arcStrokeWidth
         }
 
-        arcRect.apply {
+        borderArcsRect.apply {
             left = circleCenterX - outerCircleRadius
             top = circleCenterY - outerCircleRadius + arcStrokeWidth / 2
             right = circleCenterX + outerCircleRadius
@@ -70,10 +65,10 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
 
         canvas.apply {
-            drawArc(arcRect, bigArcsStartAngle, BIG_BORDER_ARC_ANGLE, false, paint)
+            drawArc(borderArcsRect, bigArcsStartAngle, BIG_BORDER_ARC_ANGLE, false, paint)
             save()
             rotate(180f, circleCenterX, circleCenterY)
-            drawArc(arcRect, bigArcsStartAngle, BIG_BORDER_ARC_ANGLE, false, paint)
+            drawArc(borderArcsRect, bigArcsStartAngle, BIG_BORDER_ARC_ANGLE, false, paint)
             restore()
         }
 
@@ -90,7 +85,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
                     rotate(BIG_BORDER_ARC_ANGLE + spaceAngleBetweenArcs, circleCenterX, circleCenterY)
                 }
 
-                drawArc(arcRect, smallArcsStartAngle, SMALL_BORDER_ARC_ANGLE, false, paint)
+                drawArc(borderArcsRect, smallArcsStartAngle, SMALL_BORDER_ARC_ANGLE, false, paint)
                 rotate(spaceAngleBetweenArcs, circleCenterX, circleCenterY)
             }
 
