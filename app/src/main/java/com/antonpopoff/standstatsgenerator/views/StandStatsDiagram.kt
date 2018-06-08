@@ -52,7 +52,6 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     private fun drawBorderArcs(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
                                outerCircleRadius: Float, innerCircleRadius: Float) {
         val arcStrokeWidth = outerCircleRadius - innerCircleRadius
-        val bigArcsStartAngle = 270 - BIG_BORDER_ARC_ANGLE / 2
 
         paint.apply {
             paint.style = Paint.Style.STROKE
@@ -66,6 +65,13 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
             bottom = circleCenterY + outerCircleRadius
         }
 
+        drawBigArcs(canvas, circleCenterX, circleCenterY)
+        drawSmallArcs(canvas, circleCenterX, circleCenterY)
+    }
+
+    private fun drawBigArcs(canvas: Canvas, circleCenterX: Float, circleCenterY: Float) {
+        val bigArcsStartAngle = 270 - BIG_BORDER_ARC_ANGLE / 2
+
         canvas.apply {
             drawArc(borderArcsRect, bigArcsStartAngle, BIG_BORDER_ARC_ANGLE, false, paint)
             save()
@@ -73,7 +79,9 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
             drawArc(borderArcsRect, bigArcsStartAngle, BIG_BORDER_ARC_ANGLE, false, paint)
             restore()
         }
+    }
 
+    private fun drawSmallArcs(canvas: Canvas, circleCenterX: Float, circleCenterY: Float) {
         val availableAngle = 180 - BIG_BORDER_ARC_ANGLE
         val spaceAngleBetweenArcs = availableAngle / (NUMBER_OF_SMALL_BORDER_ARCS + 1)
         val smallArcsStartAngle = 270 - SMALL_BORDER_ARC_ANGLE / 2
@@ -98,14 +106,21 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, innerCircleRadius: Float) {
         val statsCircleRadius = innerCircleRadius * 0.625f
         val statRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
-        val angleBetweenStats = 60f
-        val ratingLineStartX = circleCenterX - ratingLineWidth
-        val ratingLineEndX = circleCenterX + ratingLineWidth
 
         paint.strokeWidth = statsMarkLineWidth
         textPaint.textSize = statRatingLength
 
         canvas.drawCircle(circleCenterX, circleCenterY, statsCircleRadius, paint)
+        drawStatsLines(canvas, circleCenterX, circleCenterY, statsCircleRadius, statRatingLength)
+        drawRatingLetters(canvas, circleCenterX, circleCenterY, statRatingLength)
+    }
+
+    private fun drawStatsLines(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
+                               statsCircleRadius: Float, statRatingLength: Float) {
+        val angleBetweenStats = 60f
+        val ratingLineStartX = circleCenterX - ratingLineWidth
+        val ratingLineEndX = circleCenterX + ratingLineWidth
+
         canvas.save()
 
         for (i in 0 until NUMBER_OF_STATS) {
@@ -120,7 +135,10 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
 
         canvas.restore()
+    }
 
+    private fun drawRatingLetters(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
+                                  statRatingLength: Float) {
         val ratingLetterX = circleCenterX + ratingLineWidth + ratingLineAndLetterSpacing
 
         for (i in 0 until NUMBER_OF_RATINGS) {
