@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator
+package com.antonpopoff.standstatsgenerator.views
 
 import android.content.Context
 import android.graphics.Canvas
@@ -18,20 +18,21 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val availableWidth = (width - paddingLeft - paddingRight).toFloat()
-        val availableHeight = (height - paddingTop - paddingBottom).toFloat()
-        val circleCenterX = availableWidth / 2 + paddingRight
-        val circleCenterY = availableHeight / 2 + paddingTop
+        val circleWidth = pxToDp(OUTER_RING_WIDTH)
+        val availableWidth = (width - paddingLeft - paddingRight - circleWidth)
+        val availableHeight = (height - paddingTop - paddingBottom - circleWidth)
+        val circleCenterX = availableWidth / 2 + paddingLeft + circleWidth / 2
+        val circleCenterY = availableHeight / 2 + paddingTop + circleWidth / 2
         val outerCircleRadius = minOf(availableWidth, availableHeight) / 2
         val innerCircleRadius = outerCircleRadius * 0.9f
 
-        drawBorderRings(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
+        drawBorderRings(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius,
+                circleWidth)
     }
 
     private fun drawBorderRings(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
-                                outerRingRadius: Float, innerRingRadius: Float) {
-        val circleWidth = resources.displayMetrics.density * OUTER_RING_WIDTH
-
+                                outerCircleRadius: Float, innerCircleRadius: Float,
+                                circleWidth: Float) {
         paint.apply {
             style = Paint.Style.STROKE
             color = Color.BLACK
@@ -39,8 +40,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
 
         canvas.apply {
-            drawCircle(circleCenterX, circleCenterY, outerRingRadius, paint)
-            drawCircle(circleCenterX, circleCenterY, innerRingRadius, paint)
+            drawCircle(circleCenterX, circleCenterY, outerCircleRadius, paint)
+            drawCircle(circleCenterX, circleCenterY, innerCircleRadius, paint)
         }
     }
 
