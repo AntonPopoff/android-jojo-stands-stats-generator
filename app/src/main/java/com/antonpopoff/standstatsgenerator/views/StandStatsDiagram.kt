@@ -2,15 +2,15 @@ package com.antonpopoff.standstatsgenerator.views
 
 import android.content.Context
 import android.graphics.*
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import kotlin.math.cos
-import kotlin.math.sin
 
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val borderArcsRect = RectF()
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -93,25 +93,39 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
     }
 
-    private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
-                              innerCircleRadius: Float) {
-        val statsCircleRadius = innerCircleRadius * 0.6f
-        var angle = 270
+    private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, innerCircleRadius: Float) {
+        val statsCircleRadius = innerCircleRadius * 0.625f
+        val statRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
+        val angleBetweenStats = 60f
+        val ratingLineWidth = pxToDp(RATING_LINE_WIDTH)
+        val ratingLineStartX = circleCenterX - ratingLineWidth
+        val ratingLineEndX = circleCenterX + ratingLineWidth
+        val spaceBetweenLetterAndRatingLine = pxToDp(SPACE_BETWEEN_LETTER_AND_RATING_LINE)
 
         paint.strokeWidth = pxToDp(STATS_CIRCLE_BORDER_WIDTH)
+        textPaint.textSize = statRatingLength
 
         canvas.drawCircle(circleCenterX, circleCenterY, statsCircleRadius, paint)
+        canvas.save()
 
-        for (i in 0 until 6) {
-            val oppositePointAngle = (angle + 180) % 360
-            val oppositeAngleRadians = Math.toRadians(oppositePointAngle.toDouble())
-            val radians = Math.toRadians(angle.toDouble())
-            val startPointX = (statsCircleRadius * cos(radians) + circleCenterX).toFloat()
-            val startPointY = (statsCircleRadius * sin(radians) + circleCenterY).toFloat()
-            val oppositePointX = (statsCircleRadius * cos(oppositeAngleRadians) + circleCenterX).toFloat()
-            val oppositePointY = (statsCircleRadius * sin(oppositeAngleRadians) + circleCenterY).toFloat()
-            canvas.drawLine(startPointX, startPointY, oppositePointX, oppositePointY, paint)
-            angle += 60
+        for (i in 0 until NUMBER_OF_STATS) {
+            canvas.drawLine(circleCenterX, circleCenterY, circleCenterX, circleCenterY - statsCircleRadius, paint)
+
+            for (j in 0 until NUMBER_OF_RATINGS) {
+                val ratingLineY = circleCenterY - statRatingLength * (j + 1)
+                canvas.drawLine(ratingLineStartX, ratingLineY, ratingLineEndX, ratingLineY, paint)
+            }
+
+            canvas.rotate(angleBetweenStats, circleCenterX, circleCenterY)
+        }
+
+        canvas.restore()
+
+        val ratingLetterX = circleCenterX + ratingLineWidth + spaceBetweenLetterAndRatingLine
+
+        for (i in 0 until NUMBER_OF_RATINGS) {
+            val ratingLineY = circleCenterY - statRatingLength * (i + 1)
+            canvas.drawText(RATING_LETTER[i], ratingLetterX, ratingLineY, textPaint)
         }
     }
 
@@ -123,5 +137,11 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         private const val BIG_BORDER_ARC_ANGLE = 3.5f
         private const val SMALL_BORDER_ARC_ANGLE = 2.5f
         private const val NUMBER_OF_SMALL_BORDER_ARCS = 10
+        private const val NUMBER_OF_STATS = 6
+        private const val NUMBER_OF_RATINGS = 5
+        private const val RATING_LINE_WIDTH = 3f
+        private const val SPACE_BETWEEN_LETTER_AND_RATING_LINE = 2.5f
+
+        private val RATING_LETTER = arrayOf("E", "D", "C", "B", "A")
     }
 }
