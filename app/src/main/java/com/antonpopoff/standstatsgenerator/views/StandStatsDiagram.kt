@@ -5,18 +5,27 @@ import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import kotlin.math.PI
 
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+
+    private val outerCircleWidth = dpToPx(3f)
+    private val innerCircleWidth = dpToPx(2.75f)
+    private val ratingLineWidth = dpToPx(3f)
+    private val ratingLineAndLetterSpacing = dpToPx(2.5f)
+    private val statsMarkLineWidth = dpToPx(1.5f)
+    private val statNameTextSize = spToPx(18f)
+    private val spaceBetweenStatsAndBorder = dpToPx(6f)
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private val borderArcsRect = RectF()
+    private val textMeasureRect = Rect()
+    private val statsTextPathRect = RectF()
+    private val statsTextPath = Path()
 
-    private val outerCircleWidth = pxToDp(3f)
-    private val innerCircleWidth = pxToDp(2.75f)
-    private val ratingLineWidth = pxToDp(3f)
-    private val ratingLineAndLetterSpacing = pxToDp(2.5f)
-    private val statsMarkLineWidth = pxToDp(1.5f)
+    private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+    private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -35,6 +44,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
         drawBorderArcs(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
         drawStatsMark(canvas, circleCenterX, circleCenterY, innerCircleRadius)
+        drawStatsNames(canvas, circleCenterX, circleCenterY, innerCircleRadius)
     }
 
     private fun drawBorderCircles(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
@@ -108,7 +118,11 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         val statRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
 
         paint.strokeWidth = statsMarkLineWidth
-        textPaint.textSize = statRatingLength
+
+        textPaint.apply {
+            textSize = statRatingLength
+            typeface = normalFont
+        }
 
         canvas.drawCircle(circleCenterX, circleCenterY, statsCircleRadius, paint)
         drawStatsLines(canvas, circleCenterX, circleCenterY, statsCircleRadius, statRatingLength)
@@ -117,7 +131,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     private fun drawStatsLines(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
                                statsCircleRadius: Float, statRatingLength: Float) {
-        val angleBetweenStats = 60f
+        val angleBetweenStats = 360f / NUMBER_OF_STATS
         val ratingLineStartX = circleCenterX - ratingLineWidth
         val ratingLineEndX = circleCenterX + ratingLineWidth
 
@@ -147,6 +161,47 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
     }
 
+    private fun drawStatsNames(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, innerCircleRadius: Float) {
+        val angleBetweenStats = 360f / NUMBER_OF_STATS
+
+        textPaint.apply {
+            typeface = boldFont
+            textSize = statNameTextSize
+        }
+
+        canvas.save()
+
+        for ((index, stat) in STATS.withIndex()) {
+            textPaint.getTextBounds(stat, 0, stat.length, textMeasureRect)
+
+            val textWidth = textPaint.measureText(stat)
+            val pathTextRadius = calcPathTextRadius(index, innerCircleRadius)
+            val arcAngle = ((textWidth * 180) / (PI * pathTextRadius)).toFloat()
+            val sweepAngle = if (index < STATS.size / 2) arcAngle else -arcAngle
+            val startAngle = (270 - angleBetweenStats - sweepAngle / 2) % 360
+
+            statsTextPathRect.apply {
+                left = circleCenterX - pathTextRadius
+                top = circleCenterY - pathTextRadius
+                right = circleCenterX + pathTextRadius
+                bottom = circleCenterY + pathTextRadius
+            }
+
+            statsTextPath.rewind()
+            statsTextPath.addArc(statsTextPathRect, startAngle, sweepAngle)
+            canvas.drawTextOnPath(stat, statsTextPath, 0f, 0f, textPaint)
+            canvas.rotate(angleBetweenStats, circleCenterX, circleCenterY)
+        }
+
+        canvas.restore()
+    }
+
+    private fun calcPathTextRadius(index: Int, innerCircleRadius: Float) = if (index < STATS.size / 2) {
+        innerCircleRadius - textMeasureRect.height() - spaceBetweenStatsAndBorder
+    } else {
+        innerCircleRadius - spaceBetweenStatsAndBorder
+    }
+
     companion object {
 
         private const val BIG_BORDER_ARC_ANGLE = 3.5f
@@ -155,5 +210,6 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         private const val NUMBER_OF_STATS = 6
         private const val NUMBER_OF_RATINGS = 5
         private val RATING_LETTER = arrayOf("E", "D", "C", "B", "A")
+        private val STATS = arrayOf("POTENTIAL", "POWER", "SPEED", "RANGE", "DURABILITY", "PRECISION")
     }
 }
