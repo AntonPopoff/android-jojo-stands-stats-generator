@@ -5,7 +5,11 @@ import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import com.antonpopoff.standstatsgenerator.R
+import com.antonpopoff.standstatsgenerator.utils.toRadians
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
@@ -14,8 +18,9 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     private val ratingLineWidth = dpToPx(3f)
     private val ratingLineAndLetterSpacing = dpToPx(2.5f)
     private val statsMarkLineWidth = dpToPx(1.5f)
-    private val statNameTextSize = spToPx(18f)
     private val spaceBetweenStatsAndBorder = dpToPx(6f)
+    private val statNameTextSize = getDimension(R.dimen.stat_name_text_size)
+    private val statMarkTextSize = getDimension(R.dimen.stat_mark_text_size)
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
@@ -40,11 +45,13 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         val circleCenterY = availableHeight / 2 + paddingTop + outerCircleWidth / 2
         val outerCircleRadius = minOf(availableWidth, availableHeight) / 2
         val innerCircleRadius = outerCircleRadius * 0.9f
+        val statsCircleRadius = innerCircleRadius * 0.625f
 
         drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
         drawBorderArcs(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
-        drawStatsMark(canvas, circleCenterX, circleCenterY, innerCircleRadius)
+        drawStatsMark(canvas, circleCenterX, circleCenterY, statsCircleRadius)
         drawStatsNames(canvas, circleCenterX, circleCenterY, innerCircleRadius)
+        drawStatsRatings(canvas, circleCenterX, circleCenterY, innerCircleRadius, statsCircleRadius)
     }
 
     private fun drawBorderCircles(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
@@ -113,8 +120,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
     }
 
-    private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, innerCircleRadius: Float) {
-        val statsCircleRadius = innerCircleRadius * 0.625f
+    private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, statsCircleRadius: Float) {
         val statRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
 
         paint.strokeWidth = statsMarkLineWidth
@@ -194,6 +200,33 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
 
         canvas.restore()
+    }
+
+    private fun drawStatsRatings(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
+                                 innerCircleRadius: Float, statsCircleRadius: Float) {
+        textPaint.textSize = statMarkTextSize
+
+        val deltaAngle = 360 / NUMBER_OF_STATS
+        var currentAngle = 270 - deltaAngle
+        val letterToDraw = "A"
+
+        for (i in 0 until NUMBER_OF_STATS) {
+            val statName = STATS[i]
+            textPaint.getTextBounds(statName, 0, statName.length, textMeasureRect)
+
+            val radiusWithTextHeight = innerCircleRadius - textMeasureRect.height() - spaceBetweenStatsAndBorder
+            val r = radiusWithTextHeight - (radiusWithTextHeight - statsCircleRadius) / 2
+            val letterWidth = textPaint.measureText(letterToDraw)
+
+            textPaint.getTextBounds(letterToDraw, 0, letterToDraw.length, textMeasureRect)
+
+            val radians = toRadians(currentAngle.toFloat())
+            val letterX = r * cos(radians) + circleCenterX - letterWidth / 2
+            val letterY = r * sin(radians) + circleCenterY + textMeasureRect.height() / 2
+
+            canvas.drawText(letterToDraw, letterX, letterY, textPaint)
+            currentAngle = (currentAngle + deltaAngle) % 360
+        }
     }
 
     private fun calcPathTextRadius(index: Int, innerCircleRadius: Float) = if (index < STATS.size / 2) {
