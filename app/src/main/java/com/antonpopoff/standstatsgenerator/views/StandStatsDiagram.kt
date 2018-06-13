@@ -28,9 +28,13 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     private val textMeasureRect = Rect()
     private val statsTextPathRect = RectF()
     private val statsTextPath = Path()
+    private val statsPolylinePath = Path()
 
     private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+    private val polylineColor = Color.parseColor("#70BF00F0")
+
+    private val testStats = arrayOf(4, 3, 4, 5, 5, 3)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -52,6 +56,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         drawStatsMark(canvas, circleCenterX, circleCenterY, statsCircleRadius)
         drawStatsNames(canvas, circleCenterX, circleCenterY, innerCircleRadius)
         drawStatsRatings(canvas, circleCenterX, circleCenterY, innerCircleRadius, statsCircleRadius)
+        drawStatsPolyline(canvas, circleCenterX, circleCenterY, statsCircleRadius)
     }
 
     private fun drawBorderCircles(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
@@ -233,6 +238,37 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         innerCircleRadius - textMeasureRect.height() - spaceBetweenStatsAndBorder
     } else {
         innerCircleRadius - spaceBetweenStatsAndBorder
+    }
+
+    private fun drawStatsPolyline(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, statsCircleRadius: Float) {
+        val statLineRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
+        val deltaAngle = 60
+        val startAngle = 270 - deltaAngle
+        var currentAngle = startAngle
+
+        paint.apply {
+            color = polylineColor
+            style = Paint.Style.FILL
+        }
+
+        for ((index, stat) in testStats.withIndex()) {
+            val r = statLineRatingLength * stat
+            val radians = toRadians(currentAngle.toFloat())
+            val pointX = r * cos(radians) + circleCenterX
+            val pointY = r * sin(radians) + circleCenterY
+
+            if (index == 0) {
+                statsPolylinePath.moveTo(pointX, pointY)
+            } else {
+                statsPolylinePath.lineTo(pointX, pointY)
+            }
+
+            currentAngle = (currentAngle + deltaAngle) % 360
+        }
+
+        statsPolylinePath.close()
+
+        canvas.drawPath(statsPolylinePath, paint)
     }
 
     companion object {
