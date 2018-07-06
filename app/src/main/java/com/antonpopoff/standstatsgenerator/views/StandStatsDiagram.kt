@@ -15,8 +15,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     private val outerCircleWidth = dpToPx(3f)
     private val innerCircleWidth = dpToPx(2.75f)
-    private val ratingLineWidth = dpToPx(3f)
-    private val ratingLineAndLetterSpacing = dpToPx(2.5f)
+    private val statLineWidth = dpToPx(3f)
+    private val statLineAndLetterSpacing = dpToPx(2.5f)
     private val statsMarkLineWidth = dpToPx(1.5f)
     private val spaceBetweenStatsAndBorder = dpToPx(6f)
     private val statNameTextSize = getDimension(R.dimen.stat_name_text_size)
@@ -45,17 +45,17 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
         val availableWidth = (width - paddingLeft - paddingRight - outerCircleWidth)
         val availableHeight = (height - paddingTop - paddingBottom - outerCircleWidth)
-        val circleCenterX = availableWidth / 2 + paddingLeft + outerCircleWidth / 2
-        val circleCenterY = availableHeight / 2 + paddingTop + outerCircleWidth / 2
+        val circleCenterX = (availableWidth + outerCircleWidth) / 2 + paddingLeft
+        val circleCenterY = (availableHeight + outerCircleWidth) / 2 + paddingTop
         val outerCircleRadius = minOf(availableWidth, availableHeight) / 2
         val innerCircleRadius = outerCircleRadius * 0.9f
         val statsCircleRadius = innerCircleRadius * 0.625f
 
         drawBorderCircles(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
         drawBorderArcs(canvas, circleCenterX, circleCenterY, outerCircleRadius, innerCircleRadius)
-        drawStatsMark(canvas, circleCenterX, circleCenterY, statsCircleRadius)
+        drawStatsDiagram(canvas, circleCenterX, circleCenterY, statsCircleRadius)
         drawStatsNames(canvas, circleCenterX, circleCenterY, innerCircleRadius)
-        drawStatsRatings(canvas, circleCenterX, circleCenterY, innerCircleRadius, statsCircleRadius)
+        drawStatsRatingsLetters(canvas, circleCenterX, circleCenterY, innerCircleRadius, statsCircleRadius)
         drawStatsPolyline(canvas, circleCenterX, circleCenterY, statsCircleRadius)
     }
 
@@ -125,7 +125,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
     }
 
-    private fun drawStatsMark(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, statsCircleRadius: Float) {
+    private fun drawStatsDiagram(canvas: Canvas, circleCenterX: Float, circleCenterY: Float, statsCircleRadius: Float) {
         val statRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
 
         paint.strokeWidth = statsMarkLineWidth
@@ -143,28 +143,30 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     private fun drawStatsLines(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
                                statsCircleRadius: Float, statRatingLength: Float) {
         val angleBetweenStats = 360f / NUMBER_OF_STATS
-        val ratingLineStartX = circleCenterX - ratingLineWidth
-        val ratingLineEndX = circleCenterX + ratingLineWidth
+        val ratingLineStartX = circleCenterX - statLineWidth
+        val ratingLineEndX = circleCenterX + statLineWidth
 
-        canvas.save()
+        canvas.apply {
+            save()
 
-        for (i in 0 until NUMBER_OF_STATS) {
-            canvas.drawLine(circleCenterX, circleCenterY, circleCenterX, circleCenterY - statsCircleRadius, paint)
+            for (i in 0 until NUMBER_OF_STATS) {
+                drawLine(circleCenterX, circleCenterY, circleCenterX, circleCenterY - statsCircleRadius, paint)
 
-            for (j in 0 until NUMBER_OF_RATINGS) {
-                val ratingLineY = circleCenterY - statRatingLength * (j + 1)
-                canvas.drawLine(ratingLineStartX, ratingLineY, ratingLineEndX, ratingLineY, paint)
+                for (j in 0 until NUMBER_OF_RATINGS) {
+                    val ratingLineY = circleCenterY - statRatingLength * (j + 1)
+                    drawLine(ratingLineStartX, ratingLineY, ratingLineEndX, ratingLineY, paint)
+                }
+
+                rotate(angleBetweenStats, circleCenterX, circleCenterY)
             }
 
-            canvas.rotate(angleBetweenStats, circleCenterX, circleCenterY)
+            restore()
         }
-
-        canvas.restore()
     }
 
     private fun drawRatingLetters(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
                                   statRatingLength: Float) {
-        val ratingLetterX = circleCenterX + ratingLineWidth + ratingLineAndLetterSpacing
+        val ratingLetterX = circleCenterX + statLineWidth + statLineAndLetterSpacing
 
         for (i in 0 until NUMBER_OF_RATINGS) {
             val ratingLineY = circleCenterY - statRatingLength * (i + 1)
@@ -207,8 +209,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         canvas.restore()
     }
 
-    private fun drawStatsRatings(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
-                                 innerCircleRadius: Float, statsCircleRadius: Float) {
+    private fun drawStatsRatingsLetters(canvas: Canvas, circleCenterX: Float, circleCenterY: Float,
+                                        innerCircleRadius: Float, statsCircleRadius: Float) {
         textPaint.textSize = statMarkTextSize
 
         val deltaAngle = 360 / NUMBER_OF_STATS
