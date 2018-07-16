@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.views
+package com.antonpopoff.standstatsgenerator.views.standstatsdiagram
 
 import android.content.Context
 import android.graphics.*
@@ -7,6 +7,8 @@ import android.util.AttributeSet
 import android.view.View
 import com.antonpopoff.standstatsgenerator.R
 import com.antonpopoff.standstatsgenerator.utils.toRadians
+import com.antonpopoff.standstatsgenerator.views.dpToPx
+import com.antonpopoff.standstatsgenerator.views.getDimension
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -34,7 +36,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     private val polylineColor = Color.parseColor("#70BF00F0")
 
-    private val testStats = arrayOf(4, 3, 4, 5, 5, 3)
+    var statistics = StandStats.NONE
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -215,10 +217,11 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
         val deltaAngle = 360 / NUMBER_OF_STATS
         var currentAngle = 270 - deltaAngle
-        val letterToDraw = "A"
 
         for (i in 0 until NUMBER_OF_STATS) {
             val statName = STATS[i]
+            val letterToDraw = statistics.orderedStats[i].letter
+
             textPaint.getTextBounds(statName, 0, statName.length, textMeasureRect)
 
             val radiusWithTextHeight = innerCircleRadius - textMeasureRect.height() - spaceBetweenStatsAndBorder
@@ -253,8 +256,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
             style = Paint.Style.FILL
         }
 
-        for ((index, stat) in testStats.withIndex()) {
-            val r = statLineRatingLength * stat
+        for ((index, stat) in statistics.orderedStats.withIndex()) {
+            val r = statLineRatingLength * stat.number
             val radians = toRadians(currentAngle.toFloat())
             val pointX = r * cos(radians) + circleCenterX
             val pointY = r * sin(radians) + circleCenterY
