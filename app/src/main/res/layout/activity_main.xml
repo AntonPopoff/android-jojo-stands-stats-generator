@@ -20,31 +20,49 @@
         android:id="@+id/bottomSheetContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="12dp"
         android:orientation="vertical"
+        android:theme="@style/AppTheme.StatsBottomSheetTheme"
         app:layout_behavior="@string/bottom_sheet_behavior"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
-        android:background="@android:color/white">
+        android:background="@color/white">
 
-        <Button
+        <TextView
+            android:id="@+id/powerLabelText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Power"/>
 
-        <Button
+        <TextView
+            android:id="@+id/speedLabelText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Speed"/>
 
-        <Button
+        <TextView
+            android:id="@+id/rangeLabelText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Range"/>
 
-        <Button
+        <TextView
+            android:id="@+id/durabilityLabelText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Durability"/>
 
-        <Button
+        <TextView
+            android:id="@+id/presicionLabelText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Precision"/>
+
+        <TextView
+            android:id="@+id/potentialLabelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Potential"/>
 
     </LinearLayout>
 
