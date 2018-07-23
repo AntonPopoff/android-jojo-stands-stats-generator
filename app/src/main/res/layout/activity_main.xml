@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/bottomSheetContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,46 +25,121 @@
         android:theme="@style/AppTheme.StatsBottomSheetTheme"
         app:layout_behavior="@string/bottom_sheet_behavior"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="1000dp"
         android:background="@color/white">
 
         <TextView
             android:id="@+id/powerLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Power"/>
+            android:text="Power"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/powerRatingView"
+            app:layout_constraintBottom_toBottomOf="@id/powerRatingView"/>
+
+        <com.antonpopoff.standstatsgenerator.views.StandStatRatingView
+            android:id="@+id/powerRatingView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toEndOf="@id/statsNameLabelsBarrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/speedLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Speed"/>
+            android:text="Speed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/speedRatingView"
+            app:layout_constraintBottom_toBottomOf="@id/speedRatingView" />
+
+        <com.antonpopoff.standstatsgenerator.views.StandStatRatingView
+            android:id="@+id/speedRatingView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toEndOf="@id/statsNameLabelsBarrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/powerRatingView"/>
 
         <TextView
             android:id="@+id/rangeLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Range"/>
+            android:text="Range"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rangeRatingView"
+            app:layout_constraintBottom_toBottomOf="@id/rangeRatingView"/>
+
+        <com.antonpopoff.standstatsgenerator.views.StandStatRatingView
+            android:id="@+id/rangeRatingView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toEndOf="@id/statsNameLabelsBarrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/speedRatingView"/>
 
         <TextView
             android:id="@+id/durabilityLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Durability"/>
+            android:text="Durability"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/durabilityRatingView"
+            app:layout_constraintBottom_toBottomOf="@id/durabilityRatingView"/>
+
+        <com.antonpopoff.standstatsgenerator.views.StandStatRatingView
+            android:id="@+id/durabilityRatingView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toEndOf="@id/statsNameLabelsBarrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rangeRatingView"/>
 
         <TextView
-            android:id="@+id/presicionLabelText"
+            android:id="@+id/precisionLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Precision"/>
+            android:text="Precision"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/precisionRatingView"
+            app:layout_constraintBottom_toBottomOf="@id/precisionRatingView"/>
+
+        <com.antonpopoff.standstatsgenerator.views.StandStatRatingView
+            android:id="@+id/precisionRatingView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toEndOf="@id/statsNameLabelsBarrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/durabilityRatingView"/>
 
         <TextView
             android:id="@+id/potentialLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Potential"/>
+            android:text="Potential"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/potentialRatingView"
+            app:layout_constraintBottom_toBottomOf="@id/potentialRatingView"/>
 
-    </LinearLayout>
+        <com.antonpopoff.standstatsgenerator.views.StandStatRatingView
+            android:id="@+id/potentialRatingView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toEndOf="@id/statsNameLabelsBarrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/precisionRatingView"/>
+
+        <android.support.constraint.Barrier
+            android:id="@+id/statsNameLabelsBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="powerLabelText,speedLabelText,rangeLabelText,durabilityLabelText,precisionLabelText,potentialLabelText"
+            tools:layout_editor_absoluteX="12dp"
+            tools:layout_editor_absoluteY="12dp" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/bottomSheetControlButton"
