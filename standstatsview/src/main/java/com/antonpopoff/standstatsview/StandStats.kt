@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.views.standstatsdiagram
+package com.antonpopoff.standstatsview
 
 data class StandStats(
         val potential: Rating,

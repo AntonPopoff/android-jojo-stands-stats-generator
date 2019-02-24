@@ -1,17 +1,18 @@
-package com.antonpopoff.standstatsgenerator.views.standstatsdiagram
+package com.antonpopoff.standstatsview
 
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import com.antonpopoff.standstatsgenerator.R
-import com.antonpopoff.standstatsgenerator.utils.toRadians
-import com.antonpopoff.standstatsgenerator.views.dpToPx
-import com.antonpopoff.standstatsgenerator.views.getDimension
+
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+
+import com.antonpopoff.standstatsview.utils.dpToPx
+import com.antonpopoff.standstatsview.utils.getDimension
+import com.antonpopoff.standstatsview.utils.toRadians
 
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 

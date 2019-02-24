@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.views
+package com.antonpopoff.standstatsview.utils
 
 import android.view.View
 

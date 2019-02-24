@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.views.standstatsdiagram
+package com.antonpopoff.standstatsview
 
 enum class Rating(val letter: String, val number: Int) {
     A("A", 5),
