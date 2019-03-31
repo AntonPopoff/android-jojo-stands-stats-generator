@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.antonpopoff.standstatsview.StandStatsDiagram
+    <com.antonpopoff.standstatsview.diagram.StandStatsDiagram
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp" />
