@@ -13,21 +13,32 @@ import kotlin.math.sin
 
 class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
+    private val ratingPolygonAlpha = 64
+
     private val rect = RectF()
     private val rectF = Rect()
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private val statsTextPath = Path()
-    private val ratingPolylinePath = Path()
+    private val ratingPolygonPath = Path()
 
     private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-    private val polylineColor = Color.parseColor("#70BF00F0")
 
     private val diagramValues = DiagramValues()
 
     var statistics = StandRating.UNKNOWN
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var polylineColor = Color.MAGENTA
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -257,8 +268,8 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         var angle = 270f - diagramValues.angleBetweenStats
 
         diagramValues.apply {
-            for (i in 0 until Statistics.count) {
-                val letter = statistics.get(i).letter
+            for (rating in statistics.ratings) {
+                val letter = rating.letter
                 val radians = toRadians(angle)
                 val textWidth = textPaint.measureText(letter)
                 val textHeight = textPaint.getTextHeight(letter, 0, letter.length, rectF)
@@ -272,34 +283,35 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     }
 
     private fun drawStatsPolyline(canvas: Canvas) {
-//        val statLineRatingLength = statsCircleRadius / (NUMBER_OF_RATINGS + 1)
-//        val deltaAngle = 60
-//        val startAngle = 270 - deltaAngle
-//        var currentAngle = startAngle
-//
-//        paint.apply {
-//            color = polylineColor
-//            style = Paint.Style.FILL
-//        }
-//
-//        for ((index, stat) in statistics.orderedStats.withIndex()) {
-//            val r = statLineRatingLength * stat.count
-//            val radians = toRadians(currentAngle.toFloat())
-//            val pointX = r * cos(radians) + circleCenterX
-//            val pointY = r * sin(radians) + circleCenterY
-//
-//            if (index == 0) {
-//                ratingPolylinePath.moveTo(pointX, pointY)
-//            } else {
-//                ratingPolylinePath.lineTo(pointX, pointY)
-//            }
-//
-//            currentAngle = (currentAngle + deltaAngle) % 360
-//        }
-//
-//        ratingPolylinePath.close()
-//
-//        canvas.drawPath(ratingPolylinePath, paint)
-    }
+        paint.apply {
+            style = Paint.Style.FILL
+            color = polylineColor
+            alpha = ratingPolygonAlpha
+        }
 
+        ratingPolygonPath.rewind()
+
+        diagramValues.apply {
+            var angle = 270 - angleBetweenStats
+
+            for (i in 0 until Statistics.count) {
+                val ratingRadius = spaceBetweenRatings * statistics.ratings[i].mark
+                val radians = toRadians(angle)
+                val x = ratingRadius * cos(radians) + centerX
+                val y = ratingRadius * sin(radians) + centerY
+
+                if (i == 0) {
+                    ratingPolygonPath.moveTo(x, y)
+                } else {
+                    ratingPolygonPath.lineTo(x, y)
+                }
+
+                angle += angleBetweenStats
+            }
+        }
+
+        ratingPolygonPath.close()
+
+        canvas.drawPath(ratingPolygonPath, paint)
+    }
 }

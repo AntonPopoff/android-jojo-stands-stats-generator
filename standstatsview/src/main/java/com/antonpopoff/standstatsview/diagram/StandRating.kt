@@ -9,9 +9,7 @@ data class StandRating(
         val range: Rating
 ) {
 
-    private val values = listOf(potential, power, speed, precision, durability, range)
-
-    fun get(index: Int) = values[index]
+    val ratings = listOf(potential, power, speed, precision, durability, range)
 
     companion object {
 
