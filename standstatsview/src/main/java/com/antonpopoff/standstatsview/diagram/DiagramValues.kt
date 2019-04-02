@@ -4,8 +4,6 @@ class DiagramValues {
 
     /* Predefined diagram values and ratios */
 
-    val ratingsCount = 5
-
     val bigNotchesCount = 2
 
     val smallNotchesCount = 20

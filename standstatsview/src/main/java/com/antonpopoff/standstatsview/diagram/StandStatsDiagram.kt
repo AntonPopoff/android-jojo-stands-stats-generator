@@ -81,7 +81,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
             statsNameCircleRadius = innerBorderRadius - statNameTextSize
             angleBetweenStats = 360f / Statistics.count
 
-            spaceBetweenRatings = statsCircleRadius / (ratingsCount + 1)
+            spaceBetweenRatings = statsCircleRadius / (Rating.letterRatings.size + 1)
             ratingNotchLen = statsCircleRadius * statNotchLenToRatingCircleRadiusRatio
             ratingNotchLeft = centerX - ratingNotchLen / 2
             ratingNotchRight = ratingNotchLeft + ratingNotchLen
