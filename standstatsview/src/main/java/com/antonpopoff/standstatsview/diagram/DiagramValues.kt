@@ -4,9 +4,9 @@ class DiagramValues {
 
     /* Predefined diagram values and ratios */
 
-    val bigNotchesCount = 2
+    val bigBorderNotchesCount = 2
 
-    val smallNotchesCount = 20
+    val smallBorderNotchesCount = 20
 
     val innerBorderRadiusToOuterRatio = 0.9f
 
@@ -20,9 +20,9 @@ class DiagramValues {
 
     val statNotchLenToRatingCircleRadiusRatio = 0.075f
 
-    val bigNotchAngle = 3.5f
+    val bigBorderNotchAngle = 3.5f
 
-    val smallNotchAngle = 2.5f
+    val smallBorderNotchAngle = 2.5f
 
     /* Calculated values */
 

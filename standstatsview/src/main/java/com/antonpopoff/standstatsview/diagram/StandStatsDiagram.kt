@@ -122,27 +122,26 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     private fun drawBigBorderNotches(canvas: Canvas) {
         diagramValues.apply {
-            var startAngle = 270 - bigNotchAngle / 2
-            val deltaAngle = 180
+            var startAngle = 270 - bigBorderNotchAngle / 2
 
-            for (i in 0 until bigNotchesCount) {
-                canvas.drawArc(rect, startAngle, bigNotchAngle, false, paint)
-                startAngle += deltaAngle
+            for (i in 0 until bigBorderNotchesCount) {
+                canvas.drawArc(rect, startAngle, bigBorderNotchAngle, false, paint)
+                startAngle += 180
             }
         }
     }
 
     private fun drawSmallBorderNotches(canvas: Canvas) {
         diagramValues.apply {
-            val spaceBetweenNotches = (180 - bigNotchAngle) / (smallNotchesCount / 2 + 1)
-            var startAngle = 270 + (bigNotchAngle - smallNotchAngle) / 2 + spaceBetweenNotches
+            val spaceBetweenNotches = (180 - bigBorderNotchAngle) / (smallBorderNotchesCount / 2 + 1)
+            var startAngle = 270 + (bigBorderNotchAngle - smallBorderNotchAngle) / 2 + spaceBetweenNotches
 
-            for (i in 0 until smallNotchesCount) {
-                if (i == smallNotchesCount / 2) {
-                    startAngle += bigNotchAngle + spaceBetweenNotches
+            for (i in 0 until smallBorderNotchesCount) {
+                if (i == smallBorderNotchesCount / 2) {
+                    startAngle += bigBorderNotchAngle + spaceBetweenNotches
                 }
 
-                canvas.drawArc(rect, startAngle, smallNotchAngle, false, paint)
+                canvas.drawArc(rect, startAngle, smallBorderNotchAngle, false, paint)
                 startAngle += spaceBetweenNotches
             }
         }
