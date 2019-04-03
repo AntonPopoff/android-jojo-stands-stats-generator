@@ -1,14 +1,20 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/Toolbar.Base.Default</item>
     </style>
 
-    <style name="AppTheme.StatsBottomSheetTheme">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/black</item>
+    <style name="AppTheme.Base.Default" />
+
+    <style name="Toolbar.Base" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?actionBarSize</item>
+        <item name="android:background">?colorPrimary</item>
     </style>
+
+    <style name="Toolbar.Base.Default" />
 
 </resources>
