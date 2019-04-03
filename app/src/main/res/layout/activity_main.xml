@@ -11,4 +11,9 @@
         android:layout_height="?actionBarSize"
         app:title="Stand"/>
 
+    <com.antonpopoff.standstatsview.diagram.StandStatsDiagram
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"/>
+
 </LinearLayout>
