@@ -90,7 +90,10 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     }
 
     private fun drawBorderCircles(canvas: Canvas) {
-        paint.style = Paint.Style.STROKE
+        paint.apply {
+            style = Paint.Style.STROKE
+            color = Color.BLACK
+        }
 
         diagramValues.apply {
             paint.strokeWidth = outerBorderWidth
@@ -102,10 +105,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
     }
 
     private fun drawBorderNotches(canvas: Canvas) {
-        paint.apply {
-            style = Paint.Style.STROKE
-            strokeWidth = diagramValues.borderNotchWidth
-        }
+        paint.strokeWidth = diagramValues.borderNotchWidth
 
         diagramValues.apply {
             rect.apply {
