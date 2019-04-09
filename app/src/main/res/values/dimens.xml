@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="toolbarElevation">8dp</dimen>
+    <dimen name="toolbar_elevation">8dp</dimen>
+
+    <dimen name="statistics_dialog_inset">16dp</dimen>
 
 </resources>

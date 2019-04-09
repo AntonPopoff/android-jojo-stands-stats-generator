@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Toolbar.Base.Default">
-        <item name="android:elevation">@dimen/toolbarElevation</item>
+        <item name="android:elevation">@dimen/toolbar_elevation</item>
     </style>
 
 </resources>
