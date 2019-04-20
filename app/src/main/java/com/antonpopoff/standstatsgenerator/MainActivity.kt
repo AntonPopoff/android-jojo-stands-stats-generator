@@ -1,12 +1,8 @@
 package com.antonpopoff.standstatsgenerator
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.antonpopoff.standstatsgenerator.common.BaseViewActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseViewActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
+    override val layoutId = R.layout.activity_main
 }
