@@ -24,6 +24,18 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun onToolbarMenuClick(menuItem: MenuItem): Boolean {
+        if (menuItem.itemId == R.id.edit) {
+            pushEditFragment()
+            return true
+        }
+
         return false
+    }
+
+    private fun pushEditFragment() {
+        fragmentManager?.beginTransaction()
+                ?.replace(R.id.container, EditDiagramFragment())
+                ?.addToBackStack(null)
+                ?.commit()
     }
 }
