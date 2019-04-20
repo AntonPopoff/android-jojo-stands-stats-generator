@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">standstatsgenerator</string>
+    <string name="edit_diagram">Edit Diagram</string>
 </resources>
