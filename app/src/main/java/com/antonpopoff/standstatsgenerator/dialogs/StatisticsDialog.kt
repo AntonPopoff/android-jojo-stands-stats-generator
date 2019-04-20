@@ -1,8 +1,9 @@
-package com.antonpopoff.standstatsgenerator
+package com.antonpopoff.standstatsgenerator.dialogs
 
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
+import com.antonpopoff.standstatsgenerator.R
 
 class StatisticsDialog : DialogFragment() {
 
