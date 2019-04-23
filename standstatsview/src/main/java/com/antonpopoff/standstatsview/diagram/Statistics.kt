@@ -10,9 +10,9 @@ enum class Statistics {
 
     companion object {
 
-        private val values = Statistics.values().toList()
+        private val values = values().toList()
 
-        val count = Statistics.values().size
+        val count = values.size
 
         fun get(index: Int) = values[index]
     }
