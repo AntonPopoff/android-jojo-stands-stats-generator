@@ -12,6 +12,10 @@ enum class Rating(val letter: String, val mark: Int) {
 
     companion object {
 
+        val ratings = values().toList()
+
+        val ratingsCount = ratings.size
+
         val letterRatings = listOf(A, B, C, D, E)
     }
 }
