@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--<declare-styleable name="StandStatsRatingBar">-->
+        <!--<attr name="rb_barColor" format="color" />-->
+        <!--<attr name="rb_selectedBarColor" format="color" />-->
+        <!--<attr name="rb_fontSize" format="dimension" />-->
+        <!--<attr name="rb_spaceBetweenBarAndText" format="dimension" />-->
+        <!--<attr name="rb_barHeight" format="dimension" />-->
+    <!--</declare-styleable>-->
+
+</resources>
