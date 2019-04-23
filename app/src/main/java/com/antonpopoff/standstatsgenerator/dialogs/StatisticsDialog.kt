@@ -1,15 +1,15 @@
-package com.antonpopoff.standstatsgenerator
+package com.antonpopoff.standstatsgenerator.dialogs
 
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.antonpopoff.standstatsgenerator.R
 
 class StatisticsDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default_Statistics)
+        setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default_Statistics)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
