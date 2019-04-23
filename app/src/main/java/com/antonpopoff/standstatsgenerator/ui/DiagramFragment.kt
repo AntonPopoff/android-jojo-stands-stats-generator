@@ -33,9 +33,16 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun pushEditFragment() {
-        fragmentManager?.beginTransaction()
-                ?.replace(R.id.container, EditDiagramFragment())
-                ?.addToBackStack(null)
-                ?.commit()
+        fragmentManager?.beginTransaction()?.apply {
+            setCustomAnimations(
+                    R.anim.fragment_enter,
+                    R.anim.fragment_exit,
+                    R.anim.fragment_pop_enter,
+                    R.anim.fragment_pop_exit
+            )
+            replace(R.id.container, EditDiagramFragment())
+            addToBackStack(null)
+            commit()
+        }
     }
 }
