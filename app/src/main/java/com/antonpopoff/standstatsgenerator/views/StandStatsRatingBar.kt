@@ -16,10 +16,10 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
 
     private val selectedBarColor = Color.parseColor("#EA7371")
     private val unselectedBarColor = Color.parseColor("#F1B8B8")
+
     private val barHeight = context.resources.displayMetrics.density * 3
-    private val notchesDiameter = barHeight * 2.5f
-    private val thumbDiameter = barHeight * 4.5f
-    private val notchesCount = Rating.values().size
+    private val notchesRadius = barHeight * 2.5f / 2
+    private val thumbRadius = barHeight * 4.5f / 2
 
     private val totalRatingRect = RectF()
     private val actualRatingRect = RectF()
@@ -27,13 +27,9 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private var distanceBetweenNotches = 0f
     private var thumbX = 0f
 
-    private val valueAnimator = ValueAnimator().apply {
+    private val thumbXAnimator = ValueAnimator().apply {
+        addUpdateListener(ThumbXAnimatorUpdateListener())
         duration = 200
-
-        addUpdateListener {
-            thumbX = it.animatedValue as Float
-            postInvalidateOnAnimation()
-        }
     }
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -48,7 +44,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val preferredHeight = thumbDiameter.roundToInt()
+        val preferredHeight = (thumbRadius * 2).roundToInt()
 
         setMeasuredDimension(
                 resolveSize(preferredWidth, widthMeasureSpec),
@@ -57,77 +53,73 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+        calcTotalRatingBarRect()
+        calcDistanceBetweenNotches()
+        ensureThumbWithinTotalRatingRect()
+        calcActualRatingBarRect()
 
-        calculateTotalRatingBarRect()
-        ensureThumbPosition()
-        calculateActualRatingBarRect()
-
-        drawFullRatingBarRect(canvas)
-        drawActualRatingBarRect(canvas)
+        drawRect(canvas, totalRatingRect, unselectedBarColor)
+        drawRect(canvas, actualRatingRect, selectedBarColor)
         drawNotches(canvas)
         drawThumb(canvas)
     }
 
-    private fun ensureThumbPosition() {
-        thumbX = when (thumbX) {
-            0f -> totalRatingRect.left
-            else -> thumbX
-        }
-    }
-
-    private fun calculateTotalRatingBarRect() {
+    private fun calcTotalRatingBarRect() {
         val availableHeight = height - paddingTop - paddingBottom
 
         totalRatingRect.apply {
-            left = paddingLeft + thumbDiameter / 2
-            right = width - paddingRight - thumbDiameter / 2
+            left = paddingLeft + thumbRadius
+            right = width - paddingRight - thumbRadius
             top = paddingTop + (availableHeight - barHeight) / 2
             bottom = top + barHeight
         }
     }
 
-    private fun drawFullRatingBarRect(canvas: Canvas) {
-        paint.color = unselectedBarColor
-        canvas.drawRect(totalRatingRect, paint)
-    }
-
-    private fun calculateActualRatingBarRect() {
+    private fun calcActualRatingBarRect() {
         actualRatingRect.apply {
             set(totalRatingRect)
             right = thumbX
         }
     }
 
-    private fun drawActualRatingBarRect(canvas: Canvas) {
-        paint.color = selectedBarColor
-        canvas.drawRect(actualRatingRect, paint)
+    private fun calcDistanceBetweenNotches() {
+        distanceBetweenNotches = totalRatingRect.width() / (Rating.ratingsCount - 1)
+    }
+
+    private fun ensureThumbWithinTotalRatingRect() {
+        if (thumbX == 0f) {
+            thumbX = totalRatingRect.left
+        }
+    }
+
+    private fun drawRect(canvas: Canvas, rectF: RectF, color: Int) {
+        paint.color = color
+        canvas.drawRect(rectF, paint)
     }
 
     private fun drawThumb(canvas: Canvas) {
         paint.color = selectedBarColor
-        canvas.drawCircle(thumbX, totalRatingRect.centerY(), thumbDiameter / 2, paint)
+        canvas.drawCircle(thumbX, totalRatingRect.centerY(), thumbRadius, paint)
     }
 
     private fun drawNotches(canvas: Canvas) {
-        distanceBetweenNotches = totalRatingRect.width() / (notchesCount - 1)
-        var cx = totalRatingRect.left
-
-        for (i in 0 until notchesCount) {
-            if (cx >= thumbX) {
-                paint.color = unselectedBarColor
-            } else {
-                paint.color = selectedBarColor
-            }
-            canvas.drawCircle(cx, totalRatingRect.centerY(), notchesDiameter / 2, paint)
-            cx += distanceBetweenNotches
+        for (i in 0 until Rating.ratingsCount) {
+            val notchX = totalRatingRect.left + i * distanceBetweenNotches
+            paint.color = getNotchColor(notchX)
+            canvas.drawCircle(notchX, totalRatingRect.centerY(), notchesRadius, paint)
         }
+    }
+
+    private fun getNotchColor(notchX: Float) = if (notchX > thumbX) {
+        unselectedBarColor
+    } else {
+        selectedBarColor
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                valueAnimator.cancel()
+                thumbXAnimator.cancel()
                 updateThumbX(event.x)
                 invalidate()
                 return true
@@ -139,21 +131,29 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
             }
             MotionEvent.ACTION_UP -> {
                 updateThumbX(event.x)
-                val ratingIndex = ((thumbX - thumbDiameter / 2) / distanceBetweenNotches).roundToInt()
-                val destination = ratingIndex * distanceBetweenNotches + thumbDiameter / 2
-                valueAnimator.setFloatValues(thumbX, destination)
-                valueAnimator.start()
+                val ratingIndex = ((thumbX - thumbRadius) / distanceBetweenNotches).roundToInt()
+                val destination = ratingIndex * distanceBetweenNotches + thumbRadius
+                thumbXAnimator.setFloatValues(thumbX, destination)
+                thumbXAnimator.start()
             }
         }
 
         return super.onTouchEvent(event)
     }
 
-    private fun updateThumbX(eventX: Float) {
+    private fun updateThumbX(newX: Float) {
         thumbX = when {
-            eventX < totalRatingRect.left -> totalRatingRect.left
-            eventX > totalRatingRect.right -> totalRatingRect.right
-            else -> eventX
+            newX < totalRatingRect.left -> totalRatingRect.left
+            newX > totalRatingRect.right -> totalRatingRect.right
+            else -> newX
+        }
+    }
+
+    private inner class ThumbXAnimatorUpdateListener : ValueAnimator.AnimatorUpdateListener {
+
+        override fun onAnimationUpdate(animation: ValueAnimator) {
+            thumbX = animation.animatedValue as Float
+            postInvalidateOnAnimation()
         }
     }
 }
