@@ -11,11 +11,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import com.antonpopoff.standstatsview.diagram.Rating
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-
+    private val viewConfiguration = ViewConfiguration.get(context)
 
     private val selectedBarColor = Color.parseColor("#EA7371")
     private val unselectedBarColor = Color.parseColor("#F1B8B8")
@@ -26,9 +27,10 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
 
     private val totalRatingRect = RectF()
     private val actualRatingRect = RectF()
-
     private var distanceBetweenNotches = 0f
+
     private var thumbX = 0f
+    private var downX = 0f
 
     private val thumbXAnimator = ValueAnimator().apply {
         addUpdateListener(ThumbXAnimatorUpdateListener())
@@ -44,8 +46,6 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     constructor(context: Context) : this(context, null)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val preferredHeight = (thumbRadius * 2).roundToInt()
 
@@ -122,6 +122,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                downX = event.x
                 thumbXAnimator.cancel()
                 updateThumbX(event.x)
                 return true
@@ -132,6 +133,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
             MotionEvent.ACTION_UP -> {
                 updateThumbX(event.x)
                 animateThumbToFinalPosition()
+                if (isTap(event)) performClick()
             }
             MotionEvent.ACTION_CANCEL -> {
                 updateThumbX(event.x)
@@ -140,6 +142,13 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         }
 
         return false
+    }
+
+    override fun performClick() = super.performClick()
+
+    private fun isTap(event: MotionEvent): Boolean {
+        return (event.eventTime - event.downTime < ViewConfiguration.getTapTimeout()
+                && (event.x - downX).absoluteValue < viewConfiguration.scaledTouchSlop)
     }
 
     private fun animateThumbToFinalPosition() {
