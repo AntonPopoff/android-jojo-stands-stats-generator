@@ -9,10 +9,13 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import com.antonpopoff.standstatsview.diagram.Rating
 import kotlin.math.roundToInt
 
 class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+
+
 
     private val selectedBarColor = Color.parseColor("#EA7371")
     private val unselectedBarColor = Color.parseColor("#F1B8B8")
@@ -121,24 +124,32 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
             MotionEvent.ACTION_DOWN -> {
                 thumbXAnimator.cancel()
                 updateThumbX(event.x)
-                invalidate()
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 updateThumbX(event.x)
-                invalidate()
-                return true
             }
             MotionEvent.ACTION_UP -> {
                 updateThumbX(event.x)
-                val ratingIndex = ((thumbX - thumbRadius) / distanceBetweenNotches).roundToInt()
-                val destination = ratingIndex * distanceBetweenNotches + thumbRadius
-                thumbXAnimator.setFloatValues(thumbX, destination)
-                thumbXAnimator.start()
+                animateThumbToFinalPosition()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                updateThumbX(event.x)
+                animateThumbToFinalPosition()
             }
         }
 
-        return super.onTouchEvent(event)
+        return false
+    }
+
+    private fun animateThumbToFinalPosition() {
+        val ratingIndex = ((thumbX - thumbRadius) / distanceBetweenNotches).roundToInt()
+        val destination = ratingIndex * distanceBetweenNotches + thumbRadius
+
+        thumbXAnimator.apply {
+            setFloatValues(thumbX, destination)
+            start()
+        }
     }
 
     private fun updateThumbX(newX: Float) {
@@ -147,6 +158,8 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
             newX > totalRatingRect.right -> totalRatingRect.right
             else -> newX
         }
+
+        invalidate()
     }
 
     private inner class ThumbXAnimatorUpdateListener : ValueAnimator.AnimatorUpdateListener {
