@@ -2,16 +2,16 @@ package com.antonpopoff.standstatsgenerator.views
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import com.antonpopoff.standstatsgenerator.extensions.getTextHeight
 import com.antonpopoff.standstatsview.diagram.Rating
-import kotlin.math.absoluteValue
+import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
@@ -22,12 +22,18 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private val unselectedBarColor = Color.parseColor("#F1B8B8")
 
     private val barHeight = context.resources.displayMetrics.density * 3
+    private val ratingTextSize = context.resources.displayMetrics.density * 22
+    private val textOffset = barHeight * 1.5f
     private val notchesRadius = barHeight * 2.5f / 2
     private val thumbRadius = barHeight * 4.5f / 2
+    private var distanceBetweenNotches = 0f
+
+    private var maxTextHeight = 0
+    private var sidesOffset = 0f
 
     private val totalRatingRect = RectF()
     private val actualRatingRect = RectF()
-    private var distanceBetweenNotches = 0f
+    private val textRect = Rect()
 
     private var thumbX = 0f
     private var downX = 0f
@@ -41,13 +47,19 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         style = Paint.Style.FILL
     }
 
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = ratingTextSize
+    }
+
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context) : this(context, null)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        calculateMaxRatingCharacterHeight()
+
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val preferredHeight = (thumbRadius * 2).roundToInt()
+        val preferredHeight = (thumbRadius * 2 + textOffset + maxTextHeight).roundToInt()
 
         setMeasuredDimension(
                 resolveSize(preferredWidth, widthMeasureSpec),
@@ -55,7 +67,14 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         )
     }
 
+    private fun calculateMaxRatingCharacterHeight() {
+        maxTextHeight = Rating.ratings.fold(0) { acc, rating ->
+            max(acc, textPaint.getTextHeight(rating.letter, textRect))
+        }
+    }
+
     override fun onDraw(canvas: Canvas) {
+        calcSidesOffset()
         calcTotalRatingBarRect()
         calcDistanceBetweenNotches()
         ensureThumbWithinTotalRatingRect()
@@ -65,14 +84,15 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         drawRect(canvas, actualRatingRect, selectedBarColor)
         drawNotches(canvas)
         drawThumb(canvas)
+        drawRatingText(canvas)
     }
 
     private fun calcTotalRatingBarRect() {
-        val availableHeight = height - paddingTop - paddingBottom
+        val availableHeight = height - paddingTop - paddingBottom - maxTextHeight - textOffset
 
         totalRatingRect.apply {
-            left = paddingLeft + thumbRadius
-            right = width - paddingRight - thumbRadius
+            left = paddingLeft + sidesOffset
+            right = width - paddingRight - sidesOffset
             top = paddingTop + (availableHeight - barHeight) / 2
             bottom = top + barHeight
         }
@@ -93,6 +113,12 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         if (thumbX == 0f) {
             thumbX = totalRatingRect.left
         }
+    }
+
+    private fun calcSidesOffset() {
+        val firstRatingCharacterWidth = textPaint.measureText(Rating.ratings.first().letter) / 2
+        val lastRatingCharacterWidth = textPaint.measureText(Rating.ratings.last().letter) / 2
+        sidesOffset = maxOf(thumbRadius, notchesRadius, maxOf(firstRatingCharacterWidth, lastRatingCharacterWidth))
     }
 
     private fun drawRect(canvas: Canvas, rectF: RectF, color: Int) {
@@ -117,6 +143,27 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         unselectedBarColor
     } else {
         selectedBarColor
+    }
+
+    private fun drawRatingText(canvas: Canvas) {
+        val textTop = totalRatingRect.centerY() + thumbRadius + textOffset
+
+        for (i in 0 until Rating.ratingsCount) {
+            val char = Rating.ratings[i].letter
+            val charWidth = textPaint.measureText(char)
+            val charHeight = textPaint.getTextHeight(char, textRect)
+            val textY = textTop + (maxTextHeight + charHeight) / 2
+            val textX = totalRatingRect.left + distanceBetweenNotches * i - charWidth / 2
+
+            textPaint.color = getTextColor(i)
+            canvas.drawText(char, textX, textY, textPaint)
+        }
+    }
+
+    private fun getTextColor(textIndex: Int) = if (textIndex == getDestinationRatingIndex()) {
+        selectedBarColor
+    } else {
+        unselectedBarColor
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -147,19 +194,22 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     override fun performClick() = super.performClick()
 
     private fun isTap(event: MotionEvent): Boolean {
-        return (event.eventTime - event.downTime < ViewConfiguration.getTapTimeout()
-                && (event.x - downX).absoluteValue < viewConfiguration.scaledTouchSlop)
+        val eventDuration = event.eventTime - event.downTime
+        val eventTravelDistance = abs(event.x - downX)
+        return eventDuration < ViewConfiguration.getTapTimeout() && eventTravelDistance < viewConfiguration.scaledTouchSlop
     }
 
     private fun animateThumbToFinalPosition() {
-        val ratingIndex = ((thumbX - thumbRadius) / distanceBetweenNotches).roundToInt()
-        val destination = ratingIndex * distanceBetweenNotches + thumbRadius
+        val ratingIndex = getDestinationRatingIndex()
+        val destination = ratingIndex * distanceBetweenNotches + totalRatingRect.left
 
         thumbXAnimator.apply {
             setFloatValues(thumbX, destination)
             start()
         }
     }
+
+    private fun getDestinationRatingIndex() = ((thumbX - sidesOffset - paddingLeft) / distanceBetweenNotches).roundToInt()
 
     private fun updateThumbX(newX: Float) {
         thumbX = when {
