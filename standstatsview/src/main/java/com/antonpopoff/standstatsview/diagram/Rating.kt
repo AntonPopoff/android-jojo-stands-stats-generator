@@ -1,6 +1,6 @@
 package com.antonpopoff.standstatsview.diagram
 
-enum class Rating(val letter: String, val mark: Int) {
+enum class Rating(val char: String, val mark: Int) {
     NONE("_", 0),
     UNKNOWN("?", 0),
     E("E", 1),

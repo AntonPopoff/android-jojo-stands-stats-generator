@@ -195,10 +195,10 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     private fun drawRatingLetter(canvas: Canvas, notchY: Float, ratingIndex: Int) {
         diagramValues.apply {
-            val letter = Rating.letterRatings[Rating.letterRatings.size - ratingIndex - 1].letter
-            val ratingLetterX = ratingNotchRight + ratingNotchLen / 2
-            val ratingLetterY = notchY + statsLinesWidth / 2
-            canvas.drawText(letter, ratingLetterX, ratingLetterY, textPaint)
+            val char = Rating.letterRatings[Rating.letterRatings.size - ratingIndex - 1].char
+            val charX = ratingNotchRight + ratingNotchLen / 2
+            val charY = notchY + statsLinesWidth / 2
+            canvas.drawText(char, charX, charY, textPaint)
         }
     }
 
@@ -268,14 +268,14 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
         diagramValues.apply {
             for (rating in statistics.ratings) {
-                val letter = rating.letter
+                val char = rating.char
                 val radians = toRadians(angle)
-                val textWidth = textPaint.measureText(letter)
-                val textHeight = textPaint.getTextHeight(letter, 0, letter.length, rectF)
-                val letterX = ratingLetterCircleRadius * cos(radians) + centerX - textWidth / 2
-                val letterY = ratingLetterCircleRadius * sin(radians) + centerY + textHeight / 2
+                val charWidth = textPaint.measureText(char)
+                val charHeight = textPaint.getTextHeight(char, 0, char.length, rectF)
+                val charX = ratingLetterCircleRadius * cos(radians) + centerX - charWidth / 2
+                val charY = ratingLetterCircleRadius * sin(radians) + centerY + charHeight / 2
 
-                canvas.drawText(letter, 0, letter.length, letterX, letterY, textPaint)
+                canvas.drawText(char, 0, char.length, charX, charY, textPaint)
                 angle += angleBetweenStats
             }
         }
