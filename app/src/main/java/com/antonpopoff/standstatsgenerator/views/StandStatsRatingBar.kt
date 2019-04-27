@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import com.antonpopoff.standstatsgenerator.R
 import com.antonpopoff.standstatsgenerator.extensions.getTextHeight
 import com.antonpopoff.standstatsview.diagram.Rating
 import kotlin.math.abs
@@ -17,29 +18,24 @@ import kotlin.math.roundToInt
 class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val viewConfiguration = ViewConfiguration.get(context)
-
-    private val selectedBarColor = Color.parseColor("#EA7371")
-    private val unselectedBarColor = Color.parseColor("#F1B8B8")
-
-    private val barHeight = context.resources.displayMetrics.density * 3
-    private val ratingTextSize = context.resources.displayMetrics.density * 22
-    private val textOffset = barHeight * 1.5f
-    private val notchesRadius = barHeight * 2.5f / 2
-    private val thumbRadius = barHeight * 4.5f / 2
-    private var distanceBetweenNotches = 0f
-
-    private var maxCharHeight = 0
-    private var sidesOffset = 0f
-
+    private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+    private val boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     private val totalRatingRect = RectF()
     private val actualRatingRect = RectF()
     private val textRect = Rect()
 
+    private var selectedBarColor = 0
+    private var barColor = 0
+    private var barHeight = 0f
+    private var thumbRadius = 0f
+    private var notchesRadius = 0f
+    private var textOffset = 0f
+
+    private var distanceBetweenNotches = 0f
+    private var maxCharHeight = 0
+    private var sidesOffset = 0f
     private var thumbX = 0f
     private var downX = 0f
-
-    private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-    private val boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 
     private val thumbXAnimator = ValueAnimator().apply {
         addUpdateListener(ThumbXAnimatorUpdateListener())
@@ -50,8 +46,23 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         style = Paint.Style.FILL
     }
 
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = ratingTextSize
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+
+    init {
+        attrs?.let { parseAttributes(context, it) }
+    }
+
+    private fun parseAttributes(context: Context, attrs: AttributeSet) {
+        context.obtainStyledAttributes(attrs, R.styleable.StandStatsRatingBar, 0, R.style.StatsRatingBarDefaultStyle).apply {
+            barHeight = getDimension(R.styleable.StandStatsRatingBar_rb_barHeight, 0f)
+            thumbRadius = getDimension(R.styleable.StandStatsRatingBar_rb_thumbRadius, 0f)
+            notchesRadius = getDimension(R.styleable.StandStatsRatingBar_rb_notchRadius, 0f)
+            textPaint.textSize = getDimension(R.styleable.StandStatsRatingBar_rb_textSize, 0f)
+            textOffset = getDimension(R.styleable.StandStatsRatingBar_rb_textOffset, 0f)
+            barColor = getColor(R.styleable.StandStatsRatingBar_rb_barColor, 0)
+            selectedBarColor = getColor(R.styleable.StandStatsRatingBar_rb_selectedBarColor, 0)
+            recycle()
+        }
     }
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -84,7 +95,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         ensureThumbWithinTotalRatingRect()
         calcActualRatingBarRect()
 
-        drawRect(canvas, totalRatingRect, unselectedBarColor)
+        drawRect(canvas, totalRatingRect, barColor)
         drawRect(canvas, actualRatingRect, selectedBarColor)
         drawNotches(canvas)
         drawThumb(canvas)
@@ -145,7 +156,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun getNotchColor(notchX: Float) = if (notchX > thumbX) {
-        unselectedBarColor
+        barColor
     } else {
         selectedBarColor
     }
@@ -172,7 +183,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private fun getTextColor(ratingIndex: Int) = if (ratingIndex == getDestinationRatingIndex()) {
         selectedBarColor
     } else {
-        unselectedBarColor
+        barColor
     }
 
     private fun getTextTypeface(ratingIndex: Int) = if (ratingIndex == getDestinationRatingIndex()) {
