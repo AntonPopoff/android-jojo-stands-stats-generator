@@ -32,6 +32,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private var textOffset = 0f
 
     private var distanceBetweenNotches = 0f
+    private var ratingBarOccupiedHeight = 0f
     private var maxCharHeight = 0
     private var sidesOffset = 0f
     private var thumbX = 0f
@@ -70,11 +71,11 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     constructor(context: Context) : this(context, null)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        calculateMaxRatingCharacterHeight()
+        calcMaxRatingCharacterHeight()
+        calcRatingBarOccupiedHeight()
 
-        val ratingBarTotalHeight = maxOf(thumbRadius * 2, notchesRadius * 2, barHeight)
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val preferredHeight = (ratingBarTotalHeight + textOffset + maxCharHeight).roundToInt()
+        val preferredHeight = (ratingBarOccupiedHeight + textOffset + maxCharHeight + paddingTop + paddingBottom).roundToInt()
 
         setMeasuredDimension(
                 resolveSize(preferredWidth, widthMeasureSpec),
@@ -82,12 +83,16 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         )
     }
 
-    private fun calculateMaxRatingCharacterHeight() {
+    private fun calcMaxRatingCharacterHeight() {
         textPaint.typeface = boldTypeface
 
         maxCharHeight = Rating.ratings.fold(0) { acc, rating ->
             max(acc, textPaint.getTextHeight(rating.char, textRect))
         }
+    }
+
+    private fun calcRatingBarOccupiedHeight() {
+        ratingBarOccupiedHeight = maxOf(thumbRadius * 2, notchesRadius * 2, barHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -167,7 +172,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun drawRatingText(canvas: Canvas) {
-        val textTop = totalRatingRect.centerY() + thumbRadius + textOffset
+        val textTop = paddingTop + ratingBarOccupiedHeight + textOffset
 
         for (i in 0 until Rating.ratingsCount) {
             textPaint.apply {
