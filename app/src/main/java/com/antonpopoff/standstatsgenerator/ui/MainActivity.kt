@@ -16,7 +16,7 @@ class MainActivity : BaseViewActivity() {
     private fun addDiagramFragmentIfAbsent() {
         if (supportFragmentManager.fragments.isEmpty()) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, EditDiagramFragment())
+                    .add(R.id.container, DiagramFragment())
                     .commit()
         }
     }
