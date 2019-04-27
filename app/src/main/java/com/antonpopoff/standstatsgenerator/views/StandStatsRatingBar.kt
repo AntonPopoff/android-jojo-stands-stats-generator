@@ -83,6 +83,8 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun calculateMaxRatingCharacterHeight() {
+        textPaint.typeface = boldTypeface
+
         maxCharHeight = Rating.ratings.fold(0) { acc, rating ->
             max(acc, textPaint.getTextHeight(rating.char, textRect))
         }
@@ -103,9 +105,12 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun calcSidesOffset() {
+        textPaint.typeface = boldTypeface
+
         val firstRatingCharWidth = textPaint.measureText(Rating.ratings.first().char) / 2
         val lastRatingCharWidth = textPaint.measureText(Rating.ratings.last().char) / 2
         val maxCharWidth = maxOf(firstRatingCharWidth, lastRatingCharWidth)
+
         sidesOffset = maxOf(thumbRadius, notchesRadius, maxCharWidth)
     }
 
