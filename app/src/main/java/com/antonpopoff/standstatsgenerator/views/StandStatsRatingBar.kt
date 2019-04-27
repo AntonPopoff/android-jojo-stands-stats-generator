@@ -28,7 +28,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private val thumbRadius = barHeight * 4.5f / 2
     private var distanceBetweenNotches = 0f
 
-    private var maxTextHeight = 0
+    private var maxCharHeight = 0
     private var sidesOffset = 0f
 
     private val totalRatingRect = RectF()
@@ -63,7 +63,7 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
 
         val ratingBarTotalHeight = maxOf(thumbRadius * 2, notchesRadius * 2, barHeight)
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val preferredHeight = (ratingBarTotalHeight + textOffset + maxTextHeight).roundToInt()
+        val preferredHeight = (ratingBarTotalHeight + textOffset + maxCharHeight).roundToInt()
 
         setMeasuredDimension(
                 resolveSize(preferredWidth, widthMeasureSpec),
@@ -72,8 +72,8 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun calculateMaxRatingCharacterHeight() {
-        maxTextHeight = Rating.ratings.fold(0) { acc, rating ->
-            max(acc, textPaint.getTextHeight(rating.letter, textRect))
+        maxCharHeight = Rating.ratings.fold(0) { acc, rating ->
+            max(acc, textPaint.getTextHeight(rating.char, textRect))
         }
     }
 
@@ -92,14 +92,14 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun calcSidesOffset() {
-        val firstRatingCharacterWidth = textPaint.measureText(Rating.ratings.first().letter) / 2
-        val lastRatingCharacterWidth = textPaint.measureText(Rating.ratings.last().letter) / 2
-        val maxCharacterWidth = maxOf(firstRatingCharacterWidth, lastRatingCharacterWidth)
-        sidesOffset = maxOf(thumbRadius, notchesRadius, maxCharacterWidth)
+        val firstRatingCharWidth = textPaint.measureText(Rating.ratings.first().char) / 2
+        val lastRatingCharWidth = textPaint.measureText(Rating.ratings.last().char) / 2
+        val maxCharWidth = maxOf(firstRatingCharWidth, lastRatingCharWidth)
+        sidesOffset = maxOf(thumbRadius, notchesRadius, maxCharWidth)
     }
 
     private fun calcTotalRatingBarRect() {
-        val availableHeight = height - paddingTop - paddingBottom - maxTextHeight - textOffset
+        val availableHeight = height - paddingTop - paddingBottom - maxCharHeight - textOffset
 
         totalRatingRect.apply {
             left = paddingLeft + sidesOffset
@@ -159,23 +159,23 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
                 typeface = getTextTypeface(i)
             }
 
-            val char = Rating.ratings[i].letter
+            val char = Rating.ratings[i].char
             val charWidth = textPaint.measureText(char)
             val charHeight = textPaint.getTextHeight(char, textRect)
-            val textY = textTop + (maxTextHeight + charHeight) / 2
-            val textX = totalRatingRect.left + distanceBetweenNotches * i - charWidth / 2
+            val charX = totalRatingRect.left + distanceBetweenNotches * i - charWidth / 2
+            val charY = textTop + (maxCharHeight + charHeight) / 2
 
-            canvas.drawText(char, textX, textY, textPaint)
+            canvas.drawText(char, charX, charY, textPaint)
         }
     }
 
-    private fun getTextColor(textIndex: Int) = if (textIndex == getDestinationRatingIndex()) {
+    private fun getTextColor(ratingIndex: Int) = if (ratingIndex == getDestinationRatingIndex()) {
         selectedBarColor
     } else {
         unselectedBarColor
     }
 
-    private fun getTextTypeface(textIndex: Int) = if (textIndex == getDestinationRatingIndex()) {
+    private fun getTextTypeface(ratingIndex: Int) = if (ratingIndex == getDestinationRatingIndex()) {
         boldTypeface
     } else {
         defaultTypeface
