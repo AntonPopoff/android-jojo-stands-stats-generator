@@ -38,6 +38,9 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     private var thumbX = 0f
     private var downX = 0f
 
+    private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+    private val boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+
     private val thumbXAnimator = ValueAnimator().apply {
         addUpdateListener(ThumbXAnimatorUpdateListener())
         duration = 200
@@ -58,8 +61,9 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         calculateMaxRatingCharacterHeight()
 
+        val ratingBarTotalHeight = maxOf(thumbRadius * 2, notchesRadius * 2, barHeight)
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val preferredHeight = (thumbRadius * 2 + textOffset + maxTextHeight).roundToInt()
+        val preferredHeight = (ratingBarTotalHeight + textOffset + maxTextHeight).roundToInt()
 
         setMeasuredDimension(
                 resolveSize(preferredWidth, widthMeasureSpec),
@@ -85,6 +89,13 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         drawNotches(canvas)
         drawThumb(canvas)
         drawRatingText(canvas)
+    }
+
+    private fun calcSidesOffset() {
+        val firstRatingCharacterWidth = textPaint.measureText(Rating.ratings.first().letter) / 2
+        val lastRatingCharacterWidth = textPaint.measureText(Rating.ratings.last().letter) / 2
+        val maxCharacterWidth = maxOf(firstRatingCharacterWidth, lastRatingCharacterWidth)
+        sidesOffset = maxOf(thumbRadius, notchesRadius, maxCharacterWidth)
     }
 
     private fun calcTotalRatingBarRect() {
@@ -115,12 +126,6 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         }
     }
 
-    private fun calcSidesOffset() {
-        val firstRatingCharacterWidth = textPaint.measureText(Rating.ratings.first().letter) / 2
-        val lastRatingCharacterWidth = textPaint.measureText(Rating.ratings.last().letter) / 2
-        sidesOffset = maxOf(thumbRadius, notchesRadius, maxOf(firstRatingCharacterWidth, lastRatingCharacterWidth))
-    }
-
     private fun drawRect(canvas: Canvas, rectF: RectF, color: Int) {
         paint.color = color
         canvas.drawRect(rectF, paint)
@@ -149,13 +154,17 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         val textTop = totalRatingRect.centerY() + thumbRadius + textOffset
 
         for (i in 0 until Rating.ratingsCount) {
+            textPaint.apply {
+                color = getTextColor(i)
+                typeface = getTextTypeface(i)
+            }
+
             val char = Rating.ratings[i].letter
             val charWidth = textPaint.measureText(char)
             val charHeight = textPaint.getTextHeight(char, textRect)
             val textY = textTop + (maxTextHeight + charHeight) / 2
             val textX = totalRatingRect.left + distanceBetweenNotches * i - charWidth / 2
 
-            textPaint.color = getTextColor(i)
             canvas.drawText(char, textX, textY, textPaint)
         }
     }
@@ -164,6 +173,12 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
         selectedBarColor
     } else {
         unselectedBarColor
+    }
+
+    private fun getTextTypeface(textIndex: Int) = if (textIndex == getDestinationRatingIndex()) {
+        boldTypeface
+    } else {
+        defaultTypeface
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
