@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.views
+package com.antonpopoff.standcharacteristicsgenerator.views
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import com.antonpopoff.standstatsgenerator.R
-import com.antonpopoff.standstatsgenerator.extensions.getTextHeight
+import com.antonpopoff.standcharacteristicsgenerator.R
+import com.antonpopoff.standcharacteristicsgenerator.extensions.getTextHeight
 import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import kotlin.math.abs
 import kotlin.math.max
