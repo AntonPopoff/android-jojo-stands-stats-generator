@@ -21,160 +21,100 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="6dp"
-                android:text="Potential"
-                android:textStyle="italic"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:text="Potential" />
 
             <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                style="@style/EditDiagramStatisticRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content" />
 
             <View
+                style="@style/EditDiagramDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#AFAFAF"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_height="1px" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="6dp"
-                android:text="Power"
-                android:textColor="@android:color/black"
-                android:textStyle="italic"
-                android:textSize="18sp" />
+                android:text="Power" />
 
             <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                style="@style/EditDiagramStatisticRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content" />
 
             <View
+                style="@style/EditDiagramDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#AFAFAF"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_height="1px" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="6dp"
-                android:text="Speed"
-                android:textColor="@android:color/black"
-                android:textStyle="italic"
-                android:textSize="18sp" />
+                android:text="Speed" />
 
             <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                style="@style/EditDiagramStatisticRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content" />
 
             <View
+                style="@style/EditDiagramDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#AFAFAF"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_height="1px" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="6dp"
-                android:text="Range"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="italic"/>
+                android:text="Range" />
 
             <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                style="@style/EditDiagramStatisticRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content" />
 
             <View
+                style="@style/EditDiagramDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#AFAFAF"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_height="1px" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="6dp"
-                android:text="Durability"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="italic"/>
+                android:text="Durability" />
 
             <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                style="@style/EditDiagramStatisticRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content" />
 
             <View
+                style="@style/EditDiagramDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#AFAFAF"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_height="1px" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="6dp"
-                android:text="Precision"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="italic"/>
+                android:text="Precision" />
 
             <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                style="@style/EditDiagramStatisticRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content" />
 
             <View
+                style="@style/EditDiagramDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#AFAFAF"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_height="1px" />
 
         </LinearLayout>
 
