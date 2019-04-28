@@ -21,7 +21,7 @@
         android:textColor="@android:color/black"
         android:textSize="22sp" />
 
-    <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+    <com.antonpopoff.standstatsgenerator.views.CharacteristicRatingBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"

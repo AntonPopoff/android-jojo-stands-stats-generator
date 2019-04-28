@@ -31,7 +31,7 @@
         <item name="android:windowExitAnimation">@anim/statistics_dialog_out</item>
     </style>
 
-    <style name="StatsRatingBarDefaultStyle">
+    <style name="CharacteristicsRatingBarDefaultStyle">
         <item name="rb_barHeight">4dp</item>
         <item name="rb_thumbRadius">7.5dp</item>
         <item name="rb_notchRadius">4dp</item>
