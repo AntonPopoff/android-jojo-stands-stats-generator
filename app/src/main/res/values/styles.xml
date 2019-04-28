@@ -32,11 +32,11 @@
     </style>
 
     <style name="StatsRatingBarDefaultStyle">
-        <item name="rb_barHeight">4dp</item>
-        <item name="rb_thumbRadius">7.5dp</item>
-        <item name="rb_notchRadius">4dp</item>
-        <item name="rb_textSize">22sp</item>
-        <item name="rb_textOffset">6dp</item>
+        <item name="rb_barHeight">3dp</item>
+        <item name="rb_thumbRadius">6dp</item>
+        <item name="rb_notchRadius">3dp</item>
+        <item name="rb_textSize">18sp</item>
+        <item name="rb_textOffset">3.5dp</item>
         <item name="rb_barColor">#F1B8B8</item>
         <item name="rb_selectedBarColor">#EA7371</item>
     </style>

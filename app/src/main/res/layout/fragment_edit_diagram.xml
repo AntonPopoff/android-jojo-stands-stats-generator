@@ -11,22 +11,167 @@
         android:layout_height="?actionBarSize"
         app:title="Edit" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:text="Potential"
-        android:textColor="@android:color/black"
-        android:textSize="22sp" />
-
-    <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="6dp"
+                android:text="Potential"
+                android:textStyle="italic"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#AFAFAF"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="Power"
+                android:textColor="@android:color/black"
+                android:textStyle="italic"
+                android:textSize="18sp" />
+
+            <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#AFAFAF"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="Speed"
+                android:textColor="@android:color/black"
+                android:textStyle="italic"
+                android:textSize="18sp" />
+
+            <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#AFAFAF"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="Range"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="italic"/>
+
+            <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#AFAFAF"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="Durability"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="italic"/>
+
+            <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#AFAFAF"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="Precision"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="italic"/>
+
+            <com.antonpopoff.standstatsgenerator.views.StandStatsRatingBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#AFAFAF"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
