@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import com.antonpopoff.standstatsgenerator.R
 import com.antonpopoff.standstatsgenerator.extensions.getTextHeight
-import com.antonpopoff.standstatsview.diagram.Rating
+import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
