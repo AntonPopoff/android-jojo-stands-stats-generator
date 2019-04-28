@@ -1,6 +1,6 @@
-package com.antonpopoff.standstatsview.diagram
+package com.antonpopoff.standcharacteristicsview.diagram
 
-enum class Statistics {
+enum class Characteristics {
     POTENTIAL,
     POWER,
     SPEED,

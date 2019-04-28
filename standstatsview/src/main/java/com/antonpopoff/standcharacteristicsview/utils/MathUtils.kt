@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsview.utils
+package com.antonpopoff.standcharacteristicsview.utils
 
 const val PI = Math.PI.toFloat()
 

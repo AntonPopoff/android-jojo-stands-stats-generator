@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsview.diagram
+package com.antonpopoff.standcharacteristicsview.diagram
 
 class DiagramValues {
 
@@ -10,15 +10,15 @@ class DiagramValues {
 
     val innerBorderRadiusToOuterRatio = 0.9f
 
-    val statsCircleRadiusToOuterRatio = 0.575f
+    val characteristicsCircleRadiusToOuterRatio = 0.575f
 
     val outerBorderWidthToOuterRadiusRatio = 0.02f
 
     val innerBorderWidthToOuterRadiusRatio = 0.015f
 
-    val statsCircleWidthToOuterRadiusRatio = 0.01f
+    val characteristicsCircleWidthToOuterRadiusRatio = 0.01f
 
-    val statNotchLenToRatingCircleRadiusRatio = 0.075f
+    val characteristicsNotchLenToRatingCircleRadiusRatio = 0.075f
 
     val bigBorderNotchAngle = 3.5f
 
@@ -34,13 +34,13 @@ class DiagramValues {
 
     var innerBorderRadius = 0f
 
-    var statsCircleRadius = 0f
+    var characteristicsCircleRadius = 0f
 
     var outerBorderWidth = 0f
 
     var innerBorderWidth = 0f
 
-    var statsLinesWidth = 0f
+    var characteristicsLinesWidth = 0f
 
     var borderNotchWidth = 0f
 
@@ -48,7 +48,7 @@ class DiagramValues {
 
     var ratingNotchLen = 0f
 
-    var angleBetweenStats = 0f
+    var angleBetweenCharacteristics = 0f
 
     var spaceBetweenRatings = 0f
 
@@ -56,9 +56,9 @@ class DiagramValues {
 
     var ratingNotchRight = 0f
 
-    var statNameTextSize = 0f
+    var characteristicNameTextSize = 0f
 
-    var statsNameCircleRadius = 0f
+    var characteristicNameCircleRadius = 0f
 
     var ratingLetterCircleRadius = 0f
 }
