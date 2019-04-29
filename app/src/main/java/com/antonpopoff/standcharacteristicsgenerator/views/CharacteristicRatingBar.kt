@@ -12,10 +12,20 @@ import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.extensions.getTextHeight
 import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import kotlin.math.abs
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+
+    private val thumbXAnimator = ValueAnimator().apply {
+        addUpdateListener(ThumbXAnimatorUpdateListener())
+        duration = 200
+    }
+
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     private val viewConfiguration = ViewConfiguration.get(context)
     private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
@@ -30,24 +40,13 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private var thumbRadius = 0f
     private var notchesRadius = 0f
     private var textOffset = 0f
+    private val textSize get() = textPaint.textSize
 
     private var distanceBetweenNotches = 0f
     private var ratingBarOccupiedHeight = 0f
-    private var maxCharHeight = 0
     private var sidesOffset = 0f
     private var thumbX = 0f
     private var downX = 0f
-
-    private val thumbXAnimator = ValueAnimator().apply {
-        addUpdateListener(ThumbXAnimatorUpdateListener())
-        duration = 200
-    }
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-    }
-
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     init {
         attrs?.let { parseAttributes(context, it) }
@@ -71,24 +70,15 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     constructor(context: Context) : this(context, null)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        calcMaxRatingCharacterHeight()
         calcRatingBarOccupiedHeight()
 
         val preferredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val preferredHeight = (ratingBarOccupiedHeight + textOffset + maxCharHeight + paddingTop + paddingBottom).roundToInt()
+        val preferredHeight = (ratingBarOccupiedHeight + textOffset + textSize + paddingTop + paddingBottom).roundToInt()
 
         setMeasuredDimension(
                 resolveSize(preferredWidth, widthMeasureSpec),
                 resolveSize(preferredHeight, heightMeasureSpec)
         )
-    }
-
-    private fun calcMaxRatingCharacterHeight() {
-        textPaint.typeface = boldTypeface
-
-        maxCharHeight = Rating.ratings.fold(0) { acc, rating ->
-            max(acc, textPaint.getTextHeight(rating.char, textRect))
-        }
     }
 
     private fun calcRatingBarOccupiedHeight() {
@@ -120,7 +110,7 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun calcTotalRatingBarRect() {
-        val availableHeight = height - paddingTop - paddingBottom - maxCharHeight - textOffset
+        val availableHeight = height - paddingTop - paddingBottom - textSize - textOffset
 
         totalRatingRect.apply {
             left = paddingLeft + sidesOffset
@@ -184,7 +174,7 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
             val charWidth = textPaint.measureText(char)
             val charHeight = textPaint.getTextHeight(char, textRect)
             val charX = totalRatingRect.left + distanceBetweenNotches * i - charWidth / 2
-            val charY = textTop + (maxCharHeight + charHeight) / 2
+            val charY = textTop + (textSize + charHeight) / 2
 
             canvas.drawText(char, charX, charY, textPaint)
         }
