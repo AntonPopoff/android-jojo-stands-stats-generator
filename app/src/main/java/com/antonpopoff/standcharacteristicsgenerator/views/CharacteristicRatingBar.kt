@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.views
+package com.antonpopoff.standcharacteristicsgenerator.views
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -8,14 +8,14 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import com.antonpopoff.standstatsgenerator.R
-import com.antonpopoff.standstatsgenerator.extensions.getTextHeight
-import com.antonpopoff.standstatsview.diagram.Rating
+import com.antonpopoff.standcharacteristicsgenerator.R
+import com.antonpopoff.standcharacteristicsgenerator.extensions.getTextHeight
+import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val viewConfiguration = ViewConfiguration.get(context)
     private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
@@ -54,14 +54,14 @@ class StandStatsRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: 
     }
 
     private fun parseAttributes(context: Context, attrs: AttributeSet) {
-        context.obtainStyledAttributes(attrs, R.styleable.StandStatsRatingBar, 0, R.style.StatsRatingBarDefaultStyle).apply {
-            barHeight = getDimension(R.styleable.StandStatsRatingBar_rb_barHeight, 0f)
-            thumbRadius = getDimension(R.styleable.StandStatsRatingBar_rb_thumbRadius, 0f)
-            notchesRadius = getDimension(R.styleable.StandStatsRatingBar_rb_notchRadius, 0f)
-            textPaint.textSize = getDimension(R.styleable.StandStatsRatingBar_rb_textSize, 0f)
-            textOffset = getDimension(R.styleable.StandStatsRatingBar_rb_textOffset, 0f)
-            barColor = getColor(R.styleable.StandStatsRatingBar_rb_barColor, 0)
-            selectedBarColor = getColor(R.styleable.StandStatsRatingBar_rb_selectedBarColor, 0)
+        context.obtainStyledAttributes(attrs, R.styleable.CharacteristicRatingBar, 0, R.style.CharacteristicsRatingBarDefaultStyle).apply {
+            barHeight = getDimension(R.styleable.CharacteristicRatingBar_rb_barHeight, 0f)
+            thumbRadius = getDimension(R.styleable.CharacteristicRatingBar_rb_thumbRadius, 0f)
+            notchesRadius = getDimension(R.styleable.CharacteristicRatingBar_rb_notchRadius, 0f)
+            textPaint.textSize = getDimension(R.styleable.CharacteristicRatingBar_rb_textSize, 0f)
+            textOffset = getDimension(R.styleable.CharacteristicRatingBar_rb_textOffset, 0f)
+            barColor = getColor(R.styleable.CharacteristicRatingBar_rb_barColor, 0)
+            selectedBarColor = getColor(R.styleable.CharacteristicRatingBar_rb_selectedBarColor, 0)
             recycle()
         }
     }

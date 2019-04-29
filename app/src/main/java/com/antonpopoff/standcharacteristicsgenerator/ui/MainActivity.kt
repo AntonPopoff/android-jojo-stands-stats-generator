@@ -1,8 +1,8 @@
-package com.antonpopoff.standstatsgenerator.ui
+package com.antonpopoff.standcharacteristicsgenerator.ui
 
 import android.os.Bundle
-import com.antonpopoff.standstatsgenerator.R
-import com.antonpopoff.standstatsgenerator.common.BaseViewActivity
+import com.antonpopoff.standcharacteristicsgenerator.R
+import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewActivity
 
 class MainActivity : BaseViewActivity() {
 

@@ -1,17 +1,17 @@
-package com.antonpopoff.standstatsview.diagram
+package com.antonpopoff.standcharacteristicsview.diagram
 
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import com.antonpopoff.standstatsview.extensions.getTextHeight
-import com.antonpopoff.standstatsview.utils.PI
-import com.antonpopoff.standstatsview.utils.toRadians
+import com.antonpopoff.standcharacteristicsview.extensions.getTextHeight
+import com.antonpopoff.standcharacteristicsview.utils.PI
+import com.antonpopoff.standcharacteristicsview.utils.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
 
-class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+class StandCharacteristicsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val ratingPolygonAlpha = 64
 
@@ -20,7 +20,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-    private val statsTextPath = Path()
+    private val characteristicTextPath = Path()
     private val ratingPolygonPath = Path()
 
     private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
@@ -28,7 +28,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
     private val diagramValues = DiagramValues()
 
-    var statistics = StandRating.UNKNOWN
+    var rating = StandRating.UNKNOWN
         set(value) {
             field = value
             invalidate()
@@ -51,11 +51,11 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
 
         drawBorderCircles(canvas)
         drawBorderNotches(canvas)
-        drawStatsCircle(canvas)
-        drawStats(canvas)
-        drawStatsNames(canvas)
-        drawStatsRatingsLetters(canvas)
-        drawStatsPolyline(canvas)
+        drawCharacteristicsCircle(canvas)
+        drawCharacteristics(canvas)
+        drawCharacteristicsNames(canvas)
+        drawRatingsLetters(canvas)
+        drawRatingPolyline(canvas)
     }
 
     private fun calculateBaseDiagramValues() {
@@ -75,17 +75,17 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
             borderNotchWidth = outerBorderRadius - innerBorderRadius
             borderNotchRadius = innerBorderRadius + borderNotchWidth / 2
 
-            statsCircleRadius = outerBorderRadius * statsCircleRadiusToOuterRatio
-            statsLinesWidth = outerBorderRadius * statsCircleWidthToOuterRadiusRatio
-            statNameTextSize = (innerBorderRadius - statsCircleRadius) / 3
-            statsNameCircleRadius = innerBorderRadius - statNameTextSize
-            angleBetweenStats = 360f / Statistics.count
+            characteristicsCircleRadius = outerBorderRadius * characteristicsCircleRadiusToOuterRatio
+            characteristicsLinesWidth = outerBorderRadius * characteristicsCircleWidthToOuterRadiusRatio
+            characteristicNameTextSize = (innerBorderRadius - characteristicsCircleRadius) / 3
+            characteristicNameCircleRadius = innerBorderRadius - characteristicNameTextSize
+            angleBetweenCharacteristics = 360f / Characteristics.count
 
-            spaceBetweenRatings = statsCircleRadius / (Rating.letterRatings.size + 1)
-            ratingNotchLen = statsCircleRadius * statNotchLenToRatingCircleRadiusRatio
+            spaceBetweenRatings = characteristicsCircleRadius / (Rating.letterRatings.size + 1)
+            ratingNotchLen = characteristicsCircleRadius * characteristicsNotchLenToRatingCircleRadiusRatio
             ratingNotchLeft = centerX - ratingNotchLen / 2
             ratingNotchRight = ratingNotchLeft + ratingNotchLen
-            ratingLetterCircleRadius = innerBorderRadius - statNameTextSize * 2
+            ratingLetterCircleRadius = innerBorderRadius - characteristicNameTextSize * 2
         }
     }
 
@@ -147,17 +147,17 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
     }
 
-    private fun drawStatsCircle(canvas: Canvas) {
-        paint.strokeWidth = diagramValues.statsLinesWidth
-        drawCircleInCenterWithRadius(canvas, diagramValues.statsCircleRadius)
+    private fun drawCharacteristicsCircle(canvas: Canvas) {
+        paint.strokeWidth = diagramValues.characteristicsLinesWidth
+        drawCircleInCenterWithRadius(canvas, diagramValues.characteristicsCircleRadius)
     }
 
     private fun drawCircleInCenterWithRadius(canvas: Canvas, r: Float) {
         diagramValues.apply { canvas.drawCircle(centerX, centerY, r, paint) }
     }
 
-    private fun drawStats(canvas: Canvas) {
-        paint.strokeWidth = diagramValues.statsLinesWidth
+    private fun drawCharacteristics(canvas: Canvas) {
+        paint.strokeWidth = diagramValues.characteristicsLinesWidth
 
         textPaint.apply {
             textSize = diagramValues.spaceBetweenRatings
@@ -165,28 +165,28 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         }
 
         diagramValues.apply {
-            val statLineY = centerY - statsCircleRadius
+            val y = centerY - characteristicsCircleRadius
 
             canvas.save()
 
-            for (i in 0 until Statistics.count) {
-                canvas.drawLine(centerX, centerY, centerX, statLineY, paint)
+            for (i in 0 until Characteristics.count) {
+                canvas.drawLine(centerX, centerY, centerX, y, paint)
                 drawRatingNotches(canvas, i)
-                canvas.rotate(angleBetweenStats, centerX, centerY)
+                canvas.rotate(angleBetweenCharacteristics, centerX, centerY)
             }
 
             canvas.restore()
         }
     }
 
-    private fun drawRatingNotches(canvas: Canvas, statIndex: Int) {
+    private fun drawRatingNotches(canvas: Canvas, characteristicIndex: Int) {
         diagramValues.apply {
             for (i in 0 until Rating.letterRatings.size) {
                 val notchY = centerY - spaceBetweenRatings * (i + 1)
 
                 canvas.drawLine(ratingNotchLeft, notchY, ratingNotchRight, notchY, paint)
 
-                if (statIndex == 0) {
+                if (characteristicIndex == 0) {
                     drawRatingLetter(canvas, notchY, i)
                 }
             }
@@ -197,28 +197,28 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         diagramValues.apply {
             val char = Rating.letterRatings[Rating.letterRatings.size - ratingIndex - 1].char
             val charX = ratingNotchRight + ratingNotchLen / 2
-            val charY = notchY + statsLinesWidth / 2
+            val charY = notchY + characteristicsLinesWidth / 2
             canvas.drawText(char, charX, charY, textPaint)
         }
     }
 
-    private fun drawStatsNames(canvas: Canvas) {
+    private fun drawCharacteristicsNames(canvas: Canvas) {
         textPaint.apply {
             typeface = boldFont
-            textSize = diagramValues.statNameTextSize
+            textSize = diagramValues.characteristicNameTextSize
         }
 
         canvas.save()
 
         diagramValues.apply {
-            for (i in 0 until Statistics.count) {
-                val statName = Statistics.get(i).name
-                val textWidth = textPaint.measureText(statName)
-                val textHeight = textPaint.getTextHeight(statName, 0, statName.length, rectF)
-                val textArcAngle = (textWidth * 180f) / (PI * statsNameCircleRadius)
-                val sweepAngle = getStatNameSweepAngle(i, textArcAngle)
-                val pathTextRadius = getStatNameArcRadius(i, textHeight)
-                val startAngle = 270f - angleBetweenStats - sweepAngle / 2f
+            for (i in 0 until Characteristics.count) {
+                val name = Characteristics.get(i).name
+                val textWidth = textPaint.measureText(name)
+                val textHeight = textPaint.getTextHeight(name, 0, name.length, rectF)
+                val textArcAngle = (textWidth * 180f) / (PI * characteristicNameCircleRadius)
+                val sweepAngle = getSweepAngle(i, textArcAngle)
+                val pathTextRadius = getNameArcRadius(i, textHeight)
+                val startAngle = 270f - angleBetweenCharacteristics - sweepAngle / 2f
 
                 rect.apply {
                     left = centerX - pathTextRadius
@@ -227,14 +227,14 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
                     bottom = centerY + pathTextRadius
                 }
 
-                statsTextPath.apply {
+                characteristicTextPath.apply {
                     rewind()
                     addArc(rect, startAngle, sweepAngle)
                 }
 
                 canvas.apply {
-                    drawTextOnPath(statName, statsTextPath, 0f, 0f, textPaint)
-                    rotate(angleBetweenStats, centerX, centerY)
+                    drawTextOnPath(name, characteristicTextPath, 0f, 0f, textPaint)
+                    rotate(angleBetweenCharacteristics, centerX, centerY)
                 }
             }
         }
@@ -242,32 +242,32 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         canvas.restore()
     }
 
-    private fun getStatNameSweepAngle(statIndex: Int, textArcAngle: Float): Float {
-        return if (statIndex < Statistics.count / 2) {
+    private fun getSweepAngle(characteristicIndex: Int, textArcAngle: Float): Float {
+        return if (characteristicIndex < Characteristics.count / 2) {
             textArcAngle
         } else {
             -textArcAngle
         }
     }
 
-    private fun getStatNameArcRadius(statIndex: Int, textHeight: Int): Float {
-        return if (statIndex < Statistics.count / 2) {
-            diagramValues.statsNameCircleRadius
+    private fun getNameArcRadius(characteristicIndex: Int, textHeight: Int): Float {
+        return if (characteristicIndex < Characteristics.count / 2) {
+            diagramValues.characteristicNameCircleRadius
         } else {
-            diagramValues.statsNameCircleRadius + textHeight
+            diagramValues.characteristicNameCircleRadius + textHeight
         }
     }
 
-    private fun drawStatsRatingsLetters(canvas: Canvas) {
+    private fun drawRatingsLetters(canvas: Canvas) {
         textPaint.apply {
-            textSize = diagramValues.statNameTextSize
+            textSize = diagramValues.characteristicNameTextSize
             typeface = normalFont
         }
 
-        var angle = 270f - diagramValues.angleBetweenStats
+        var angle = 270f - diagramValues.angleBetweenCharacteristics
 
         diagramValues.apply {
-            for (rating in statistics.ratings) {
+            for (rating in rating.ratings) {
                 val char = rating.char
                 val radians = toRadians(angle)
                 val charWidth = textPaint.measureText(char)
@@ -276,12 +276,12 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
                 val charY = ratingLetterCircleRadius * sin(radians) + centerY + charHeight / 2
 
                 canvas.drawText(char, 0, char.length, charX, charY, textPaint)
-                angle += angleBetweenStats
+                angle += angleBetweenCharacteristics
             }
         }
     }
 
-    private fun drawStatsPolyline(canvas: Canvas) {
+    private fun drawRatingPolyline(canvas: Canvas) {
         paint.apply {
             style = Paint.Style.FILL
             color = polylineColor
@@ -291,10 +291,10 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
         ratingPolygonPath.rewind()
 
         diagramValues.apply {
-            var angle = 270 - angleBetweenStats
+            var angle = 270 - angleBetweenCharacteristics
 
-            for (i in 0 until Statistics.count) {
-                val ratingRadius = spaceBetweenRatings * statistics.ratings[i].mark
+            for (i in 0 until Characteristics.count) {
+                val ratingRadius = spaceBetweenRatings * rating.ratings[i].mark
                 val radians = toRadians(angle)
                 val x = ratingRadius * cos(radians) + centerX
                 val y = ratingRadius * sin(radians) + centerY
@@ -305,7 +305,7 @@ class StandStatsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: In
                     ratingPolygonPath.lineTo(x, y)
                 }
 
-                angle += angleBetweenStats
+                angle += angleBetweenCharacteristics
             }
         }
 

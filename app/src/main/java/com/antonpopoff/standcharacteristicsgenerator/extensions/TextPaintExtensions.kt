@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.extensions
+package com.antonpopoff.standcharacteristicsgenerator.extensions
 
 import android.graphics.Rect
 import android.text.TextPaint

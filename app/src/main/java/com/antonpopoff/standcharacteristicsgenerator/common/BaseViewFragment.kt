@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsgenerator.common
+package com.antonpopoff.standcharacteristicsgenerator.common
 
 import android.os.Bundle
 import android.view.LayoutInflater

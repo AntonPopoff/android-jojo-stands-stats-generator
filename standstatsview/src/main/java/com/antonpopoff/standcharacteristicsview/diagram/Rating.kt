@@ -1,4 +1,4 @@
-package com.antonpopoff.standstatsview.diagram
+package com.antonpopoff.standcharacteristicsview.diagram
 
 enum class Rating(val char: String, val mark: Int) {
     NONE("_", 0),
