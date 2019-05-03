@@ -31,6 +31,7 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     private val totalRatingRect = RectF()
+    private val totalRatingRectCopy = RectF()
     private val actualRatingRect = RectF()
     private val textRect = Rect()
 
@@ -42,9 +43,11 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private var textOffset = 0f
     private val textSize get() = textPaint.textSize
 
+    private var thumbDestination = 0f
     private var distanceBetweenNotches = 0f
     private var ratingBarOccupiedHeight = 0f
     private var sidesOffset = 0f
+    private var activeTouch = false
     private var thumbX = 0f
     private var downX = 0f
 
@@ -74,13 +77,17 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
 
     fun setRating(rating: Rating, animate: Boolean = true) {
         this.rating = rating
+        updateThumbPositionOnRatingChange(animate)
+    }
 
-        val thumbDestination = getThumbDestinationX(rating.ordinal)
+    private fun updateThumbPositionOnRatingChange(animate: Boolean) {
+        thumbDestination = getThumbDestination(rating.ordinal)
 
         if (animate) {
             startThumbAnimation(thumbDestination)
         } else {
-            updateThumbX(thumbDestination)
+            thumbX = thumbDestination
+            invalidate()
         }
     }
 
@@ -103,8 +110,9 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     override fun onDraw(canvas: Canvas) {
         calcSidesOffset()
         calcTotalRatingBarRect()
+        adjustThumbPositionIfBoundsChanged()
         calcDistanceBetweenNotches()
-        ensureThumbWithinTotalRatingRect()
+        ensureThumbIsInCorrectPosition()
         calcActualRatingBarRect()
 
         drawRect(canvas, totalRatingRect, barColor)
@@ -135,6 +143,16 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
         }
     }
 
+    private fun adjustThumbPositionIfBoundsChanged() {
+        if (totalRatingRectCopy.isEmpty) {
+            totalRatingRectCopy.set(totalRatingRect)
+        } else if (totalRatingRect != totalRatingRectCopy) {
+            val relativePos = (thumbX - totalRatingRectCopy.left) / totalRatingRectCopy.width()
+            thumbX = relativePos * totalRatingRect.width() + totalRatingRect.left
+            totalRatingRectCopy.set(totalRatingRect)
+        }
+    }
+
     private fun calcActualRatingBarRect() {
         actualRatingRect.apply {
             set(totalRatingRect)
@@ -146,9 +164,25 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
         distanceBetweenNotches = totalRatingRect.width() / (Rating.ratingsCount - 1)
     }
 
-    private fun ensureThumbWithinTotalRatingRect() {
-        if (thumbX == 0f) {
-            thumbX = totalRatingRect.left
+    private fun ensureThumbIsInCorrectPosition() {
+        if (!activeTouch && !thumbXAnimator.isRunning) {
+            thumbX = getThumbDestination(rating.ordinal)
+        } else if (thumbXAnimator.isRunning) {
+            adjustThumbAnimationIfNeed()
+        }
+    }
+
+    private fun adjustThumbAnimationIfNeed() {
+        val actualThumbDestination = getThumbDestination(rating.ordinal)
+
+        if (thumbDestination != actualThumbDestination) {
+            thumbDestination = actualThumbDestination
+
+            thumbXAnimator.apply {
+                cancel()
+                setFloatValues(thumbX, actualThumbDestination)
+                start()
+            }
         }
     }
 
@@ -208,23 +242,25 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        activeTouch = event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 downX = event.x
                 thumbXAnimator.cancel()
-                updateThumbX(event.x)
+                updateThumbPositionOnMotionEvent(event.x)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                updateThumbX(event.x)
+                updateThumbPositionOnMotionEvent(event.x)
             }
             MotionEvent.ACTION_UP -> {
-                updateThumbX(event.x)
+                updateThumbPositionOnMotionEvent(event.x)
                 animateThumbToFinalPosition()
                 if (isTap(event)) performClick()
             }
             MotionEvent.ACTION_CANCEL -> {
-                updateThumbX(event.x)
+                updateThumbPositionOnMotionEvent(event.x)
                 animateThumbToFinalPosition()
             }
         }
@@ -242,9 +278,9 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
 
     private fun animateThumbToFinalPosition() {
         val ratingIndex = getDestinationRatingIndex()
-        val destination = getThumbDestinationX(ratingIndex)
+        thumbDestination = getThumbDestination(ratingIndex)
         rating = Rating.ratings[ratingIndex]
-        startThumbAnimation(destination)
+        startThumbAnimation(thumbDestination)
     }
 
     private fun startThumbAnimation(destination: Float) {
@@ -256,13 +292,13 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
 
     private fun getDestinationRatingIndex() = ((thumbX - sidesOffset - paddingLeft) / distanceBetweenNotches).roundToInt()
 
-    private fun getThumbDestinationX(ratingIndex: Int) = ratingIndex * distanceBetweenNotches + totalRatingRect.left
+    private fun getThumbDestination(ratingIndex: Int) = ratingIndex * distanceBetweenNotches + totalRatingRect.left
 
-    private fun updateThumbX(newX: Float) {
+    private fun updateThumbPositionOnMotionEvent(x: Float) {
         thumbX = when {
-            newX < totalRatingRect.left -> totalRatingRect.left
-            newX > totalRatingRect.right -> totalRatingRect.right
-            else -> newX
+            x < totalRatingRect.left -> totalRatingRect.left
+            x > totalRatingRect.right -> totalRatingRect.right
+            else -> x
         }
 
         invalidate()
