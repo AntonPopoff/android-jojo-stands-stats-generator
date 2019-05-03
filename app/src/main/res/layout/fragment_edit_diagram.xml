@@ -27,9 +27,11 @@
                 android:text="Potential" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramStatisticRatingBar"
+                style="@style/EditDiagramCharacteristicRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:rb_barColor="#92A8E5"
+                app:rb_selectedBarColor="#5B7DDF" />
 
             <View
                 style="@style/EditDiagramDivider"
@@ -43,9 +45,11 @@
                 android:text="Power" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramStatisticRatingBar"
+                style="@style/EditDiagramCharacteristicRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:rb_barColor="#ECBDAA"
+                app:rb_selectedBarColor="#EB9E84" />
 
             <View
                 style="@style/EditDiagramDivider"
@@ -59,9 +63,11 @@
                 android:text="Speed" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramStatisticRatingBar"
+                style="@style/EditDiagramCharacteristicRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:rb_barColor="#EEDDBC"
+                app:rb_selectedBarColor="#ECCB8E" />
 
             <View
                 style="@style/EditDiagramDivider"
@@ -75,9 +81,11 @@
                 android:text="Range" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramStatisticRatingBar"
+                style="@style/EditDiagramCharacteristicRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:rb_barColor="#E4B7C9"
+                app:rb_selectedBarColor="#D18BA8" />
 
             <View
                 style="@style/EditDiagramDivider"
@@ -91,9 +99,11 @@
                 android:text="Durability" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramStatisticRatingBar"
+                style="@style/EditDiagramCharacteristicRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:rb_barColor="#BDB5E7"
+                app:rb_selectedBarColor="#7A72A9" />
 
             <View
                 style="@style/EditDiagramDivider"
@@ -107,9 +117,11 @@
                 android:text="Precision" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramStatisticRatingBar"
+                style="@style/EditDiagramCharacteristicRatingBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:rb_barColor="#A5B3C5"
+                app:rb_selectedBarColor="#475567" />
 
             <View
                 style="@style/EditDiagramDivider"
