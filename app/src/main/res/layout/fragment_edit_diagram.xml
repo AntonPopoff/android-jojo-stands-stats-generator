@@ -28,6 +28,7 @@
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
+                android:id="@+id/potentialRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:rb_barColor="#92A8E5"
@@ -46,6 +47,7 @@
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
+                android:id="@+id/powerRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:rb_barColor="#ECBDAA"
@@ -64,6 +66,7 @@
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
+                android:id="@+id/speedRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:rb_barColor="#EEDDBC"
@@ -82,6 +85,7 @@
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
+                android:id="@+id/rangeRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:rb_barColor="#E4B7C9"
@@ -100,6 +104,7 @@
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
+                android:id="@+id/durabilityRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:rb_barColor="#BDB5E7"
@@ -118,6 +123,7 @@
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
+                android:id="@+id/precisionRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:rb_barColor="#A5B3C5"

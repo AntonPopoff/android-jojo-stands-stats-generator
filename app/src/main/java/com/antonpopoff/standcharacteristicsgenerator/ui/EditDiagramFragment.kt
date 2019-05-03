@@ -5,10 +5,14 @@ import android.view.MenuItem
 import android.view.View
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
+import com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
 import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import kotlinx.android.synthetic.main.fragment_edit_diagram.*
+import java.util.*
 
 class EditDiagramFragment : BaseViewFragment() {
+
+    private val random by lazy { Random() }
 
     override val layoutId = R.layout.fragment_edit_diagram
 
@@ -26,12 +30,28 @@ class EditDiagramFragment : BaseViewFragment() {
         }
     }
 
-    private fun onMenuItemClick(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == R.id.done) {
+    private fun onMenuItemClick(menuItem: MenuItem) = when (menuItem.itemId) {
+        R.id.done -> {
             fragmentManager?.popBackStack()
-            return true
+            true
         }
+        R.id.randomize -> {
+            randomizeStatistics()
+            true
+        }
+        else -> false
+    }
 
-        return false
+    private fun randomizeStatistics() {
+        randomizeRatingBar(potentialRatingBar)
+        randomizeRatingBar(powerRatingBar)
+        randomizeRatingBar(speedRatingBar)
+        randomizeRatingBar(rangeRatingBar)
+        randomizeRatingBar(durabilityRatingBar)
+        randomizeRatingBar(precisionRatingBar)
+    }
+
+    private fun randomizeRatingBar(ratingBar: CharacteristicRatingBar) {
+        ratingBar.setRating(Rating.ratings[random.nextInt(Rating.ratingsCount)])
     }
 }
