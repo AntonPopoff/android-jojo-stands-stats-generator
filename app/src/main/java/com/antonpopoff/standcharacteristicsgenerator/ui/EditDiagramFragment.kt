@@ -1,5 +1,7 @@
 package com.antonpopoff.standcharacteristicsgenerator.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -7,6 +9,7 @@ import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
 import com.antonpopoff.standcharacteristicsview.diagram.Rating
+import com.antonpopoff.standcharacteristicsview.diagram.StandRating
 import kotlinx.android.synthetic.main.fragment_edit_diagram.*
 import java.util.*
 
@@ -31,8 +34,8 @@ class EditDiagramFragment : BaseViewFragment() {
     }
 
     private fun onMenuItemClick(menuItem: MenuItem) = when (menuItem.itemId) {
-        R.id.done -> {
-            fragmentManager?.popBackStack()
+        R.id.apply -> {
+            applyRatings()
             true
         }
         R.id.randomize -> {
@@ -53,5 +56,29 @@ class EditDiagramFragment : BaseViewFragment() {
 
     private fun randomizeRatingBar(ratingBar: CharacteristicRatingBar) {
         ratingBar.setRating(Rating.ratings[random.nextInt(Rating.ratingsCount)])
+    }
+
+    private fun applyRatings() {
+        val rating = getStandRatings()
+        val intent = Intent().apply { putExtra(STAND_RATINGS, rating) }
+
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+        fragmentManager?.popBackStack()
+    }
+
+    private fun getStandRatings() = StandRating(
+            potentialRatingBar.rating,
+            powerRatingBar.rating,
+            speedRatingBar.rating,
+            precisionRatingBar.rating,
+            durabilityRatingBar.rating,
+            rangeRatingBar.rating
+    )
+
+    companion object {
+
+        const val STAND_CHARACTERISTICS_CODE = 0
+
+        const val STAND_RATINGS = "stand_ratings"
     }
 }
