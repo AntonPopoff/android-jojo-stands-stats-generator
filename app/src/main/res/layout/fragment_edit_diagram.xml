@@ -22,6 +22,7 @@
         android:textSize="22sp" />
 
     <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
+        android:id="@+id/ratingBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
