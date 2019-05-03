@@ -48,6 +48,9 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private var thumbX = 0f
     private var downX = 0f
 
+    var rating = Rating.ratings.first()
+        private set
+
     init {
         attrs?.let { parseAttributes(context, it) }
     }
@@ -68,6 +71,18 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context) : this(context, null)
+
+    fun setRating(rating: Rating, animate: Boolean = true) {
+        this.rating = rating
+
+        val thumbDestination = getThumbDestinationX(rating.ordinal)
+
+        if (animate) {
+            startThumbAnimation(thumbDestination)
+        } else {
+            updateThumbX(thumbDestination)
+        }
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         calcRatingBarOccupiedHeight()
@@ -227,8 +242,12 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
 
     private fun animateThumbToFinalPosition() {
         val ratingIndex = getDestinationRatingIndex()
-        val destination = ratingIndex * distanceBetweenNotches + totalRatingRect.left
+        val destination = getThumbDestinationX(ratingIndex)
+        rating = Rating.ratings[ratingIndex]
+        startThumbAnimation(destination)
+    }
 
+    private fun startThumbAnimation(destination: Float) {
         thumbXAnimator.apply {
             setFloatValues(thumbX, destination)
             start()
@@ -236,6 +255,8 @@ class CharacteristicRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun getDestinationRatingIndex() = ((thumbX - sidesOffset - paddingLeft) / distanceBetweenNotches).roundToInt()
+
+    private fun getThumbDestinationX(ratingIndex: Int) = ratingIndex * distanceBetweenNotches + totalRatingRect.left
 
     private fun updateThumbX(newX: Float) {
         thumbX = when {
