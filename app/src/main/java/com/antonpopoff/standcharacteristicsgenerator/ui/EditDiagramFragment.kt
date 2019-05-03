@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
+import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import kotlinx.android.synthetic.main.fragment_edit_diagram.*
 
 class EditDiagramFragment : BaseViewFragment() {
