@@ -7,15 +7,19 @@ import android.view.MenuItem
 import android.view.View
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
+import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import com.antonpopoff.standcharacteristicsview.diagram.StandRating
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
 class DiagramFragment : BaseViewFragment() {
 
+    private var rating = StandRating.UNKNOWN
+
     override val layoutId = R.layout.fragment_diagram
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        standStatsDiagram.rating = rating
         setupToolbarMenu()
     }
 
@@ -61,7 +65,7 @@ class DiagramFragment : BaseViewFragment() {
     private fun checkResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == EditDiagramFragment.STAND_CHARACTERISTICS_CODE && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<StandRating>(EditDiagramFragment.STAND_RATINGS)?.let {
-                // TODO Handle Result
+                rating = it
             }
         }
     }
