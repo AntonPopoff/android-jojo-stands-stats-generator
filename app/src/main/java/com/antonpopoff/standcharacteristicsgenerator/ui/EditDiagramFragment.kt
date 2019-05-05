@@ -21,6 +21,7 @@ class EditDiagramFragment : BaseViewFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        preFillCharacteristics()
         setupToolbar()
     }
 
@@ -30,6 +31,17 @@ class EditDiagramFragment : BaseViewFragment() {
             setNavigationOnClickListener { fragmentManager?.popBackStack() }
             inflateMenu(R.menu.fragment_edit_diagram_toolbar_menu)
             setOnMenuItemClickListener { onMenuItemClick(it) }
+        }
+    }
+
+    private fun preFillCharacteristics() {
+        arguments?.getParcelable<StandRating>(KEY_STAND_RATING)?.apply {
+            potentialRatingBar.setRating(potential, false)
+            powerRatingBar.setRating(power, false)
+            speedRatingBar.setRating(speed, false)
+            rangeRatingBar.setRating(range, false)
+            durabilityRatingBar.setRating(durability, false)
+            precisionRatingBar.setRating(precision, false)
         }
     }
 
@@ -80,5 +92,13 @@ class EditDiagramFragment : BaseViewFragment() {
         const val STAND_CHARACTERISTICS_CODE = 0
 
         const val STAND_RATINGS = "stand_ratings"
+
+        private const val KEY_STAND_RATING = "stand_rating"
+
+        fun create(rating: StandRating) = EditDiagramFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(KEY_STAND_RATING, rating)
+            }
+        }
     }
 }

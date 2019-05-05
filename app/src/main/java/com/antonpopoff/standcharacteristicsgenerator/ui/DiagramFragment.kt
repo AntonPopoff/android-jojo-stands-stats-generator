@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
-import com.antonpopoff.standcharacteristicsview.diagram.Rating
 import com.antonpopoff.standcharacteristicsview.diagram.StandRating
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
@@ -40,7 +39,7 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun pushEditFragment() {
-        val f = EditDiagramFragment().also {
+        val f = EditDiagramFragment.create(rating).also {
             it.setTargetFragment(this, EditDiagramFragment.STAND_CHARACTERISTICS_CODE)
         }
 
