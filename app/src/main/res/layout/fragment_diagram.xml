@@ -17,8 +17,8 @@
 
     <com.antonpopoff.standcharacteristicsgenerator.views.ColorWheel
         android:id="@+id/standStatsDiagram"
-        android:layout_width="192dp"
-        android:layout_height="192dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

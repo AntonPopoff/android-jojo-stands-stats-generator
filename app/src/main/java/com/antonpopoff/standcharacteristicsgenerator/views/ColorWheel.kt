@@ -1,97 +1,96 @@
 package com.antonpopoff.standcharacteristicsgenerator.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.antonpopoff.standcharacteristicsview.utils.toRadians
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.*
 
 class ColorWheel @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var sweepGradient: SweepGradient? = null
+    private var radialGradient: RadialGradient? = null
+
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
+        isDither = true
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-//        ****************************************
-
-//
-//        val s = 1f
-//        var angle = 0f
-//
-//        while (angle < 360f) {
-//            canvas.drawArc(
-//                    0f,
-//                    0f,
-//                    width.toFloat(),
-//                    height.toFloat(),
-//                    angle,
-//                    s,
-//                    true,
-//                    paint
-//            )
-//
-//            angle += s - 0.5f
-//        }
-//
-//        canvas.drawPoint()
-
-//        ****************************************
-
-//        val cx = width / 2f
-//        val cy = height / 2f
-//        val r = min(width, height) / 2
-//
-////        for (i in 0 until 360) {
-////            val x = r * cos(toRadians(i.toFloat())) + cx
-////            val y = r * sin(toRadians(i.toFloat())) + cy
-////            canvas.drawLine(cx, cy, x, y, paint)
-////        }
-//
-//        var angle = 0f
-//        val step = 0.1f
-//
-//        while (angle < 360) {
-//            val x = r * cos(toRadians(angle)) + cx
-//            val y = r * sin(toRadians(angle)) + cy
-//            canvas.drawLine(cx, cy, x, y, paint)
-//
-//            angle += step
-//        }
-
-//        ****************************************
-
-        val r = min(width, height) / 2
         val cx = width / 2f
         val cy = height / 2f
+        val r = min(width, height).toFloat() / 2
 
-        val hsv = floatArrayOf(0f, 1f, 1f)
-
-        for (i in 0 until width) {
-            for (j in 0 until height) {
-                val k0 = abs((cy - j).toDouble())
-                val k1 = abs((cx - i).toDouble())
-                val ratio = k0 / k1
-
-                var angle = Math.toDegrees(Math.atan(ratio)).toFloat() + 90
-
-                hsv[0] = angle
-                hsv[1] = Math.sqrt(k0 * k0 + k1 * k1).toFloat() / r
-
-                paint.color = Color.HSVToColor(hsv)
-
-                canvas.drawPoint(i.toFloat(),j.toFloat(),paint)
-            }
+        if (sweepGradient === null) {
+            sweepGradient = SweepGradient(cx, cy, colors, null)
+            radialGradient = RadialGradient(cx, cy, r, Color.WHITE, Color.TRANSPARENT, Shader.TileMode.CLAMP)
         }
+
+        paint.shader = sweepGradient
+        canvas.drawCircle(cx, cy, r, paint)
+
+        paint.shader = radialGradient
+        canvas.drawCircle(cx, cy, r, paint)
+    }
+
+    companion object {
+
+        private val colors = intArrayOf(
+                -0x00010000, -0x0000FB00, -0x0000F700, -0x0000F300, -0x0000EF00, -0x0000EA00,
+                -0x0000E200, -0x0000DE00, -0x0000D900, -0x0000D500, -0x0000D100, -0x0000CD00,
+                -0x0000C400, -0x0000C000, -0x0000BC00, -0x0000B700, -0x0000B300, -0x0000AF00,
+                -0x0000A600, -0x0000A200, -0x00009E00, -0x00009A00, -0x00009500, -0x00009100,
+                -0x00008900, -0x00008400, -0x00008000, -0x00007C00, -0x00007800, -0x00007300,
+                -0x00006B00, -0x00006700, -0x00006200, -0x00005E00, -0x00005A00, -0x00005600,
+                -0x00004D00, -0x00004900, -0x00004500, -0x00004000, -0x00003C00, -0x00003800,
+                -0x00002F00, -0x00002B00, -0x00002700, -0x00002300, -0x00001E00, -0x00001A00,
+                -0x00001200, -0x00000D00, -0x00000900, -0x00000500, -0x00000100, -0x00040100,
+                -0x000C0100, -0x00100100, -0x00150100, -0x00190100, -0x001D0100, -0x00210100,
+                -0x002A0100, -0x002E0100, -0x00320100, -0x00370100, -0x003B0100, -0x003F0100,
+                -0x00480100, -0x004C0100, -0x00500100, -0x00540100, -0x00590100, -0x005D0100,
+                -0x00650100, -0x006A0100, -0x006E0100, -0x00720100, -0x00760100, -0x007B0100,
+                -0x00830100, -0x00870100, -0x008C0100, -0x00900100, -0x00940100, -0x00980100,
+                -0x00A10100, -0x00A50100, -0x00A90100, -0x00AE0100, -0x00B20100, -0x00B60100,
+                -0x00BF0100, -0x00C30100, -0x00C70100, -0x00CB0100, -0x00D00100, -0x00D40100,
+                -0x00DC0100, -0x00E10100, -0x00E50100, -0x00E90100, -0x00ED0100, -0x00F20100,
+                -0x00FA0100, -0x00FF0100, -0x00FF00FB, -0x00FF00F7, -0x00FF00F3, -0x00FF00EF,
+                -0x00FF00E6, -0x00FF00E2, -0x00FF00DE, -0x00FF00D9, -0x00FF00D5, -0x00FF00D1,
+                -0x00FF00C8, -0x00FF00C4, -0x00FF00C0, -0x00FF00BC, -0x00FF00B7, -0x00FF00B3,
+                -0x00FF00AB, -0x00FF00A6, -0x00FF00A2, -0x00FF009E, -0x00FF009A, -0x00FF0095,
+                -0x00FF008D, -0x00FF0089, -0x00FF0084, -0x00FF0080, -0x00FF007C, -0x00FF0078,
+                -0x00FF006F, -0x00FF006B, -0x00FF0067, -0x00FF0062, -0x00FF005E, -0x00FF005A,
+                -0x00FF0051, -0x00FF004D, -0x00FF0049, -0x00FF0045, -0x00FF0040, -0x00FF003C,
+                -0x00FF0034, -0x00FF002F, -0x00FF002B, -0x00FF0027, -0x00FF0023, -0x00FF001E,
+                -0x00FF0016, -0x00FF0012, -0x00FF000D, -0x00FF0009, -0x00FF0005, -0x00FF0001,
+                -0x00FF0801, -0x00FF0C01, -0x00FF1001, -0x00FF1501, -0x00FF1901, -0x00FF1D01,
+                -0x00FF2601, -0x00FF2A01, -0x00FF2E01, -0x00FF3201, -0x00FF3701, -0x00FF3B01,
+                -0x00FF4301, -0x00FF4801, -0x00FF4C01, -0x00FF5001, -0x00FF5401, -0x00FF5901,
+                -0x00FF6101, -0x00FF6501, -0x00FF6A01, -0x00FF6E01, -0x00FF7201, -0x00FF7601,
+                -0x00FF7F01, -0x00FF8301, -0x00FF8701, -0x00FF8C01, -0x00FF9001, -0x00FF9401,
+                -0x00FF9D01, -0x00FFA101, -0x00FFA501, -0x00FFA901, -0x00FFAE01, -0x00FFB201,
+                -0x00FFBA01, -0x00FFBF01, -0x00FFC301, -0x00FFC701, -0x00FFCB01, -0x00FFD001,
+                -0x00FFD801, -0x00FFDC01, -0x00FFE101, -0x00FFE501, -0x00FFE901, -0x00FFED01,
+                -0x00FFF601, -0x00FFFA01, -0x00FFFF01, -0x00FAFF01, -0x00F6FF01, -0x00F2FF01,
+                -0x00E9FF01, -0x00E5FF01, -0x00E1FF01, -0x00DDFF01, -0x00D8FF01, -0x00D4FF01,
+                -0x00CCFF01, -0x00C7FF01, -0x00C3FF01, -0x00BFFF01, -0x00BBFF01, -0x00B6FF01,
+                -0x00AEFF01, -0x00AAFF01, -0x00A5FF01, -0x00A1FF01, -0x009DFF01, -0x0099FF01,
+                -0x0090FF01, -0x008CFF01, -0x0088FF01, -0x0083FF01, -0x007FFF01, -0x007BFF01,
+                -0x0072FF01, -0x006EFF01, -0x006AFF01, -0x0066FF01, -0x0061FF01, -0x005DFF01,
+                -0x0055FF01, -0x0050FF01, -0x004CFF01, -0x0048FF01, -0x0044FF01, -0x003FFF01,
+                -0x0037FF01, -0x0033FF01, -0x002EFF01, -0x002AFF01, -0x0026FF01, -0x0022FF01,
+                -0x0019FF01, -0x0015FF01, -0x0011FF01, -0x000CFF01, -0x0008FF01, -0x0004FF01,
+                -0x0000FF05, -0x0000FF09, -0x0000FF0D, -0x0000FF11, -0x0000FF16, -0x0000FF1A,
+                -0x0000FF22, -0x0000FF27, -0x0000FF2B, -0x0000FF2F, -0x0000FF33, -0x0000FF38,
+                -0x0000FF40, -0x0000FF44, -0x0000FF49, -0x0000FF4D, -0x0000FF51, -0x0000FF55,
+                -0x0000FF5E, -0x0000FF62, -0x0000FF66, -0x0000FF6B, -0x0000FF6F, -0x0000FF73,
+                -0x0000FF7C, -0x0000FF80, -0x0000FF84, -0x0000FF88, -0x0000FF8D, -0x0000FF91,
+                -0x0000FF99, -0x0000FF9E, -0x0000FFA2, -0x0000FFA6, -0x0000FFAA, -0x0000FFAF,
+                -0x0000FFB7, -0x0000FFBB, -0x0000FFC0, -0x0000FFC4, -0x0000FFC8, -0x0000FFCC,
+                -0x0000FFD5, -0x0000FFD9, -0x0000FFDD, -0x0000FFE2, -0x0000FFE6, -0x0000FFEA
+        )
     }
 }
