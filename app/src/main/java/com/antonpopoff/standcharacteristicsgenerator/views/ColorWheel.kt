@@ -27,9 +27,11 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     override fun onDraw(canvas: Canvas) {
-        val cx = width / 2f
-        val cy = height / 2f
-        val radius = min(width, height) / 2f
+        val availableWidth = width - paddingLeft - paddingRight
+        val availableHeight = height - paddingTop - paddingBottom
+        val cx = paddingLeft + availableWidth / 2f
+        val cy = paddingTop + availableHeight / 2f
+        val radius = min(availableWidth, availableHeight) / 2f
 
         updateShaderIfSizeChanged(cx,  cy, radius)
         drawCircle(canvas, cx, cy, radius, sweepGradient)
