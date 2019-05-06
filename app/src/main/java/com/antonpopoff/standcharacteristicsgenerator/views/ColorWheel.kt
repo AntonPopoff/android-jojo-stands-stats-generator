@@ -27,8 +27,6 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
         val cx = width / 2f
         val cy = height / 2f
         val radius = min(width, height) / 2f
