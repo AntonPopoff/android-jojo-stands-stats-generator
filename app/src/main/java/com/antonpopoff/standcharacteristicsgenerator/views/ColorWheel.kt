@@ -6,10 +6,9 @@ import android.util.AttributeSet
 import android.view.View
 import kotlin.math.*
 
-class ColorWheel @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
+    private var sizeChanged = true
     private var sweepGradient: SweepGradient? = null
     private var radialGradient: RadialGradient? = null
 
@@ -18,28 +17,45 @@ class ColorWheel @JvmOverloads constructor(
         isDither = true
     }
 
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context) : this(context, null)
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        sizeChanged = true
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         val cx = width / 2f
         val cy = height / 2f
-        val r = min(width, height).toFloat() / 2
+        val radius = min(width, height) / 2f
 
-        if (sweepGradient === null) {
-            sweepGradient = SweepGradient(cx, cy, wheelColors, null)
-            radialGradient = RadialGradient(cx, cy, r, Color.WHITE, Color.TRANSPARENT, Shader.TileMode.CLAMP)
+        updateShaderIfSizeChanged(cx,  cy, radius)
+        drawCircle(canvas, cx, cy, radius, sweepGradient)
+        drawCircle(canvas, cx, cy, radius, radialGradient)
+    }
+
+    private fun updateShaderIfSizeChanged(cx: Float, cy: Float, radius: Float) {
+        if (sizeChanged) {
+            sizeChanged = false
+            sweepGradient = SweepGradient(cx, cy, hueColors, null)
+            radialGradient = RadialGradient(cx, cy, radius, saturationColors, null, Shader.TileMode.CLAMP)
         }
+    }
 
-        paint.shader = sweepGradient
-        canvas.drawCircle(cx, cy, r, paint)
-
-        paint.shader = radialGradient
-        canvas.drawCircle(cx, cy, r, paint)
+    private fun drawCircle(canvas: Canvas, cx: Float, cy: Float, radius: Float, shader: Shader?) {
+        paint.shader = shader
+        canvas.drawCircle(cx, cy, radius, paint)
     }
 
     companion object {
 
-        private val wheelColors = intArrayOf(
+        private val saturationColors = intArrayOf(Color.WHITE, Color.TRANSPARENT)
+
+        private val hueColors = intArrayOf(
                 -0x00010000, -0x0000FE00, -0x0000FC00, -0x0000FA00, -0x0000F800, -0x0000F500,
                 -0x0000F100, -0x0000EF00, -0x0000ED00, -0x0000EB00, -0x0000E900, -0x0000E700,
                 -0x0000E200, -0x0000E000, -0x0000DE00, -0x0000DC00, -0x0000DA00, -0x0000D800,
