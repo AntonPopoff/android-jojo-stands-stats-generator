@@ -2,7 +2,12 @@ package com.antonpopoff.standcharacteristicsgenerator.views
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import kotlin.math.*
 
@@ -11,6 +16,17 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private var sizeChanged = true
     private var sweepGradient: SweepGradient? = null
     private var radialGradient: RadialGradient? = null
+
+    var wheelCenterX = 0f
+    var wheelCenterY = 0f
+    var wheelRadius = 0f
+
+    private var thumbX = 0f
+    private var thumbY = 0f
+    private val thumbWidth = (context.resources.displayMetrics.density * 26).toInt()
+    private val thumbHeight = (context.resources.displayMetrics.density * 26).toInt()
+    private val thumbRect = Rect()
+    private val thumbDrawable: Drawable
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -21,6 +37,32 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     constructor(context: Context) : this(context, null)
 
+    init {
+        thumbDrawable = createThumbDrawable()
+    }
+
+    private fun createThumbDrawable(): Drawable {
+        val shadowHInset = (thumbWidth * 0.05f).toInt()
+        val shadowVlInset = (thumbHeight * 0.05f).toInt()
+
+        val colorHInset = (thumbWidth * 0.15f).toInt()
+        val colorVInset = (thumbHeight * 0.15f).toInt()
+
+        val thumbDrawable = ShapeDrawable(OvalShape())
+        val shadowDrawable = ShapeDrawable(OvalShape())
+        val colorDrawable = ShapeDrawable(OvalShape())
+        val layerDrawable = LayerDrawable(arrayOf(shadowDrawable, thumbDrawable, colorDrawable))
+
+        thumbDrawable.paint.color = Color.WHITE
+        shadowDrawable.paint.color = Color.GRAY
+        colorDrawable.paint.color = Color.RED
+
+        layerDrawable.setLayerInset(0, shadowHInset, shadowVlInset, -shadowHInset, -shadowVlInset)
+        layerDrawable.setLayerInset(2, colorHInset, colorVInset, colorHInset, colorVInset)
+
+        return layerDrawable
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         sizeChanged = true
@@ -29,13 +71,25 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     override fun onDraw(canvas: Canvas) {
         val availableWidth = width - paddingLeft - paddingRight
         val availableHeight = height - paddingTop - paddingBottom
-        val cx = paddingLeft + availableWidth / 2f
-        val cy = paddingTop + availableHeight / 2f
-        val radius = min(availableWidth, availableHeight) / 2f
 
-        updateShaderIfSizeChanged(cx,  cy, radius)
-        drawCircle(canvas, cx, cy, radius, sweepGradient)
-        drawCircle(canvas, cx, cy, radius, radialGradient)
+        wheelCenterX = paddingLeft + availableWidth / 2f
+        wheelCenterY = paddingTop + availableHeight / 2f
+        wheelRadius = min(availableWidth, availableHeight) / 2f
+
+        ensurePointerInitialized(wheelCenterX, wheelCenterY)
+        updateShaderIfSizeChanged(wheelCenterX, wheelCenterY, wheelRadius)
+        calculateThumbRect()
+
+        drawCircle(canvas, wheelCenterX, wheelCenterY, wheelRadius, sweepGradient)
+        drawCircle(canvas, wheelCenterX, wheelCenterY, wheelRadius, radialGradient)
+        drawThumb(canvas)
+    }
+
+    private fun ensurePointerInitialized(defaultX: Float, defaultY: Float) {
+        if (thumbX == 0f && thumbY == 0f) {
+            thumbX = defaultX
+            thumbY = defaultY
+        }
     }
 
     private fun updateShaderIfSizeChanged(cx: Float, cy: Float, radius: Float) {
@@ -46,9 +100,64 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
+    private fun calculateThumbRect() {
+        thumbRect.set(
+                (thumbX - thumbWidth / 2).toInt(),
+                (thumbY - thumbHeight / 2).toInt(),
+                (thumbX + thumbWidth / 2).toInt(),
+                (thumbY + thumbHeight / 2).toInt()
+        )
+    }
+
     private fun drawCircle(canvas: Canvas, cx: Float, cy: Float, radius: Float, shader: Shader?) {
         paint.shader = shader
         canvas.drawCircle(cx, cy, radius, paint)
+    }
+
+    private fun drawThumb(canvas: Canvas) {
+        thumbDrawable.apply {
+            bounds = thumbRect
+            draw(canvas)
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                setThumbPositionOnMotionEvent(event)
+                return true
+            }
+            MotionEvent.ACTION_MOVE -> {
+                setThumbPositionOnMotionEvent(event)
+            }
+        }
+
+        return super.onTouchEvent(event)
+    }
+
+    private fun setThumbPositionOnMotionEvent(event: MotionEvent) {
+        if (isPointWithinCircle(event.x, event.y, wheelCenterX, wheelCenterY, wheelRadius)) {
+            thumbX = event.x
+            thumbY = event.y
+        } else {
+            val normalizedX = event.x - wheelCenterX
+            val normalizedY = event.y - wheelCenterY
+            val angle = -atan2(normalizedX, normalizedY) + PI.toFloat() / 2
+
+            val x = cos(angle) * wheelRadius + wheelCenterX
+            val y = sin(angle) * wheelRadius + wheelCenterY
+
+            thumbX = x
+            thumbY = y
+        }
+
+        invalidate()
+    }
+
+    private fun isPointWithinCircle(x: Float, y: Float, cx: Float, cy: Float, radius: Float): Boolean {
+        val dx = x - cx
+        val dy = y - cy
+        return dx * dx + dy * dy <= radius * radius
     }
 
     companion object {
