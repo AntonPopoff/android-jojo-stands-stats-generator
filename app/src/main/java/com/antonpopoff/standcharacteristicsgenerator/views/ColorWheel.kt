@@ -2,7 +2,6 @@ package com.antonpopoff.standcharacteristicsgenerator.views
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
@@ -26,7 +25,13 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private val thumbWidth = (context.resources.displayMetrics.density * 26).toInt()
     private val thumbHeight = (context.resources.displayMetrics.density * 26).toInt()
     private val thumbRect = Rect()
-    private val thumbDrawable: Drawable
+
+    private val colorDrawable = ShapeDrawable(OvalShape())
+    private val thumbDrawable: LayerDrawable
+
+    private val hsvComponents = FloatArray(3)
+
+    private var currentColor = 0
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -41,7 +46,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         thumbDrawable = createThumbDrawable()
     }
 
-    private fun createThumbDrawable(): Drawable {
+    private fun createThumbDrawable(): LayerDrawable {
         val shadowHInset = (thumbWidth * 0.05f).toInt()
         val shadowVlInset = (thumbHeight * 0.05f).toInt()
 
@@ -50,12 +55,10 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
         val thumbDrawable = ShapeDrawable(OvalShape())
         val shadowDrawable = ShapeDrawable(OvalShape())
-        val colorDrawable = ShapeDrawable(OvalShape())
         val layerDrawable = LayerDrawable(arrayOf(shadowDrawable, thumbDrawable, colorDrawable))
 
         thumbDrawable.paint.color = Color.WHITE
         shadowDrawable.paint.color = Color.GRAY
-        colorDrawable.paint.color = Color.RED
 
         layerDrawable.setLayerInset(0, shadowHInset, shadowVlInset, -shadowHInset, -shadowVlInset)
         layerDrawable.setLayerInset(2, colorHInset, colorVInset, colorHInset, colorVInset)
@@ -92,6 +95,21 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
+    private fun calcCurrentColor() {
+        val hue = (Math.toDegrees(atan2(thumbY - wheelCenterY, thumbX - wheelCenterX).toDouble()).toFloat() + 360) % 360
+        val leg0 = thumbX - wheelCenterX
+        val leg1 = thumbY - wheelCenterY
+        val saturation = sqrt(leg0 * leg0 + leg1 * leg1) / wheelRadius
+
+        hsvComponents.apply {
+            set(0, hue)
+            set(1, saturation)
+            set(2, 1f)
+        }
+
+        currentColor = Color.HSVToColor(hsvComponents)
+    }
+
     private fun updateShaderIfSizeChanged(cx: Float, cy: Float, radius: Float) {
         if (sizeChanged) {
             sizeChanged = false
@@ -115,6 +133,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun drawThumb(canvas: Canvas) {
+        colorDrawable.paint.color = currentColor
+
         thumbDrawable.apply {
             bounds = thumbRect
             draw(canvas)
@@ -125,10 +145,12 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 setThumbPositionOnMotionEvent(event)
+                calcCurrentColor()
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 setThumbPositionOnMotionEvent(event)
+                calcCurrentColor()
             }
         }
 
@@ -142,7 +164,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         } else {
             val normalizedX = event.x - wheelCenterX
             val normalizedY = event.y - wheelCenterY
-            val angle = -atan2(normalizedX, normalizedY) + PI.toFloat() / 2
+            val angle = atan2(normalizedY, normalizedX)
 
             val x = cos(angle) * wheelRadius + wheelCenterX
             val y = sin(angle) * wheelRadius + wheelCenterY
