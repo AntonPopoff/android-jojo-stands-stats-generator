@@ -1,4 +1,4 @@
-package com.antonpopoff.standcharacteristicsgenerator.views
+package com.antonpopoff.standcharacteristicsgenerator.views.colorwheel
 
 import android.content.Context
 import android.graphics.*
@@ -21,8 +21,6 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     var wheelCenterY = 0f
     var wheelRadius = 0f
 
-    private var oldRect = Rect()
-
     private var thumbX = 0f
     private var thumbY = 0f
     private val thumbWidth = (context.resources.displayMetrics.density * 26).toInt()
@@ -32,7 +30,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private val colorDrawable = ShapeDrawable(OvalShape())
     private val thumbDrawable: LayerDrawable
 
-    private val hsvComponents = FloatArray(3)
+    private val hsvColor = HSVColor()
 
     private var currentColor = 0
 
@@ -104,13 +102,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         val leg1 = thumbY - wheelCenterY
         val saturation = sqrt(leg0 * leg0 + leg1 * leg1) / wheelRadius
 
-        hsvComponents.apply {
-            set(0, hue)
-            set(1, saturation)
-            set(2, 1f)
-        }
-
-        currentColor = Color.HSVToColor(hsvComponents)
+        hsvColor.set(hue, saturation, 1f)
+        currentColor = hsvColor.toARGB()
     }
 
     private fun updateShaderIfSizeChanged(cx: Float, cy: Float, radius: Float) {
@@ -119,13 +112,11 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
             sweepGradient = SweepGradient(cx, cy, hueColors, null)
             radialGradient = RadialGradient(cx, cy, radius, saturationColors, null, Shader.TileMode.CLAMP)
 
-            Color.colorToHSV(currentColor, hsvComponents)
+            hsvColor.set(currentColor)
 
-            val angle = hsvComponents[0]
-            val r = hsvComponents[1] * wheelRadius
-            
-            thumbX = cos(toRadians(angle)) * r + wheelCenterX
-            thumbY = sin(toRadians(angle)) * r + wheelCenterY
+            val r = hsvColor.saturation * wheelRadius
+            thumbX = cos(toRadians(hsvColor.hue)) * r + wheelCenterX
+            thumbY = sin(toRadians(hsvColor.hue)) * r + wheelCenterY
         }
     }
 
