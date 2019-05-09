@@ -8,6 +8,7 @@ import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.antonpopoff.standcharacteristicsview.utils.toRadians
 import kotlin.math.*
 
 class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
@@ -19,6 +20,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     var wheelCenterX = 0f
     var wheelCenterY = 0f
     var wheelRadius = 0f
+
+    private var oldRect = Rect()
 
     private var thumbX = 0f
     private var thumbY = 0f
@@ -115,6 +118,14 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
             sizeChanged = false
             sweepGradient = SweepGradient(cx, cy, hueColors, null)
             radialGradient = RadialGradient(cx, cy, radius, saturationColors, null, Shader.TileMode.CLAMP)
+
+            Color.colorToHSV(currentColor, hsvComponents)
+
+            val angle = hsvComponents[0]
+            val r = hsvComponents[1] * wheelRadius
+            
+            thumbX = cos(toRadians(angle)) * r + wheelCenterX
+            thumbY = sin(toRadians(angle)) * r + wheelCenterY
         }
     }
 
