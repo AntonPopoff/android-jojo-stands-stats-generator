@@ -2,4 +2,6 @@ package com.antonpopoff.standcharacteristicsview.utils
 
 const val PI = Math.PI.toFloat()
 
-fun toRadians(degrees: Float) = Math.toRadians(degrees.toDouble()).toFloat()
+fun toRadians(degrees: Float) = degrees / 180f * PI
+
+fun toDegrees(radians: Float) = radians * 180f / PI
