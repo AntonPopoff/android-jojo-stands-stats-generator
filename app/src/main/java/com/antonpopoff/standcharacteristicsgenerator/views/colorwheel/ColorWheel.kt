@@ -114,9 +114,12 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         hsvColor.set(currentColor)
 
         val r = hsvColor.saturation * wheelRadius
+        val hueRadians = toRadians(hsvColor.hue)
 
-        thumbPoint.x = cos(toRadians(hsvColor.hue)) * r + wheelCenter.x
-        thumbPoint.y = sin(toRadians(hsvColor.hue)) * r + wheelCenter.y
+        thumbPoint.apply {
+            x = cos(hueRadians) * r + wheelCenter.x
+            y = sin(hueRadians) * r + wheelCenter.y
+        }
     }
 
     private fun calculateCurrentARGBColor() {
