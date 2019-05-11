@@ -1,4 +1,4 @@
-package com.antonpopoff.standcharacteristicsgenerator.views.colorwheel
+package com.antonpopoff.colorwheel
 
 import android.content.Context
 import android.graphics.*
@@ -8,9 +8,6 @@ import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.antonpopoff.standcharacteristicsgenerator.extensions.set
-import com.antonpopoff.standcharacteristicsview.utils.toDegrees
-import com.antonpopoff.standcharacteristicsview.utils.toRadians
 import kotlin.math.*
 
 class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {

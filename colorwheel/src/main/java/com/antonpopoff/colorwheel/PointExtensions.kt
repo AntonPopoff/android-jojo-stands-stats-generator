@@ -1,4 +1,4 @@
-package com.antonpopoff.standcharacteristicsgenerator.extensions
+package com.antonpopoff.colorwheel
 
 import android.graphics.PointF
 import android.view.MotionEvent

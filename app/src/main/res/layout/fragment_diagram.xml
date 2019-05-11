@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Stand" />
 
-    <com.antonpopoff.standcharacteristicsgenerator.views.colorwheel.ColorWheel
+    <com.antonpopoff.colorwheel.ColorWheel
         android:id="@+id/standStatsDiagram"
         android:layout_width="0dp"
         android:layout_height="0dp"

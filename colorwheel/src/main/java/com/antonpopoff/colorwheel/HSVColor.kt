@@ -1,4 +1,4 @@
-package com.antonpopoff.standcharacteristicsgenerator.views.colorwheel
+package com.antonpopoff.colorwheel
 
 import android.graphics.Color
 
