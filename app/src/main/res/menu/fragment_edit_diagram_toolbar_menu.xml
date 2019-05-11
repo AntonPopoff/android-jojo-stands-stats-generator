@@ -3,10 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/done"
+        android:id="@+id/randomize"
+        android:enabled="true"
+        android:icon="@drawable/ic_dice_multiple"
+        android:title="@string/randomize"
+        android:visible="true"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/apply"
         android:enabled="true"
         android:icon="@drawable/ic_done"
-        android:title="@string/save"
+        android:title="@string/apply"
         android:visible="true"
         app:showAsAction="always" />
 

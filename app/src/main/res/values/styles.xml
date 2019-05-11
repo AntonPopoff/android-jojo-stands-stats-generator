@@ -32,13 +32,35 @@
     </style>
 
     <style name="CharacteristicsRatingBarDefaultStyle">
-        <item name="rb_barHeight">4dp</item>
-        <item name="rb_thumbRadius">7.5dp</item>
-        <item name="rb_notchRadius">4dp</item>
-        <item name="rb_textSize">22sp</item>
-        <item name="rb_textOffset">6dp</item>
+        <item name="rb_barHeight">3dp</item>
+        <item name="rb_thumbRadius">6dp</item>
+        <item name="rb_notchRadius">3dp</item>
+        <item name="rb_textSize">18sp</item>
+        <item name="rb_textOffset">3.5dp</item>
         <item name="rb_barColor">#F1B8B8</item>
         <item name="rb_selectedBarColor">#EA7371</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.EditDiagramStatisticNameText">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="EditDiagramCharacteristicRatingBar">
+        <item name="android:layout_marginLeft">14dp</item>
+        <item name="android:layout_marginRight">14dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:paddingTop">6dp</item>
+    </style>
+
+    <style name="EditDiagramDivider">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:background">#AFAFAF</item>
     </style>
 
 </resources>
