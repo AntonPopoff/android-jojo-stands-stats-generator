@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
+import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
 import com.antonpopoff.standcharacteristicsview.diagram.StandRating
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
@@ -29,13 +30,20 @@ class DiagramFragment : BaseViewFragment() {
         }
     }
 
-    private fun onToolbarMenuClick(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == R.id.edit_diagram) {
+    private fun onToolbarMenuClick(menuItem: MenuItem) = when(menuItem.itemId) {
+        R.id.edit_diagram -> {
             pushEditFragment()
-            return true
+            true
         }
+        R.id.edit_diagram_color -> {
+            showEditColorDiagramFragment()
+            true
+        }
+        else -> false
+    }
 
-        return false
+    private fun showEditColorDiagramFragment() {
+        EditDiagramColorDialog().show(fragmentManager, null)
     }
 
     private fun pushEditFragment() {
