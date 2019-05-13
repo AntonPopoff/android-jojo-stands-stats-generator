@@ -16,7 +16,7 @@
         app:title="Stand" />
 
     <com.antonpopoff.colorwheel.ColorWheel
-        android:id="@+id/standStatsDiagram"
+        android:id="@+id/colorWheel"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="32dp"

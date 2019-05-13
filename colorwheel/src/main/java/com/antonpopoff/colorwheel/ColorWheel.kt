@@ -19,12 +19,9 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private val wheelCenter = PointF()
     private var wheelRadius = 0f
 
-    private var thumbRadius = 0f
     private val thumbPoint = PointF()
     private val thumbRect = Rect()
-
-    private val colorDrawable = ShapeDrawable(OvalShape())
-    private val thumbDrawable: LayerDrawable
+    private val thumbDrawable = createThumbDrawable()
 
     private val hsvColor = HSVColor()
     private var currentColor = 0
@@ -34,13 +31,20 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         isDither = true
     }
 
+    var thumbRadius = 0f
+        set(value) {
+            field = value
+            setupThumbDrawableInsets()
+            invalidate()
+        }
+
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.style.ColorWheelDefaultStyle)
 
     constructor(context: Context) : this(context, null)
 
     init {
         parseAttributes(context, attrs)
-        thumbDrawable = createThumbDrawable()
+        setupThumbDrawableInsets()
     }
 
     private fun parseAttributes(context: Context, attrs: AttributeSet?) {
@@ -51,17 +55,20 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun createThumbDrawable(): LayerDrawable {
+        val thumbDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.WHITE }
+        val shadowDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.GRAY }
+        val colorDrawable = ShapeDrawable(OvalShape())
+        return LayerDrawable(arrayOf(shadowDrawable, thumbDrawable, colorDrawable))
+    }
+
+    private fun setupThumbDrawableInsets() {
         val shadowHInset = (thumbRadius * 0.1f).toInt()
         val shadowVInset = (thumbRadius * 0.1f).toInt()
 
         val colorHInset = (thumbRadius * 0.25f).toInt()
         val colorVInset = (thumbRadius * 0.25f).toInt()
 
-        val thumbDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.WHITE }
-        val shadowDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.GRAY }
-        val layerDrawable = LayerDrawable(arrayOf(shadowDrawable, thumbDrawable, colorDrawable))
-
-        return layerDrawable.apply {
+        thumbDrawable.apply {
             setLayerInset(0, shadowHInset, shadowVInset, -shadowHInset, -shadowVInset)
             setLayerInset(2, colorHInset, colorVInset, colorHInset, colorVInset)
         }
@@ -155,12 +162,16 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun drawThumb(canvas: Canvas) {
-        colorDrawable.paint.color = currentColor
+        setColorDrawableColor(currentColor)
 
         thumbDrawable.apply {
             bounds = thumbRect
             draw(canvas)
         }
+    }
+
+    private fun setColorDrawableColor(color: Int) {
+        (thumbDrawable.getDrawable(2) as ShapeDrawable).paint.color = color
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
