@@ -43,7 +43,7 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun showEditColorDiagramFragment() {
-        EditDiagramColorDialog().show(fragmentManager, null)
+        EditDiagramColorDialog().show(childFragmentManager, null)
     }
 
     private fun pushEditFragment() {
