@@ -16,10 +16,10 @@
         app:title="Stand" />
 
     <com.antonpopoff.standcharacteristicsview.diagram.StandCharacteristicsDiagram
-        android:id="@+id/standStatsDiagram"
+        android:id="@+id/standCharacteristicsDiagram"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:padding="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

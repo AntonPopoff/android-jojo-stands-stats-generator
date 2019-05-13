@@ -1,4 +1,4 @@
-package com.antonpopoff.standcharacteristicsview.utils
+package com.antonpopoff.colorwheel
 
 const val PI = Math.PI.toFloat()
 
