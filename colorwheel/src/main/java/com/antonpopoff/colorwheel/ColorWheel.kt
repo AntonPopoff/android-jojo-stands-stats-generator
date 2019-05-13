@@ -36,6 +36,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         isDither = true
     }
 
+    var colorChangeListener: ((Int) -> Unit)? = null
+
     var thumbRadius = 0f
         set(value) {
             field = value
@@ -150,6 +152,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
             set(hue, saturation, 1f)
             toARGB()
         }
+
+        colorChangeListener?.invoke(currentColor)
     }
 
     private fun calculateThumbRect() {

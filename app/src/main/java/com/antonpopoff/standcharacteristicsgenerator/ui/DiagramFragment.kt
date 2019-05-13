@@ -13,6 +13,11 @@ class DiagramFragment : BaseViewFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        colorWheel.colorChangeListener = {
+            println(it)
+        }
+
         setupToolbarMenu()
     }
 
