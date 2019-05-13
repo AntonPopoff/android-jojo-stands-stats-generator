@@ -16,13 +16,12 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private var sweepGradient: SweepGradient? = null
     private var radialGradient: RadialGradient? = null
 
-    private val thumbPoint = PointF()
     private val wheelCenter = PointF()
-
-    private val thumbWidth = (context.resources.displayMetrics.density * 26).toInt()
-    private val thumbHeight = (context.resources.displayMetrics.density * 26).toInt()
-    private val thumbRect = Rect()
     private var wheelRadius = 0f
+
+    private var thumbRadius = 0f
+    private val thumbPoint = PointF()
+    private val thumbRect = Rect()
 
     private val colorDrawable = ShapeDrawable(OvalShape())
     private val thumbDrawable: LayerDrawable
@@ -35,20 +34,28 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         isDither = true
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.style.ColorWheelDefaultStyle)
 
     constructor(context: Context) : this(context, null)
 
     init {
+        parseAttributes(context, attrs)
         thumbDrawable = createThumbDrawable()
     }
 
-    private fun createThumbDrawable(): LayerDrawable {
-        val shadowHInset = (thumbWidth * 0.05f).toInt()
-        val shadowVInset = (thumbHeight * 0.05f).toInt()
+    private fun parseAttributes(context: Context, attrs: AttributeSet?) {
+        context.obtainStyledAttributes(attrs, R.styleable.ColorWheel, 0, R.style.ColorWheelDefaultStyle).apply {
+            thumbRadius = getDimension(R.styleable.ColorWheel_cw_thumbRadius, 0f)
+            recycle()
+        }
+    }
 
-        val colorHInset = (thumbWidth * 0.15f).toInt()
-        val colorVInset = (thumbHeight * 0.15f).toInt()
+    private fun createThumbDrawable(): LayerDrawable {
+        val shadowHInset = (thumbRadius * 0.1f).toInt()
+        val shadowVInset = (thumbRadius * 0.1f).toInt()
+
+        val colorHInset = (thumbRadius * 0.25f).toInt()
+        val colorVInset = (thumbRadius * 0.25f).toInt()
 
         val thumbDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.WHITE }
         val shadowDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.GRAY }
@@ -134,14 +141,11 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun calculateThumbRect() {
-        val halfWidth = thumbWidth / 2
-        val halfHeight = thumbHeight / 2
-
         thumbRect.set(
-                (thumbPoint.x - halfWidth).toInt(),
-                (thumbPoint.y - halfHeight).toInt(),
-                (thumbPoint.x + halfWidth).toInt(),
-                (thumbPoint.y + halfHeight).toInt()
+                (thumbPoint.x - thumbRadius).toInt(),
+                (thumbPoint.y - thumbRadius).toInt(),
+                (thumbPoint.x + thumbRadius).toInt(),
+                (thumbPoint.y + thumbRadius).toInt()
         )
     }
 
