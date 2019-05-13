@@ -3,7 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/edit"
+        android:id="@+id/edit_diagram_color"
+        android:checkable="false"
+        android:icon="@drawable/ic_palette"
+        android:title="@string/edit_diagram_color"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/edit_diagram"
         android:checkable="false"
         android:icon="@drawable/ic_edit"
         android:title="@string/edit_diagram"

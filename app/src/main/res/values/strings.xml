@@ -3,4 +3,5 @@
     <string name="edit_diagram">Edit Diagram</string>
     <string name="apply">Apply</string>
     <string name="randomize">Randomize</string>
+    <string name="edit_diagram_color">Edit Diagram Color</string>
 </resources>

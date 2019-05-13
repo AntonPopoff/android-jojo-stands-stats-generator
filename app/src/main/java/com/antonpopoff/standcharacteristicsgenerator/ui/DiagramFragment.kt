@@ -30,7 +30,7 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun onToolbarMenuClick(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == R.id.edit) {
+        if (menuItem.itemId == R.id.edit_diagram) {
             pushEditFragment()
             return true
         }
