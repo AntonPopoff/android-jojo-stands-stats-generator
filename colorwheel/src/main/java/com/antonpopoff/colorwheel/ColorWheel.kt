@@ -8,9 +8,12 @@ import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import kotlin.math.*
 
 class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+
+    private var viewConfig = ViewConfiguration.get(context)
 
     private var sizeChangeHandled = false
     private var sweepGradient: SweepGradient? = null
@@ -25,6 +28,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     private val hsvColor = HSVColor()
     private var currentColor = 0
+
+    private var motionEventDownX = 0f
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -177,6 +182,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                motionEventDownX = event.x
                 setThumbPositionOnMotionEvent(event)
                 calculateCurrentARGBColor()
                 return true
@@ -185,10 +191,15 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
                 setThumbPositionOnMotionEvent(event)
                 calculateCurrentARGBColor()
             }
+            MotionEvent.ACTION_UP -> {
+                if (isTap(event)) performClick()
+            }
         }
 
         return super.onTouchEvent(event)
     }
+
+    override fun performClick() = super.performClick()
 
     private fun setThumbPositionOnMotionEvent(event: MotionEvent) {
         if (isPointWithinCircle(event.x, event.y, wheelCenter.x, wheelCenter.y, wheelRadius)) {
@@ -215,6 +226,12 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         val dx = x - cx
         val dy = y - cy
         return dx * dx + dy * dy <= radius * radius
+    }
+
+    private fun isTap(event: MotionEvent): Boolean {
+        val eventDuration = event.eventTime - event.downTime
+        val eventTravelDistance = abs(event.x - motionEventDownX)
+        return eventDuration < ViewConfiguration.getTapTimeout() && eventTravelDistance < viewConfig.scaledTouchSlop
     }
 
     companion object {
