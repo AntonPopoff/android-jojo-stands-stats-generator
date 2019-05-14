@@ -25,7 +25,7 @@
                 style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Potential" />
+                android:text="@string/potential" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
@@ -44,7 +44,7 @@
                 style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Power" />
+                android:text="@string/power" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
@@ -63,7 +63,7 @@
                 style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Speed" />
+                android:text="@string/speed" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
@@ -82,7 +82,7 @@
                 style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Range" />
+                android:text="@string/range" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
@@ -101,7 +101,7 @@
                 style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Durability" />
+                android:text="@string/durability" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
@@ -120,7 +120,7 @@
                 style="@style/TextAppearance.AppCompat.EditDiagramStatisticNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precision" />
+                android:text="@string/precision" />
 
             <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
                 style="@style/EditDiagramCharacteristicRatingBar"
