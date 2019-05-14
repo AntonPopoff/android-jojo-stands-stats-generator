@@ -13,4 +13,14 @@ abstract class BaseViewFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(layoutId, container, false)
     }
+
+    override fun onResume() {
+        super.onResume()
+        view?.isClickable = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        view?.isClickable = false
+    }
 }
