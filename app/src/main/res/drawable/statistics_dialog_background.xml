@@ -6,11 +6,8 @@
     android:insetTop="@dimen/statistics_dialog_inset">
 
     <shape >
-
         <solid android:color="@color/white" />
-
         <corners android:radius="16dp" />
-
     </shape>
 
 </inset>
