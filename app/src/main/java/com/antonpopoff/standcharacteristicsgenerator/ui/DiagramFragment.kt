@@ -52,13 +52,8 @@ class DiagramFragment : BaseViewFragment() {
         }
 
         fragmentManager?.beginTransaction()?.apply {
-            setCustomAnimations(
-                    R.anim.fragment_enter,
-                    R.anim.fragment_exit,
-                    R.anim.fragment_pop_enter,
-                    R.anim.fragment_pop_exit
-            )
-            replace(R.id.container, f)
+            setCustomAnimations(R.anim.fragment_enter, 0, 0, R.anim.fragment_pop_exit)
+            add(R.id.container, f)
             addToBackStack(null)
             commit()
         }
@@ -72,6 +67,7 @@ class DiagramFragment : BaseViewFragment() {
     private fun checkResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == EditDiagramFragment.STAND_CHARACTERISTICS_CODE && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<StandRating>(EditDiagramFragment.STAND_RATINGS)?.let {
+                standCharacteristicsDiagram.rating = it
                 rating = it
             }
         }
