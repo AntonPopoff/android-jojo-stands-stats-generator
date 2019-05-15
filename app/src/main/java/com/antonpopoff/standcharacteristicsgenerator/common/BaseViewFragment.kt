@@ -1,5 +1,6 @@
 package com.antonpopoff.standcharacteristicsgenerator.common
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 abstract class BaseViewFragment : Fragment() {
+
+    protected var preferredOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 
     abstract val layoutId: Int
 
@@ -16,6 +19,7 @@ abstract class BaseViewFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        activity?.requestedOrientation = preferredOrientation
         view?.isClickable = true
     }
 
