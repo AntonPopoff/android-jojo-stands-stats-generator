@@ -95,6 +95,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     private fun ensureThumbYInitialized() {
         if (thumbY == 0) {
             thumbY = gradientRect.top
+            updateColorIndicator()
         }
     }
 
@@ -109,10 +110,14 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 updateThumbY(event)
+                updateColorIndicator()
+                invalidate()
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 updateThumbY(event)
+                updateColorIndicator()
+                invalidate()
             }
         }
 
@@ -125,8 +130,13 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
             event.y < gradientRect.top -> gradientRect.top
             else -> event.y.roundToInt()
         }
+    }
 
-        invalidate()
+    private fun updateColorIndicator() {
+        val relativeThumbY = (thumbY - gradientRect.top).toFloat()
+        val alpha = 255 - ((relativeThumbY / gradientRect.height()) * 255).roundToInt()
+        val color = (color shl 8 ushr 8) or (alpha shl 24)
+        thumbDrawable.indicatorColor = color
     }
 
     override fun performClick() = super.performClick()
