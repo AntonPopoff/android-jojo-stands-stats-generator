@@ -9,6 +9,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import com.antonpopoff.colorwheel.utils.createThumbDrawable
+import com.antonpopoff.colorwheel.utils.toDegrees
+import com.antonpopoff.colorwheel.utils.toRadians
 import kotlin.math.*
 
 class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
@@ -61,13 +64,6 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
             thumbRadius = getDimension(R.styleable.ColorWheel_cw_thumbRadius, 0f)
             recycle()
         }
-    }
-
-    private fun createThumbDrawable(): LayerDrawable {
-        val thumbDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.WHITE }
-        val shadowDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.GRAY }
-        val colorDrawable = ShapeDrawable(OvalShape())
-        return LayerDrawable(arrayOf(shadowDrawable, thumbDrawable, colorDrawable))
     }
 
     private fun setupThumbDrawableInsets() {
