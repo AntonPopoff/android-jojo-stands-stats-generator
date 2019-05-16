@@ -2,15 +2,12 @@ package com.antonpopoff.colorwheel
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.ShapeDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import com.antonpopoff.colorwheel.utils.HSVColor
-import com.antonpopoff.colorwheel.utils.createThumbDrawable
-import com.antonpopoff.colorwheel.utils.toDegrees
-import com.antonpopoff.colorwheel.utils.toRadians
+import com.antonpopoff.colorwheel.extensions.set
+import com.antonpopoff.colorwheel.utils.*
 import kotlin.math.*
 
 class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
@@ -26,7 +23,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     private val thumbPoint = PointF()
     private val thumbRect = Rect()
-    private val thumbDrawable = createThumbDrawable()
+    private val thumbDrawable = ThumbDrawable()
 
     private val currentHSVColor = HSVColor()
 
@@ -44,8 +41,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     var thumbRadius = 0f
         set(value) {
+            thumbDrawable.applyInsets(value)
             field = value
-            setupThumbDrawableInsets()
             invalidate()
         }
 
@@ -55,26 +52,13 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     init {
         parseAttributes(context, attrs)
-        setupThumbDrawableInsets()
+        thumbDrawable.applyInsets(thumbRadius)
     }
 
     private fun parseAttributes(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.ColorWheel, 0, R.style.ColorWheelDefaultStyle).apply {
             thumbRadius = getDimension(R.styleable.ColorWheel_cw_thumbRadius, 0f)
             recycle()
-        }
-    }
-
-    private fun setupThumbDrawableInsets() {
-        val shadowHInset = (thumbRadius * 0.1f).toInt()
-        val shadowVInset = (thumbRadius * 0.1f).toInt()
-
-        val colorHInset = (thumbRadius * 0.25f).toInt()
-        val colorVInset = (thumbRadius * 0.25f).toInt()
-
-        thumbDrawable.apply {
-            setLayerInset(0, shadowHInset, shadowVInset, -shadowHInset, -shadowVInset)
-            setLayerInset(2, colorHInset, colorVInset, colorHInset, colorVInset)
         }
     }
 
@@ -175,16 +159,11 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun drawThumb(canvas: Canvas) {
-        setColorDrawableColor(currentColorArgb)
-
         thumbDrawable.apply {
+            indicatorColor = currentColorArgb
             bounds = thumbRect
             draw(canvas)
         }
-    }
-
-    private fun setColorDrawableColor(color: Int) {
-        (thumbDrawable.getDrawable(2) as ShapeDrawable).paint.color = color
     }
 
     private fun fireColorListener() {

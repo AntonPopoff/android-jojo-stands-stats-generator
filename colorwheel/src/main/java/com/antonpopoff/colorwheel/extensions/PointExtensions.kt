@@ -1,4 +1,4 @@
-package com.antonpopoff.colorwheel
+package com.antonpopoff.colorwheel.extensions
 
 import android.graphics.PointF
 import android.view.MotionEvent
