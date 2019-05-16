@@ -1,6 +1,7 @@
 package com.antonpopoff.standcharacteristicsgenerator.dialogs
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.*
@@ -16,7 +17,7 @@ class EditDiagramColorDialog : DialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default)
-        selectedColorViewBackground = ContextCompat.getDrawable(context, R.drawable.rounded_corners_rectangle) as GradientDrawable
+        selectedColorViewBackground = ContextCompat.getDrawable(context, R.drawable.rounded_corners_rectangle)?.mutate() as GradientDrawable
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -26,7 +27,14 @@ class EditDiagramColorDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         selectedColorView.background = selectedColorViewBackground
-        colorWheel.colorChangeListener = { selectedColorViewBackground.setColor(it) }
+        setupColorWheel()
+    }
+
+    private fun setupColorWheel() {
+        colorWheel.apply {
+            colorChangeListener = { selectedColorViewBackground.setColor(it) }
+            setColor(arguments?.getInt(KEY_COLOR, Color.WHITE) ?: Color.WHITE)
+        }
     }
 
     override fun onStart() {
@@ -38,6 +46,17 @@ class EditDiagramColorDialog : DialogFragment() {
         dialog?.window?.apply {
             setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
             setGravity(Gravity.BOTTOM)
+        }
+    }
+
+    companion object {
+
+        private const val KEY_COLOR = "color"
+
+        fun create(presetColor: Int) = EditDiagramColorDialog().apply {
+            arguments = Bundle().apply {
+                putInt(KEY_COLOR, presetColor)
+            }
         }
     }
 }

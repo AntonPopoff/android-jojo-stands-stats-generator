@@ -9,6 +9,7 @@ import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
 import com.antonpopoff.standcharacteristicsview.diagram.StandRating
+import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
 class DiagramFragment : BaseViewFragment() {
@@ -43,7 +44,9 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun showEditColorDiagramFragment() {
-        EditDiagramColorDialog().show(childFragmentManager, null)
+        EditDiagramColorDialog
+                .create(standCharacteristicsDiagram.polylineColor)
+                .show(childFragmentManager, null)
     }
 
     private fun pushEditFragment() {

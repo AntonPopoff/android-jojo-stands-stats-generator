@@ -27,7 +27,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private val thumbDrawable = createThumbDrawable()
 
     private val hsvColor = HSVColor()
-    private var currentColor = 0
+    private var currentColorArgb = 0
 
     private var motionEventDownX = 0f
 
@@ -81,6 +81,13 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
+    fun setColor(argb: Int) {
+        currentColorArgb = argb
+        adjustThumbPosition()
+        fireColorListener()
+        invalidate()
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         sizeChangeHandled = false
@@ -129,7 +136,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun adjustThumbPosition() {
-        hsvColor.set(currentColor)
+        hsvColor.set(currentColorArgb)
 
         val r = hsvColor.saturation * wheelRadius
         val hueRadians = toRadians(hsvColor.hue)
@@ -148,12 +155,12 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         val legY = thumbPoint.y - wheelCenter.y
         val saturation = sqrt(legX * legX + legY * legY) / wheelRadius
 
-        currentColor = hsvColor.run {
+        currentColorArgb = hsvColor.run {
             set(hue, saturation, 1f)
             toARGB()
         }
 
-        colorChangeListener?.invoke(currentColor)
+        fireColorListener()
     }
 
     private fun calculateThumbRect() {
@@ -171,7 +178,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun drawThumb(canvas: Canvas) {
-        setColorDrawableColor(currentColor)
+        setColorDrawableColor(currentColorArgb)
 
         thumbDrawable.apply {
             bounds = thumbRect
@@ -181,6 +188,10 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     private fun setColorDrawableColor(color: Int) {
         (thumbDrawable.getDrawable(2) as ShapeDrawable).paint.color = color
+    }
+
+    private fun fireColorListener() {
+        colorChangeListener?.invoke(currentColorArgb)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
