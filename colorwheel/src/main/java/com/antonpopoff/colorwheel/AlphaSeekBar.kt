@@ -24,6 +24,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     var color
         get() = gradientColors[1]
         set(value) {
+            gradientColors[0] = value shl 8 ushr 8
             gradientColors[1] = value
             invalidate()
         }
