@@ -11,6 +11,8 @@ import android.view.ViewConfiguration
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+private const val MAX_ALPHA = 255
+
 class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
     private val viewConfig = ViewConfiguration.get(context)
@@ -26,13 +28,18 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     private val thumbDrawable = ThumbDrawable()
     private var barWidth = 0
 
+    var colorAlpha = MAX_ALPHA
+        private set
+
     var color
         get() = gradientColors[1]
         set(value) {
             gradientColors[0] = clearAlpha(value)
-            gradientColors[1] = value
+            gradientColors[1] = setAlpha(value, MAX_ALPHA)
             invalidate()
         }
+
+    val argb get() = setAlpha(color, colorAlpha)
 
     init {
         parseAttributes(context, attrs, R.style.AlphaSeekBarDefaultStyle)
@@ -51,6 +58,11 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         }
     }
 
+    fun setAlpha(alpha: Int) {
+        this.colorAlpha = abs(alpha) % MAX_ALPHA
+        invalidate()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val preferredWidth = maxOf(barWidth, thumbRadius * 2)
         val preferredHeight = MeasureSpec.getSize(heightMeasureSpec)
@@ -64,6 +76,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     override fun onDraw(canvas: Canvas) {
         calculateGradientRect()
         ensureThumbYInitialized()
+        ensureThumbPositionReflectsAlpha()
         calculateThumbRect()
         drawGradientRect(canvas)
         drawThumb(canvas)
@@ -104,6 +117,12 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         }
     }
 
+    private fun ensureThumbPositionReflectsAlpha() {
+        if (colorAlpha != calculateAlphaByThumbPosition()) {
+            convertAlphaToThumbPosition(colorAlpha)
+        }
+    }
+
     private fun drawThumb(canvas: Canvas) {
         thumbDrawable.apply {
             bounds = thumbRect
@@ -132,6 +151,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
 
     private fun updateThumbOnMotionEvent(event: MotionEvent) {
         updateThumbY(event)
+        colorAlpha = calculateAlphaByThumbPosition()
         updateColorIndicator()
         invalidate()
     }
@@ -144,10 +164,13 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         }
     }
 
-    private fun updateColorIndicator() {
+    private fun calculateAlphaByThumbPosition(): Int {
         val relativeThumbY = (thumbY - gradientRect.top).toFloat()
-        val alpha = 255 - ((relativeThumbY / gradientRect.height()) * 255).roundToInt()
-        thumbDrawable.indicatorColor = setAlpha(color, alpha)
+        return MAX_ALPHA - ((relativeThumbY / gradientRect.height()) * MAX_ALPHA).roundToInt()
+    }
+
+    private fun updateColorIndicator() {
+        thumbDrawable.indicatorColor = setAlpha(color, colorAlpha)
     }
 
     private fun isTap(event: MotionEvent): Boolean {
@@ -157,6 +180,10 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     }
 
     override fun performClick() = super.performClick()
+
+    private fun convertAlphaToThumbPosition(alpha: Int) {
+        thumbY = (gradientRect.top + (1 - (alpha.toFloat() / MAX_ALPHA)) * gradientRect.height()).roundToInt()
+    }
 
     private fun clearAlpha(argb: Int): Int = (argb shl 8 ushr 8)
 
