@@ -29,7 +29,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     var color
         get() = gradientColors[1]
         set(value) {
-            gradientColors[0] = value shl 8 ushr 8
+            gradientColors[0] = clearAlpha(value)
             gradientColors[1] = value
             invalidate()
         }
@@ -147,8 +147,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     private fun updateColorIndicator() {
         val relativeThumbY = (thumbY - gradientRect.top).toFloat()
         val alpha = 255 - ((relativeThumbY / gradientRect.height()) * 255).roundToInt()
-        val color = (color shl 8 ushr 8) or (alpha shl 24)
-        thumbDrawable.indicatorColor = color
+        thumbDrawable.indicatorColor = setAlpha(color, alpha)
     }
 
     private fun isTap(event: MotionEvent): Boolean {
@@ -158,4 +157,8 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     }
 
     override fun performClick() = super.performClick()
+
+    private fun clearAlpha(argb: Int): Int = (argb shl 8 ushr 8)
+
+    private fun setAlpha(argb: Int, alpha: Int) = clearAlpha(argb) or (alpha shl 24)
 }
