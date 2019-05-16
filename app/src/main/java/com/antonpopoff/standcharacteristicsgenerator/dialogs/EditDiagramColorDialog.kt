@@ -28,6 +28,7 @@ class EditDiagramColorDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        alphaSeekBar.color = Color.MAGENTA
         selectedColorView.background = selectedColorViewBackground
         cancelButton.setOnClickListener { dismiss() }
         resetButton.setOnClickListener { colorWheel.setColor(initialColor) }
