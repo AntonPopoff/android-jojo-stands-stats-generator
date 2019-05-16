@@ -2,7 +2,11 @@
 <resources>
 
     <style name="ColorWheelDefaultStyle">
-        <item name="cw_thumbRadius">13dp</item>
+        <item name="cw_thumbRadius">@dimen/default_thumb_radius</item>
+    </style>
+
+    <style name="AlphaSeekBarDefaultStyle">
+        <item name="asb_thumbRadius">@dimen/default_thumb_radius</item>
     </style>
 
 </resources>
