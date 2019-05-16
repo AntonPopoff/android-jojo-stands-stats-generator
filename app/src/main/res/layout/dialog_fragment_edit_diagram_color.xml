@@ -15,7 +15,6 @@
         android:layout_marginRight="8dp"
         android:text="Apply"
         android:textColor="#5f9ee4"
-        android:textSize="12sp"
         android:minHeight="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -26,7 +25,6 @@
         android:layout_height="wrap_content"
         android:text="Default"
         android:textColor="#5f9ee4"
-        android:textSize="12sp"
         android:minHeight="0dp"
         app:layout_constraintEnd_toStartOf="@id/applyButton"
         app:layout_constraintTop_toTopOf="@id/applyButton"
@@ -39,7 +37,6 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:layout_marginLeft="8dp"
-        android:textSize="12sp"
         android:textColor="#5f9ee4"
         android:minHeight="0dp"
         app:layout_constraintStart_toStartOf="parent"
