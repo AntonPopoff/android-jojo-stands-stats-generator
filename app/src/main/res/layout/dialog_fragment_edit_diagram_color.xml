@@ -21,9 +21,10 @@
 
     <Button
         style="?android:buttonBarButtonStyle"
+        android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Default"
+        android:text="Reset"
         android:textColor="#5f9ee4"
         android:minHeight="0dp"
         app:layout_constraintEnd_toStartOf="@id/applyButton"

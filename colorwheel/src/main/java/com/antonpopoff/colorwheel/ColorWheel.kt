@@ -26,8 +26,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private val thumbRect = Rect()
     private val thumbDrawable = createThumbDrawable()
 
-    private val hsvColor = HSVColor()
-    private var currentColorArgb = 0
+    private val currentHSVColor = HSVColor()
 
     private var motionEventDownX = 0f
 
@@ -37,6 +36,9 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     var colorChangeListener: ((Int) -> Unit)? = null
+
+    var currentColorArgb = 0
+        private set
 
     var thumbRadius = 0f
         set(value) {
@@ -136,10 +138,10 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun adjustThumbPosition() {
-        hsvColor.set(currentColorArgb)
+        currentHSVColor.set(currentColorArgb)
 
-        val r = hsvColor.saturation * wheelRadius
-        val hueRadians = toRadians(hsvColor.hue)
+        val r = currentHSVColor.saturation * wheelRadius
+        val hueRadians = toRadians(currentHSVColor.hue)
 
         thumbPoint.apply {
             x = cos(hueRadians) * r + wheelCenter.x
@@ -155,7 +157,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         val legY = thumbPoint.y - wheelCenter.y
         val saturation = sqrt(legX * legX + legY * legY) / wheelRadius
 
-        currentColorArgb = hsvColor.run {
+        currentColorArgb = currentHSVColor.run {
             set(hue, saturation, 1f)
             toARGB()
         }

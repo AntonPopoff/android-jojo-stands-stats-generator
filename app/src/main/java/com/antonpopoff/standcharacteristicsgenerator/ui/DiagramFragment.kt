@@ -9,10 +9,9 @@ import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
 import com.antonpopoff.standcharacteristicsview.diagram.StandRating
-import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
-class DiagramFragment : BaseViewFragment() {
+class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     private var rating = StandRating.UNKNOWN
 
@@ -74,5 +73,9 @@ class DiagramFragment : BaseViewFragment() {
                 rating = it
             }
         }
+    }
+
+    override fun onColorApplied(argb: Int) {
+        standCharacteristicsDiagram.polylineColor = argb
     }
 }
