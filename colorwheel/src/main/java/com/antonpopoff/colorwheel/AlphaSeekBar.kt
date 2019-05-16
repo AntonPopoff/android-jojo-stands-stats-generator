@@ -109,19 +109,24 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                updateThumbY(event)
-                updateColorIndicator()
-                invalidate()
+                updateThumbOnMotionEvent(event)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                updateThumbY(event)
-                updateColorIndicator()
-                invalidate()
+                updateThumbOnMotionEvent(event)
+            }
+            MotionEvent.ACTION_UP -> {
+                updateThumbOnMotionEvent(event)
             }
         }
 
         return super.onTouchEvent(event)
+    }
+
+    private fun updateThumbOnMotionEvent(event: MotionEvent) {
+        updateThumbY(event)
+        updateColorIndicator()
+        invalidate()
     }
 
     private fun updateThumbY(event: MotionEvent) {
