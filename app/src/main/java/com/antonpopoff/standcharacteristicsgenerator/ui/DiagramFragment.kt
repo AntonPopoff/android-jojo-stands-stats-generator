@@ -20,8 +20,6 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        alphaSeekBar.color = Color.MAGENTA
-        alphaSeekBar.setAlpha(128)
 //        standCharacteristicsDiagram.rating = rating
         setupToolbarMenu()
     }

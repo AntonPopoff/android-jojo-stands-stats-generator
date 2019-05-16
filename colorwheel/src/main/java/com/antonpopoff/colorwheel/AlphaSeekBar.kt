@@ -1,7 +1,9 @@
 package com.antonpopoff.colorwheel
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
@@ -54,12 +56,30 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         context.obtainStyledAttributes(attrs, R.styleable.AlphaSeekBar, 0, defStyle).apply {
             thumbRadius = getDimensionPixelOffset(R.styleable.AlphaSeekBar_asb_thumbRadius, 0)
             barWidth = getDimensionPixelOffset(R.styleable.AlphaSeekBar_asb_barWidth, 0)
+            color = getColor(R.styleable.AlphaSeekBar_asb_color, Color.BLACK)
+            colorAlpha = readAlpha(this)
             recycle()
         }
     }
 
+    private fun readAlpha(typedArray: TypedArray): Int {
+        val alphaFraction = typedArray.getFloat(R.styleable.AlphaSeekBar_asb_alpha, 1f)
+        val checkedAlpha = when {
+            alphaFraction < 0 -> 0f
+            alphaFraction > 1 -> 1f
+            else -> alphaFraction
+        }
+
+        return (checkedAlpha * 255).roundToInt()
+    }
+
     fun setAlpha(alpha: Int) {
-        this.colorAlpha = abs(alpha) % MAX_ALPHA
+        colorAlpha = when {
+            alpha < 0 -> 0
+            alpha > MAX_ALPHA -> MAX_ALPHA
+            else -> alpha
+        }
+
         invalidate()
     }
 
