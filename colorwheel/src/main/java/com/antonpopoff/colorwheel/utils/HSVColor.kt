@@ -1,4 +1,4 @@
-package com.antonpopoff.colorwheel
+package com.antonpopoff.colorwheel.utils
 
 import android.graphics.Color
 
@@ -22,5 +22,5 @@ class HSVColor {
 
     fun set(argb: Int) = Color.colorToHSV(argb, hsvComponents)
 
-    fun toARGB() = Color.HSVToColor(hsvComponents)
+    fun toArgb() = Color.HSVToColor(hsvComponents)
 }

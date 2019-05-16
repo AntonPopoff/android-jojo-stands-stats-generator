@@ -2,13 +2,12 @@ package com.antonpopoff.colorwheel
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import com.antonpopoff.colorwheel.utils.HSVColor
 import com.antonpopoff.colorwheel.utils.createThumbDrawable
 import com.antonpopoff.colorwheel.utils.toDegrees
 import com.antonpopoff.colorwheel.utils.toRadians
@@ -155,7 +154,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
         currentColorArgb = currentHSVColor.run {
             set(hue, saturation, 1f)
-            toARGB()
+            toArgb()
         }
 
         fireColorListener()
