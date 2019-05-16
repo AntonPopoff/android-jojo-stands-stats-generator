@@ -7,6 +7,7 @@
 
     <declare-styleable name="AlphaSeekBar">
         <attr name="asb_thumbRadius" format="dimension"/>
+        <attr name="asb_barWidth" format="dimension" />
     </declare-styleable>
 
 </resources>

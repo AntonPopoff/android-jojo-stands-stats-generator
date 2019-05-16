@@ -46,14 +46,14 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
             invalidate()
         }
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.style.ColorWheelDefaultStyle)
-
-    constructor(context: Context) : this(context, null)
-
     init {
         parseAttributes(context, attrs)
         thumbDrawable.applyInsets(thumbRadius)
     }
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.style.ColorWheelDefaultStyle)
+
+    constructor(context: Context) : this(context, null)
 
     private fun parseAttributes(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.ColorWheel, 0, R.style.ColorWheelDefaultStyle).apply {
