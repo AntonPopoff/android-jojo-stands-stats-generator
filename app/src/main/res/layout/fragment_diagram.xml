@@ -15,14 +15,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Stand" />
 
-    <com.antonpopoff.standcharacteristicsview.diagram.StandCharacteristicsDiagram
-        android:id="@+id/standCharacteristicsDiagram"
+    <!--<com.antonpopoff.standcharacteristicsview.diagram.StandCharacteristicsDiagram-->
+        <!--android:id="@+id/standCharacteristicsDiagram"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:padding="32dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/toolbar" />-->
+
+    <com.antonpopoff.colorwheel.AlphaSeekBar
+        android:id="@+id/alphaSeekBar"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
