@@ -7,14 +7,19 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
+
+    private val viewConfig = ViewConfiguration.get(context)
 
     private val gradientRect = Rect()
     private val gradientColors = IntArray(2)
     private val gradient = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradientColors)
 
+    private var motionEventDownX = 0f
     private var thumbY = 0
     private var thumbRadius = 0
     private val thumbRect = Rect()
@@ -109,6 +114,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                motionEventDownX = event.x
                 updateThumbOnMotionEvent(event)
                 return true
             }
@@ -117,6 +123,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
             }
             MotionEvent.ACTION_UP -> {
                 updateThumbOnMotionEvent(event)
+                if (isTap(event)) performClick()
             }
         }
 
@@ -142,6 +149,12 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         val alpha = 255 - ((relativeThumbY / gradientRect.height()) * 255).roundToInt()
         val color = (color shl 8 ushr 8) or (alpha shl 24)
         thumbDrawable.indicatorColor = color
+    }
+
+    private fun isTap(event: MotionEvent): Boolean {
+        val eventDuration = event.eventTime - event.downTime
+        val eventTravelDistance = abs(event.x - motionEventDownX)
+        return eventDuration < ViewConfiguration.getTapTimeout() && eventTravelDistance < viewConfig.scaledTouchSlop
     }
 
     override fun performClick() = super.performClick()
