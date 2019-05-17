@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import com.antonpopoff.colorwheel.utils.setAlpha
 import com.antonpopoff.standcharacteristicsgenerator.R
 import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 
@@ -28,18 +29,50 @@ class EditDiagramColorDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        selectedColorView.background = selectedColorViewBackground
-        cancelButton.setOnClickListener { dismiss() }
         resetButton.setOnClickListener { colorWheel.setColor(initialColor) }
         applyButton.setOnClickListener { onApplyButtonClick() }
+        cancelButton.setOnClickListener { dismiss() }
+        setupSelectedColorView()
         setupColorWheel()
+        setupAlphaSeekBar()
+    }
+
+    private fun setupSelectedColorView() {
+        selectedColorViewBackground.setColor(initialColor)
+        selectedColorView.background = selectedColorViewBackground
     }
 
     private fun setupColorWheel() {
-        colorWheel.apply {
-            colorChangeListener = { selectedColorViewBackground.setColor(it) }
-            setColor(initialColor)
+        colorWheel.also {
+            it.setColor(setAlpha(initialColor, 255))
+            it.colorChangeListener = this::onColorChanged
         }
+    }
+
+    private fun onColorChanged(rgb: Int) {
+        alphaSeekBar.color = rgb
+        updateSelectedColorViewBackground()
+    }
+
+    private fun setupAlphaSeekBar() {
+        alphaSeekBar.apply {
+            color = initialColor
+            setAlpha(Color.alpha(initialColor))
+            alphaChangeListener = { updateSelectedColorViewBackground() }
+        }
+    }
+
+    private fun updateSelectedColorViewBackground() {
+        val argb = setAlpha(colorWheel.currentColorArgb, alphaSeekBar.colorAlpha)
+        selectedColorViewBackground.setColor(argb)
+    }
+
+    private fun onApplyButtonClick() {
+        val argb = colorWheel.currentColorArgb
+        val alpha = alphaSeekBar.colorAlpha
+
+        (parentFragment as? Listener)?.onColorApplied(setAlpha(argb, alpha))
+        dismiss()
     }
 
     override fun onStart() {
@@ -52,11 +85,6 @@ class EditDiagramColorDialog : DialogFragment() {
             setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
             setGravity(Gravity.BOTTOM)
         }
-    }
-
-    private fun onApplyButtonClick() {
-        (parentFragment as? Listener)?.onColorApplied(colorWheel.currentColorArgb)
-        dismiss()
     }
 
     interface Listener {

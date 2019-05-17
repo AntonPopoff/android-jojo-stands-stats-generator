@@ -2,7 +2,6 @@ package com.antonpopoff.standcharacteristicsgenerator.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -20,7 +19,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        standCharacteristicsDiagram.rating = rating
+        standCharacteristicsDiagram.rating = rating
         setupToolbarMenu()
     }
 
@@ -44,9 +43,9 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     private fun showEditColorDiagramFragment() {
-//        EditDiagramColorDialog
-//                .create(standCharacteristicsDiagram.polylineColor)
-//                .show(childFragmentManager, null)
+        EditDiagramColorDialog
+                .create(standCharacteristicsDiagram.polylineColor)
+                .show(childFragmentManager, null)
     }
 
     private fun pushEditFragment() {
@@ -70,13 +69,13 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     private fun checkResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == EditDiagramFragment.STAND_CHARACTERISTICS_CODE && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<StandRating>(EditDiagramFragment.STAND_RATINGS)?.let {
-//                standCharacteristicsDiagram.rating = it
+                standCharacteristicsDiagram.rating = it
                 rating = it
             }
         }
     }
 
     override fun onColorApplied(argb: Int) {
-//        standCharacteristicsDiagram.polylineColor = argb
+        standCharacteristicsDiagram.polylineColor = argb
     }
 }

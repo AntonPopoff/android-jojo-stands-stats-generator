@@ -10,6 +10,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import com.antonpopoff.colorwheel.utils.clearAlpha
+import com.antonpopoff.colorwheel.utils.setAlpha
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -38,10 +40,14 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         set(value) {
             gradientColors[0] = clearAlpha(value)
             gradientColors[1] = setAlpha(value, MAX_ALPHA)
+            gradient.colors = gradientColors
+            updateColorIndicator()
             invalidate()
         }
 
     val argb get() = setAlpha(color, colorAlpha)
+
+    var alphaChangeListener: ((Int) -> Unit)? = null
 
     init {
         parseAttributes(context, attrs, R.style.AlphaSeekBarDefaultStyle)
@@ -80,6 +86,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
             else -> alpha
         }
 
+        fireListener()
         invalidate()
     }
 
@@ -172,6 +179,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
     private fun updateThumbOnMotionEvent(event: MotionEvent) {
         updateThumbY(event)
         colorAlpha = calculateAlphaByThumbPosition()
+        fireListener()
         updateColorIndicator()
         invalidate()
     }
@@ -205,7 +213,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         thumbY = (gradientRect.top + (1 - (alpha.toFloat() / MAX_ALPHA)) * gradientRect.height()).roundToInt()
     }
 
-    private fun clearAlpha(argb: Int): Int = (argb shl 8 ushr 8)
-
-    private fun setAlpha(argb: Int, alpha: Int) = clearAlpha(argb) or (alpha shl 24)
+    private fun fireListener() {
+        alphaChangeListener?.invoke(colorAlpha)
+    }
 }
