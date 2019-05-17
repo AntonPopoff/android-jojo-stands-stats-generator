@@ -12,7 +12,7 @@ data class StandRating(
         val range: Rating
 ) : Parcelable {
 
-    val ratings = listOf(potential, power, speed, precision, durability, range)
+    val ratings = listOf(potential, power, speed, range, durability, precision)
 
     constructor(parcel: Parcel) : this(
             parcel.readSerializable() as Rating,
