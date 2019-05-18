@@ -33,5 +33,9 @@ class ThumbDrawable {
         thumbDrawable.setLayerInset(1, colorHInset, colorVInset, colorHInset, colorVInset)
     }
 
+    fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        thumbDrawable.setBounds(left, top, right, bottom)
+    }
+
     fun draw(canvas: Canvas) = thumbDrawable.draw(canvas)
 }
