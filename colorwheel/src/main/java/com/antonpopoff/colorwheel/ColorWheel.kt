@@ -2,6 +2,7 @@ package com.antonpopoff.colorwheel
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -15,8 +16,9 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private var viewConfig = ViewConfiguration.get(context)
 
     private var sizeChangeHandled = false
-    private var sweepGradient: SweepGradient? = null
-    private var radialGradient: RadialGradient? = null
+
+    private val sweepGradient = createOvalGradient(hueColors, GradientDrawable.SWEEP_GRADIENT)
+    private val radialGradient = createOvalGradient(saturationColors, GradientDrawable.RADIAL_GRADIENT)
 
     private val wheelCenter = PointF()
     private var wheelRadius = 0f
@@ -28,11 +30,6 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private val currentHSVColor = HSVColor()
 
     private var motionEventDownX = 0f
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        isDither = true
-    }
 
     var colorChangeListener: ((Int) -> Unit)? = null
 
@@ -62,6 +59,13 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
+    private fun createOvalGradient(gradientColors: IntArray, type: Int) = GradientDrawable().apply {
+        setDither(true)
+        gradientType = type
+        colors = gradientColors
+        shape = GradientDrawable.OVAL
+    }
+
     fun setColor(argb: Int) {
         currentColorArgb = argb
         adjustThumbPosition()
@@ -79,10 +83,24 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         ensureThumbInitialized()
         updateWheelOnSizeChange()
         calculateThumbRect()
-
-        drawWheelCircleWithShader(canvas, sweepGradient)
-        drawWheelCircleWithShader(canvas, radialGradient)
+        calculateGradientBounds()
+        sweepGradient.draw(canvas)
+        radialGradient.draw(canvas)
         drawThumb(canvas)
+    }
+
+    private fun calculateGradientBounds() {
+        val left = (wheelCenter.x - wheelRadius).toInt()
+        val top = (wheelCenter.y - wheelRadius).toInt()
+        val right = (wheelCenter.x + wheelRadius).toInt()
+        val bottom = (wheelCenter.y + wheelRadius).toInt()
+
+        sweepGradient.setBounds(left, top, right, bottom)
+
+        radialGradient.apply {
+            setBounds(left, top, right, bottom)
+            gradientRadius = wheelRadius
+        }
     }
 
     private fun calculateWheelProperties() {
@@ -105,15 +123,9 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     private fun updateWheelOnSizeChange() {
         if (!sizeChangeHandled) {
-            updateShader()
             adjustThumbPosition()
             sizeChangeHandled = true
         }
-    }
-
-    private fun updateShader() {
-        sweepGradient = SweepGradient(wheelCenter.x, wheelCenter.y, hueColors, null)
-        radialGradient = RadialGradient(wheelCenter.x, wheelCenter.y, wheelRadius, saturationColors, null, Shader.TileMode.CLAMP)
     }
 
     private fun adjustThumbPosition() {
@@ -151,11 +163,6 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
                 (thumbPoint.x + thumbRadius).toInt(),
                 (thumbPoint.y + thumbRadius).toInt()
         )
-    }
-
-    private fun drawWheelCircleWithShader(canvas: Canvas, shader: Shader?) {
-        paint.shader = shader
-        canvas.drawCircle(wheelCenter.x, wheelCenter.y, wheelRadius, paint)
     }
 
     private fun drawThumb(canvas: Canvas) {
