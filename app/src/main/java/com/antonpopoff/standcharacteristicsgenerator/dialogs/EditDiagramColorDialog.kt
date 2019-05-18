@@ -50,13 +50,13 @@ class EditDiagramColorDialog : DialogFragment() {
     }
 
     private fun onColorChanged(rgb: Int) {
-        alphaSeekBar.color = rgb
+        alphaSeekBar.setOriginColor(rgb)
         updateSelectedColorViewBackground()
     }
 
     private fun setupAlphaSeekBar() {
         alphaSeekBar.apply {
-            color = initialColor
+            setOriginColor(initialColor)
             setAlpha(Color.alpha(initialColor))
             alphaChangeListener = { updateSelectedColorViewBackground() }
         }
