@@ -146,14 +146,14 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 motionEventDownX = event.x
-                updateThumbOnMotionEvent(event)
+                calculateAlphaOnMotionEvent(event)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                updateThumbOnMotionEvent(event)
+                calculateAlphaOnMotionEvent(event)
             }
             MotionEvent.ACTION_UP -> {
-                updateThumbOnMotionEvent(event)
+                calculateAlphaOnMotionEvent(event)
                 if (isTap(event)) performClick()
             }
         }
@@ -161,7 +161,7 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         return super.onTouchEvent(event)
     }
 
-    private fun updateThumbOnMotionEvent(event: MotionEvent) {
+    private fun calculateAlphaOnMotionEvent(event: MotionEvent) {
         colorAlpha = calculateAlphaByMotionEventY(ensureMotionEventYInBounds(event))
         fireListener()
         invalidate()
