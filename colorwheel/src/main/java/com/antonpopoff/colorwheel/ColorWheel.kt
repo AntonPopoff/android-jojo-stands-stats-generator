@@ -21,8 +21,7 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     private var wheelRadius = 0f
 
     private val thumbDrawable = ThumbDrawable()
-
-    private val hsvColor = HSVColor().apply { set(0f, 0f, 1f) }
+    private val hsvColor = HsvColor(value = 1f)
 
     private var motionEventDownX = 0f
 
@@ -54,7 +53,6 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
     }
 
     private fun createOvalGradient(gradientColors: IntArray, type: Int) = GradientDrawable().apply {
-        setDither(true)
         gradientType = type
         colors = gradientColors
         shape = GradientDrawable.OVAL
