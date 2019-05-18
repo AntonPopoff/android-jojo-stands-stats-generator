@@ -53,32 +53,22 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
         context.obtainStyledAttributes(attrs, R.styleable.AlphaSeekBar, 0, defStyle).apply {
             thumbRadius = getDimensionPixelOffset(R.styleable.AlphaSeekBar_asb_thumbRadius, 0)
             barWidth = getDimensionPixelOffset(R.styleable.AlphaSeekBar_asb_barWidth, 0)
-            colorAlpha = readAlpha(this)
+            setAlpha(getInteger(R.styleable.AlphaSeekBar_asb_alpha, MAX_ALPHA))
             setOriginColor(getColor(R.styleable.AlphaSeekBar_asb_color, Color.BLACK))
             recycle()
         }
     }
 
-    private fun readAlpha(typedArray: TypedArray): Int {
-        val alphaFraction = typedArray.getFloat(R.styleable.AlphaSeekBar_asb_alpha, 1f)
-        val checkedAlpha = when {
-            alphaFraction < 0 -> 0f
-            alphaFraction > 1 -> 1f
-            else -> alphaFraction
-        }
-
-        return (checkedAlpha * 255).roundToInt()
-    }
-
     fun setAlpha(alpha: Int) {
-        colorAlpha = when {
-            alpha < 0 -> 0
-            alpha > MAX_ALPHA -> MAX_ALPHA
-            else -> alpha
-        }
-
+        colorAlpha = ensureAlphaWithinRange(alpha)
         fireListener()
         invalidate()
+    }
+
+    private fun ensureAlphaWithinRange(alpha: Int) = when {
+        alpha < 0 -> 0
+        alpha > MAX_ALPHA -> MAX_ALPHA
+        else -> alpha
     }
 
     fun setOriginColor(argb: Int) {
