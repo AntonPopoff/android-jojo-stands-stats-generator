@@ -29,12 +29,17 @@ class EditDiagramColorDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        resetButton.setOnClickListener { colorWheel.setColor(initialColor) }
+        resetButton.setOnClickListener { resetColors() }
         applyButton.setOnClickListener { onApplyButtonClick() }
         cancelButton.setOnClickListener { dismiss() }
         setupSelectedColorView()
         setupColorWheel()
         setupAlphaSeekBar()
+    }
+
+    private fun resetColors() {
+        colorWheel.setColor(initialColor)
+        alphaSeekBar.setAlpha(Color.alpha(initialColor))
     }
 
     private fun setupSelectedColorView() {
