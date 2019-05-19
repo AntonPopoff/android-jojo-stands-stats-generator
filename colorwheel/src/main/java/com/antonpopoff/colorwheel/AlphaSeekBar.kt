@@ -50,8 +50,8 @@ class AlphaSeekBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : 
 
     private fun parseAttributes(context: Context, attrs: AttributeSet?, defStyle: Int) {
         context.obtainStyledAttributes(attrs, R.styleable.AlphaSeekBar, 0, defStyle).apply {
-            thumbRadius = getDimensionPixelOffset(R.styleable.AlphaSeekBar_asb_thumbRadius, 0)
-            barWidth = getDimensionPixelOffset(R.styleable.AlphaSeekBar_asb_barWidth, 0)
+            thumbRadius = getDimensionPixelSize(R.styleable.AlphaSeekBar_asb_thumbRadius, 0)
+            barWidth = getDimensionPixelSize(R.styleable.AlphaSeekBar_asb_barWidth, 0)
             setAlpha(getInteger(R.styleable.AlphaSeekBar_asb_alpha, MAX_ALPHA))
             setOriginColor(getColor(R.styleable.AlphaSeekBar_asb_color, Color.BLACK))
             recycle()
