@@ -1,10 +1,15 @@
 package com.antonpopoff.standcharacteristicsgenerator.ui
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
@@ -14,6 +19,8 @@ import kotlinx.android.synthetic.main.fragment_diagram.*
 class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     private var rating = StandRating.UNKNOWN
+
+    private var polylineColorAnimator: ValueAnimator? = null
 
     override val layoutId = R.layout.fragment_diagram
 
@@ -76,6 +83,20 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     override fun onColorApplied(argb: Int) {
-        standCharacteristicsDiagram.polylineColor = argb
+        Handler().postDelayed({
+            animateCharacteristicPolylineColor(argb)
+        }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
+    }
+
+    private fun animateCharacteristicPolylineColor(argb: Int) {
+        polylineColorAnimator?.end()
+        polylineColorAnimator = createColorAnimator(argb).apply { start() }
+    }
+
+    private fun createColorAnimator(argb: Int) = ObjectAnimator.ofInt(standCharacteristicsDiagram.polylineColor, argb).apply {
+        addUpdateListener { standCharacteristicsDiagram?.polylineColor = it.animatedValue as Int }
+        setEvaluator(ArgbEvaluator())
+        interpolator = DecelerateInterpolator()
+        duration = 750
     }
 }
