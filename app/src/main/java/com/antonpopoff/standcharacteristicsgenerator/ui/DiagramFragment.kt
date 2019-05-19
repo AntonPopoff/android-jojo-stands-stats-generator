@@ -10,6 +10,7 @@ import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
@@ -96,7 +97,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     private fun createColorAnimator(argb: Int) = ObjectAnimator.ofInt(standCharacteristicsDiagram.polylineColor, argb).apply {
         addUpdateListener { standCharacteristicsDiagram?.polylineColor = it.animatedValue as Int }
         setEvaluator(ArgbEvaluator())
-        interpolator = DecelerateInterpolator()
+        interpolator = LinearInterpolator()
         duration = 750
     }
 }
