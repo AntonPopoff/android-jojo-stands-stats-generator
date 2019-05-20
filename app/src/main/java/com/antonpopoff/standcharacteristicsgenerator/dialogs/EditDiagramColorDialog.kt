@@ -71,10 +71,10 @@ class EditDiagramColorDialog : DialogFragment() {
     }
 
     private fun onApplyButtonClick() {
-        val argb = colorWheel.argb
-        val alpha = alphaSeekBar.colorAlpha
+        val color = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
 
-        (parentFragment as? Listener)?.onColorApplied(setAlpha(argb, alpha))
+        (parentFragment as? Listener)?.onColorApplied(color)
+        
         dismiss()
     }
 
