@@ -7,7 +7,7 @@
 
     <shape >
         <solid android:color="@color/white" />
-        <corners android:radius="16dp" />
+        <corners android:radius="@dimen/dialog_corners_radius" />
     </shape>
 
 </inset>

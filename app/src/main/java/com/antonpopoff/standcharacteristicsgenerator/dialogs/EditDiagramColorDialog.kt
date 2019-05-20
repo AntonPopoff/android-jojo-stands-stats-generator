@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.antonpopoff.colorwheel.utils.setAlpha
 import com.antonpopoff.standcharacteristicsgenerator.R
@@ -15,12 +14,9 @@ class EditDiagramColorDialog : DialogFragment() {
 
     private val initialColor by lazy { arguments?.getInt(KEY_INITIAL_COLOR, Color.WHITE) ?: Color.WHITE }
 
-    private lateinit var selectedColorViewBackground: GradientDrawable
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default)
-        selectedColorViewBackground = ContextCompat.getDrawable(context, R.drawable.rounded_corners_rectangle)?.mutate() as GradientDrawable
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,8 +39,10 @@ class EditDiagramColorDialog : DialogFragment() {
     }
 
     private fun setupSelectedColorView() {
-        selectedColorViewBackground.setColor(initialColor)
-        selectedColorView.background = selectedColorViewBackground
+        selectedColorView.background = GradientDrawable().apply {
+            cornerRadius = resources.getDimension(R.dimen.dialog_corners_radius)
+            setColor(initialColor)
+        }
     }
 
     private fun setupColorWheel() {
@@ -69,7 +67,7 @@ class EditDiagramColorDialog : DialogFragment() {
 
     private fun updateSelectedColorViewBackground() {
         val argb = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
-        selectedColorViewBackground.setColor(argb)
+        (selectedColorView.background as GradientDrawable).setColor(argb)
     }
 
     private fun onApplyButtonClick() {
