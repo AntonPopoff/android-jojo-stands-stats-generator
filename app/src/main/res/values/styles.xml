@@ -64,4 +64,9 @@
         <item name="android:background">#AFAFAF</item>
     </style>
 
+    <style name="EditDiagramColorDialogButtonBar" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
 </resources>

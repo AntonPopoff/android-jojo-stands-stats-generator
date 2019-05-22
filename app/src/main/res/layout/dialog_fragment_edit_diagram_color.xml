@@ -7,38 +7,34 @@
 
     <Button
         android:id="@+id/applyButton"
-        style="?android:buttonBarButtonStyle"
+        style="@style/EditDiagramColorDialogButtonBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginBottom="4dp"
-        android:minHeight="0dp"
         android:text="@string/apply"
-        android:textColor="#5f9ee4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/resetButton"
-        style="?android:buttonBarButtonStyle"
+        style="@style/EditDiagramColorDialogButtonBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="0dp"
         android:text="@string/reset"
-        android:textColor="#5f9ee4"
         app:layout_constraintBottom_toBottomOf="@id/applyButton"
         app:layout_constraintEnd_toStartOf="@id/applyButton"
         app:layout_constraintTop_toTopOf="@id/applyButton" />
 
     <Button
         android:id="@+id/cancelButton"
-        style="?android:buttonBarButtonStyle"
+        style="@style/EditDiagramColorDialogButtonBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:minHeight="0dp"
+        android:layout_marginRight="8dp"
         android:text="@string/cancel"
-        android:textColor="#5f9ee4"
         app:layout_constraintBottom_toBottomOf="@id/applyButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/applyButton" />
@@ -68,6 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="@id/colorWheel"
