@@ -10,4 +10,7 @@
     <string name="range">Range</string>
     <string name="durability">Durability</string>
     <string name="precision">Precision</string>
+    <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
+    <string name="cancel">Cancel</string>
 </resources>
