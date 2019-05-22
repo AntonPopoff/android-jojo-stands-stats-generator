@@ -32,7 +32,7 @@ class StandCharacteristicsDiagram(context: Context, attrs: AttributeSet?, defSty
             invalidate()
         }
 
-    var polylineColor = Color.MAGENTA
+    var polylineColor = 0
         set(value) {
             field = value
             invalidate()

@@ -10,6 +10,7 @@ import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.LinearInterpolator
+import androidx.core.content.res.ResourcesCompat
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
@@ -19,15 +20,27 @@ import kotlinx.android.synthetic.main.fragment_diagram.*
 class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     private var rating = StandRating.UNKNOWN
-
     private var polylineColorAnimator: ValueAnimator? = null
+    private var polylineColor = 0
 
     override val layoutId = R.layout.fragment_diagram
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        polylineColor = ResourcesCompat.getColor(resources, R.color.magenta, context?.theme)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        standCharacteristicsDiagram.rating = rating
+        setupStandDiagram()
         setupToolbarMenu()
+    }
+
+    private fun setupStandDiagram() {
+        standCharacteristicsDiagram.also {
+            it.rating = rating
+            it.polylineColor = polylineColor
+        }
     }
 
     private fun setupToolbarMenu() {
@@ -84,6 +97,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     override fun onColorApplied(argb: Int) {
         Handler().postDelayed({
+            polylineColor = argb
             animateCharacteristicPolylineColor(argb)
         }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
     }
