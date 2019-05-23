@@ -13,8 +13,6 @@ import kotlin.math.sin
 
 class StandCharacteristicsDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-    private val ratingPolygonAlpha = 64
-
     private val rect = RectF()
     private val rectF = Rect()
 
@@ -34,7 +32,7 @@ class StandCharacteristicsDiagram(context: Context, attrs: AttributeSet?, defSty
             invalidate()
         }
 
-    var polylineColor = Color.MAGENTA
+    var polylineColor = 0
         set(value) {
             field = value
             invalidate()
@@ -285,7 +283,6 @@ class StandCharacteristicsDiagram(context: Context, attrs: AttributeSet?, defSty
         paint.apply {
             style = Paint.Style.FILL
             color = polylineColor
-            alpha = ratingPolygonAlpha
         }
 
         ratingPolygonPath.rewind()

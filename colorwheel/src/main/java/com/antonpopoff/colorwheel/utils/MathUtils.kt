@@ -1,4 +1,4 @@
-package com.antonpopoff.colorwheel
+package com.antonpopoff.colorwheel.utils
 
 const val PI = Math.PI.toFloat()
 

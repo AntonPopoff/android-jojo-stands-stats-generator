@@ -2,57 +2,48 @@ package com.antonpopoff.colorwheel
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.LayerDrawable
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import com.antonpopoff.colorwheel.utils.*
 import kotlin.math.*
 
 class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-    private var viewConfig = ViewConfiguration.get(context)
+    private val viewConfig = ViewConfiguration.get(context)
 
-    private var sizeChangeHandled = false
-    private var sweepGradient: SweepGradient? = null
-    private var radialGradient: RadialGradient? = null
+    private val sweepGradient = createOvalGradient(hueColors, GradientDrawable.SWEEP_GRADIENT)
+    private val radialGradient = createOvalGradient(saturationColors, GradientDrawable.RADIAL_GRADIENT)
 
     private val wheelCenter = PointF()
     private var wheelRadius = 0f
 
-    private val thumbPoint = PointF()
-    private val thumbRect = Rect()
-    private val thumbDrawable = createThumbDrawable()
-
-    private val hsvColor = HSVColor()
-    private var currentColor = 0
+    private val thumbDrawable = ThumbDrawable()
+    private val hsvColor = HsvColor(value = 1f)
 
     private var motionEventDownX = 0f
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        isDither = true
-    }
-
     var colorChangeListener: ((Int) -> Unit)? = null
+
+    val argb get() = hsvColor.toArgb()
 
     var thumbRadius = 0f
         set(value) {
+            thumbDrawable.applyInsets(value)
             field = value
-            setupThumbDrawableInsets()
             invalidate()
         }
+
+    init {
+        parseAttributes(context, attrs)
+        thumbDrawable.applyInsets(thumbRadius)
+    }
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.style.ColorWheelDefaultStyle)
 
     constructor(context: Context) : this(context, null)
-
-    init {
-        parseAttributes(context, attrs)
-        setupThumbDrawableInsets()
-    }
 
     private fun parseAttributes(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.ColorWheel, 0, R.style.ColorWheelDefaultStyle).apply {
@@ -61,40 +52,39 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
-    private fun createThumbDrawable(): LayerDrawable {
-        val thumbDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.WHITE }
-        val shadowDrawable = ShapeDrawable(OvalShape()).apply { paint.color = Color.GRAY }
-        val colorDrawable = ShapeDrawable(OvalShape())
-        return LayerDrawable(arrayOf(shadowDrawable, thumbDrawable, colorDrawable))
+    private fun createOvalGradient(gradientColors: IntArray, type: Int) = GradientDrawable().apply {
+        gradientType = type
+        colors = gradientColors
+        shape = GradientDrawable.OVAL
     }
 
-    private fun setupThumbDrawableInsets() {
-        val shadowHInset = (thumbRadius * 0.1f).toInt()
-        val shadowVInset = (thumbRadius * 0.1f).toInt()
-
-        val colorHInset = (thumbRadius * 0.25f).toInt()
-        val colorVInset = (thumbRadius * 0.25f).toInt()
-
-        thumbDrawable.apply {
-            setLayerInset(0, shadowHInset, shadowVInset, -shadowHInset, -shadowVInset)
-            setLayerInset(2, colorHInset, colorVInset, colorHInset, colorVInset)
-        }
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        sizeChangeHandled = false
+    fun setColor(argb: Int) {
+        hsvColor.set(argb)
+        fireColorListener()
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         calculateWheelProperties()
-        ensureThumbInitialized()
-        updateWheelOnSizeChange()
         calculateThumbRect()
-
-        drawWheelCircleWithShader(canvas, sweepGradient)
-        drawWheelCircleWithShader(canvas, radialGradient)
+        calculateGradientBounds()
+        sweepGradient.draw(canvas)
+        radialGradient.draw(canvas)
         drawThumb(canvas)
+    }
+
+    private fun calculateGradientBounds() {
+        val left = (wheelCenter.x - wheelRadius).toInt()
+        val top = (wheelCenter.y - wheelRadius).toInt()
+        val right = (wheelCenter.x + wheelRadius).toInt()
+        val bottom = (wheelCenter.y + wheelRadius).toInt()
+
+        sweepGradient.setBounds(left, top, right, bottom)
+
+        radialGradient.apply {
+            setBounds(left, top, right, bottom)
+            gradientRadius = wheelRadius
+        }
     }
 
     private fun calculateWheelProperties() {
@@ -109,93 +99,44 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
-    private fun ensureThumbInitialized() {
-        if (thumbPoint.x == 0f && thumbPoint.y == 0f) {
-            thumbPoint.set(wheelCenter)
-        }
-    }
-
-    private fun updateWheelOnSizeChange() {
-        if (!sizeChangeHandled) {
-            updateShader()
-            adjustThumbPosition()
-            sizeChangeHandled = true
-        }
-    }
-
-    private fun updateShader() {
-        sweepGradient = SweepGradient(wheelCenter.x, wheelCenter.y, hueColors, null)
-        radialGradient = RadialGradient(wheelCenter.x, wheelCenter.y, wheelRadius, saturationColors, null, Shader.TileMode.CLAMP)
-    }
-
-    private fun adjustThumbPosition() {
-        hsvColor.set(currentColor)
-
+    private fun calculateThumbRect() {
         val r = hsvColor.saturation * wheelRadius
         val hueRadians = toRadians(hsvColor.hue)
 
-        thumbPoint.apply {
-            x = cos(hueRadians) * r + wheelCenter.x
-            y = sin(hueRadians) * r + wheelCenter.y
-        }
-    }
+        val thumbX = cos(hueRadians) * r + wheelCenter.x
+        val thumbY = sin(hueRadians) * r + wheelCenter.y
 
-    private fun calculateCurrentARGBColor() {
-        val normalizedX = thumbPoint.x - wheelCenter.x
-        val normalizedY = thumbPoint.y - wheelCenter.y
-        val hue = (toDegrees(atan2(normalizedY, normalizedX)) + 360) % 360
-        val legX = thumbPoint.x - wheelCenter.x
-        val legY = thumbPoint.y - wheelCenter.y
-        val saturation = sqrt(legX * legX + legY * legY) / wheelRadius
+        val left = (thumbX - thumbRadius).toInt()
+        val top = (thumbY - thumbRadius).toInt()
+        val right = (thumbX + thumbRadius).toInt()
+        val bottom = (thumbY + thumbRadius).toInt()
 
-        currentColor = hsvColor.run {
-            set(hue, saturation, 1f)
-            toARGB()
-        }
-
-        colorChangeListener?.invoke(currentColor)
-    }
-
-    private fun calculateThumbRect() {
-        thumbRect.set(
-                (thumbPoint.x - thumbRadius).toInt(),
-                (thumbPoint.y - thumbRadius).toInt(),
-                (thumbPoint.x + thumbRadius).toInt(),
-                (thumbPoint.y + thumbRadius).toInt()
-        )
-    }
-
-    private fun drawWheelCircleWithShader(canvas: Canvas, shader: Shader?) {
-        paint.shader = shader
-        canvas.drawCircle(wheelCenter.x, wheelCenter.y, wheelRadius, paint)
+        thumbDrawable.setBounds(left, top, right, bottom)
     }
 
     private fun drawThumb(canvas: Canvas) {
-        setColorDrawableColor(currentColor)
-
         thumbDrawable.apply {
-            bounds = thumbRect
+            indicatorColor = hsvColor.toArgb()
             draw(canvas)
         }
     }
 
-    private fun setColorDrawableColor(color: Int) {
-        (thumbDrawable.getDrawable(2) as ShapeDrawable).paint.color = color
+    private fun fireColorListener() {
+        colorChangeListener?.invoke(hsvColor.toArgb())
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 motionEventDownX = event.x
-                setThumbPositionOnMotionEvent(event)
-                calculateCurrentARGBColor()
+                updateColorOnMotionEvent(event)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                setThumbPositionOnMotionEvent(event)
-                calculateCurrentARGBColor()
+                updateColorOnMotionEvent(event)
             }
             MotionEvent.ACTION_UP -> {
+                updateColorOnMotionEvent(event)
                 if (isTap(event)) performClick()
             }
         }
@@ -205,31 +146,32 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     override fun performClick() = super.performClick()
 
-    private fun setThumbPositionOnMotionEvent(event: MotionEvent) {
-        if (isPointWithinCircle(event.x, event.y, wheelCenter.x, wheelCenter.y, wheelRadius)) {
-            thumbPoint.set(event)
-        } else {
-            setEdgePosition(event)
-        }
+    private fun updateColorOnMotionEvent(event: MotionEvent) {
+        val legX = event.x - wheelCenter.x
+        val legY = event.y - wheelCenter.y
+        val r = calculateRadius(legX, legY)
+        val angle = atan2(legY, legX)
+        val x = cos(angle) * r + wheelCenter.x
+        val y = sin(angle) * r + wheelCenter.y
 
+        calculateColor(x, y, wheelCenter.x, wheelCenter.y, wheelRadius)
+        fireColorListener()
         invalidate()
     }
 
-    private fun setEdgePosition(event: MotionEvent) {
-        val normalizedX = event.x - wheelCenter.x
-        val normalizedY = event.y - wheelCenter.y
-        val angle = atan2(normalizedY, normalizedX)
-
-        thumbPoint.apply {
-            x = cos(angle) * wheelRadius + wheelCenter.x
-            y = sin(angle) * wheelRadius + wheelCenter.y
-        }
+    private fun calculateRadius(legX: Float, legY: Float): Float {
+        val radius = sqrt(legX * legX + legY * legY)
+        return if (radius > wheelRadius) wheelRadius else radius
     }
 
-    private fun isPointWithinCircle(x: Float, y: Float, cx: Float, cy: Float, radius: Float): Boolean {
+    private fun calculateColor(x: Float, y: Float, cx: Float, cy: Float, r: Float) {
         val dx = x - cx
         val dy = y - cy
-        return dx * dx + dy * dy <= radius * radius
+
+        val hue = (toDegrees(atan2(dy, dx)) + 360) % 360
+        val saturation = sqrt(dx * dx + dy * dy) / wheelRadius
+
+        hsvColor.set(hue, saturation, 1f)
     }
 
     private fun isTap(event: MotionEvent): Boolean {
