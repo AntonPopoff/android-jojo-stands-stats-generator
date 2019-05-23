@@ -12,8 +12,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.core.content.res.ResourcesCompat
-import com.antonpopoff.standcharacteristicsgenerator.storage.AppDataCache
-import com.antonpopoff.standcharacteristicsgenerator.storage.AppDataPreferencesCache
+import com.antonpopoff.standparametersgenerator.storage.AppDataCache
+import com.antonpopoff.standparametersgenerator.storage.AppDataPreferencesCache
 import com.antonpopoff.standparametersgenerator.R
 import com.antonpopoff.standparametersgenerator.common.BaseViewFragment
 import com.antonpopoff.standparametersgenerator.dialogs.EditDiagramColorDialog
@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_diagram.*
 class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     private lateinit var appDataCache: AppDataCache
-    private var rating = StandParameters.UNKNOWN
     private var polylineColorAnimator: ValueAnimator? = null
 
     override val layoutId = R.layout.fragment_diagram
@@ -43,7 +42,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
         val defColor = ResourcesCompat.getColor(resources, R.color.magenta, context?.theme)
 
         standParametersDiagram.also {
-            it.standParameters = rating
+            it.standParameters = appDataCache.readStandRating(StandParameters.UNKNOWN)
             it.polylineColor = appDataCache.readDiagramColor(defColor)
         }
     }
@@ -74,7 +73,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     private fun pushEditFragment() {
-        val f = EditDiagramFragment.create(rating).also {
+        val f = EditDiagramFragment.create(standParametersDiagram.standParameters).also {
             it.setTargetFragment(this, EditDiagramFragment.STAND_PARAMETERS_CODE)
         }
 
@@ -95,7 +94,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
         if (requestCode == EditDiagramFragment.STAND_PARAMETERS_CODE && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<StandParameters>(EditDiagramFragment.STAND_RATINGS)?.let {
                 standParametersDiagram.standParameters = it
-                rating = it
+                appDataCache.saveStandRating(it)
             }
         }
     }

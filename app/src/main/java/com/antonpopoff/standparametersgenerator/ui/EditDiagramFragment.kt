@@ -36,12 +36,12 @@ class EditDiagramFragment : BaseViewFragment() {
 
     private fun preFillStandParameters() {
         arguments?.getParcelable<StandParameters>(KEY_STAND_RATING)?.apply {
-            potentialRatingBar.setRating(potential.rating, false)
-            powerRatingBar.setRating(power.rating, false)
-            speedRatingBar.setRating(speed.rating, false)
-            rangeRatingBar.setRating(range.rating, false)
-            durabilityRatingBar.setRating(durability.rating, false)
-            precisionRatingBar.setRating(precision.rating, false)
+            potentialRatingBar.setRating(potential, false)
+            powerRatingBar.setRating(power, false)
+            speedRatingBar.setRating(speed, false)
+            rangeRatingBar.setRating(range, false)
+            durabilityRatingBar.setRating(durability, false)
+            precisionRatingBar.setRating(precision, false)
         }
     }
 
