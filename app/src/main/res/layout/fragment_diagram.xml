@@ -15,8 +15,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Stand" />
 
-    <com.antonpopoff.standcharacteristicsview.diagram.StandCharacteristicsDiagram
-        android:id="@+id/standCharacteristicsDiagram"
+    <com.antonpopoff.standparametersview.diagram.StandParametersDiagram
+        android:id="@+id/standParametersDiagram"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="32dp"

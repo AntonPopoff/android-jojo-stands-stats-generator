@@ -27,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/potential" />
 
-            <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramCharacteristicRatingBar"
+            <com.antonpopoff.standparametersgenerator.views.StandParameterRatingBar
+                style="@style/EditDiagramParametersRatingBar"
                 android:id="@+id/potentialRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,8 +46,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/power" />
 
-            <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramCharacteristicRatingBar"
+            <com.antonpopoff.standparametersgenerator.views.StandParameterRatingBar
+                style="@style/EditDiagramParametersRatingBar"
                 android:id="@+id/powerRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/speed" />
 
-            <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramCharacteristicRatingBar"
+            <com.antonpopoff.standparametersgenerator.views.StandParameterRatingBar
+                style="@style/EditDiagramParametersRatingBar"
                 android:id="@+id/speedRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,8 +84,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/range" />
 
-            <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramCharacteristicRatingBar"
+            <com.antonpopoff.standparametersgenerator.views.StandParameterRatingBar
+                style="@style/EditDiagramParametersRatingBar"
                 android:id="@+id/rangeRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,8 +103,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/durability" />
 
-            <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramCharacteristicRatingBar"
+            <com.antonpopoff.standparametersgenerator.views.StandParameterRatingBar
+                style="@style/EditDiagramParametersRatingBar"
                 android:id="@+id/durabilityRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,8 +122,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/precision" />
 
-            <com.antonpopoff.standcharacteristicsgenerator.views.CharacteristicRatingBar
-                style="@style/EditDiagramCharacteristicRatingBar"
+            <com.antonpopoff.standparametersgenerator.views.StandParameterRatingBar
+                style="@style/EditDiagramParametersRatingBar"
                 android:id="@+id/precisionRatingBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
