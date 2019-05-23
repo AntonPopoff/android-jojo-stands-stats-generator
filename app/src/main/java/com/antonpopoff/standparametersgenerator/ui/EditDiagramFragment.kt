@@ -82,9 +82,9 @@ class EditDiagramFragment : BaseViewFragment() {
             potentialRatingBar.rating,
             powerRatingBar.rating,
             speedRatingBar.rating,
-            precisionRatingBar.rating,
+            rangeRatingBar.rating,
             durabilityRatingBar.rating,
-            rangeRatingBar.rating
+            precisionRatingBar.rating
     )
 
     companion object {
