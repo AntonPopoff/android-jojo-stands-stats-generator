@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -14,20 +15,23 @@ import androidx.core.content.res.ResourcesCompat
 import com.antonpopoff.standcharacteristicsgenerator.R
 import com.antonpopoff.standcharacteristicsgenerator.common.BaseViewFragment
 import com.antonpopoff.standcharacteristicsgenerator.dialogs.EditDiagramColorDialog
+import com.antonpopoff.standcharacteristicsgenerator.storage.AppDataCache
+import com.antonpopoff.standcharacteristicsgenerator.storage.AppDataPreferencesCache
 import com.antonpopoff.standcharacteristicsview.diagram.StandRating
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
 class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
+    private lateinit var appDataCache: AppDataCache
+
     private var rating = StandRating.UNKNOWN
     private var polylineColorAnimator: ValueAnimator? = null
-    private var polylineColor = 0
 
     override val layoutId = R.layout.fragment_diagram
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        polylineColor = ResourcesCompat.getColor(resources, R.color.magenta, context?.theme)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        appDataCache = AppDataPreferencesCache(context)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,9 +41,11 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     private fun setupStandDiagram() {
+        val defaultColor = ResourcesCompat.getColor(resources, R.color.magenta, context?.theme)
+
         standCharacteristicsDiagram.also {
             it.rating = rating
-            it.polylineColor = polylineColor
+            it.polylineColor = appDataCache.readDiagramColor(defaultColor)
         }
     }
 
@@ -97,7 +103,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     override fun onColorApplied(argb: Int) {
         Handler().postDelayed({
-            polylineColor = argb
+            appDataCache.saveDiagramColor(argb)
             animateCharacteristicPolylineColor(argb)
         }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
     }
