@@ -1,1 +1,1 @@
-include ':app', ':standstatsview', ':colorwheel'
+include ':app', ':standparametersview', ':colorwheel'
