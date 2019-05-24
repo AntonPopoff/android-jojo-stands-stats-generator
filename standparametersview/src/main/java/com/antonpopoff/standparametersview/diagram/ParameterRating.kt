@@ -14,8 +14,12 @@ enum class ParameterRating(val char: String, val mark: Int) {
 
         val ratings = values().toList()
 
+        val markToRatingMap = ratings.associateBy { it.mark }
+
         val ratingsCount = ratings.size
 
         val letterRatings = listOf(A, B, C, D, E)
+
+        fun valueOf(mark: Int) = markToRatingMap[mark]
     }
 }

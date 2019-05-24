@@ -10,9 +10,9 @@ enum class ParameterName {
 
     companion object {
 
-        private val values = values().toList()
+        val values by lazy { values().toList() }
 
-        val count = values.size
+        val count by lazy { values.size }
 
         fun get(index: Int) = values[index]
     }

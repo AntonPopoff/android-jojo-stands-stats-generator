@@ -265,8 +265,8 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         var angle = 270f - diagramValues.angleBetweenParameters
 
         diagramValues.apply {
-            for (parameter in standParameters.parameters) {
-                val char = parameter.rating.char
+            for (rating in standParameters.ratings) {
+                val char = rating.char
                 val radians = toRadians(angle)
                 val charWidth = textPaint.measureText(char)
                 val charHeight = textPaint.getTextHeight(char, 0, char.length, rectF)
@@ -291,7 +291,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
             var angle = 270 - angleBetweenParameters
 
             for (i in 0 until ParameterName.count) {
-                val ratingRadius = spaceBetweenRatings * standParameters.parameters[i].rating.mark
+                val ratingRadius = spaceBetweenRatings * standParameters.ratings[i].mark
                 val radians = toRadians(angle)
                 val x = ratingRadius * cos(radians) + centerX
                 val y = ratingRadius * sin(radians) + centerY

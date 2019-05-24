@@ -4,27 +4,15 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class StandParameters(
-        potentialRating: ParameterRating,
-        powerRating: ParameterRating,
-        speedRating: ParameterRating,
-        precisionRating: ParameterRating,
-        durabilityRating: ParameterRating,
-        rangeRating: ParameterRating
+        val potential: ParameterRating,
+        val power: ParameterRating,
+        val speed: ParameterRating,
+        val range: ParameterRating,
+        val durability: ParameterRating,
+        val precision: ParameterRating
 ) : Parcelable {
 
-    val potential = StandParameter(ParameterName.POTENTIAL, potentialRating)
-
-    val power = StandParameter(ParameterName.POWER, powerRating)
-
-    val speed = StandParameter(ParameterName.SPEED, speedRating)
-
-    val precision= StandParameter(ParameterName.PRECISION, precisionRating)
-
-    val durability = StandParameter(ParameterName.DURABILITY, durabilityRating)
-
-    val range = StandParameter(ParameterName.RANGE, rangeRating)
-
-    val parameters = listOf(potential, power, speed, range, durability, precision)
+    val ratings = listOf(potential, power, speed, range, durability, precision)
 
     constructor(parcel: Parcel) : this(
             parcel.readSerializable() as ParameterRating,
@@ -34,6 +22,19 @@ class StandParameters(
             parcel.readSerializable() as ParameterRating,
             parcel.readSerializable() as ParameterRating
     )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.apply {
+            writeSerializable(potential)
+            writeSerializable(power)
+            writeSerializable(speed)
+            writeSerializable(precision)
+            writeSerializable(durability)
+            writeSerializable(range)
+        }
+    }
+
+    override fun describeContents() = 0
 
     companion object {
 
@@ -53,18 +54,14 @@ class StandParameters(
 
             override fun newArray(size: Int) = arrayOfNulls<StandParameters>(size)
         }
-    }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.apply {
-            writeSerializable(potential.rating)
-            writeSerializable(power.rating)
-            writeSerializable(speed.rating)
-            writeSerializable(precision.rating)
-            writeSerializable(durability.rating)
-            writeSerializable(range.rating)
-        }
+        fun from(list: List<ParameterRating>) = StandParameters(
+                list.getOrNull(0) ?: ParameterRating.UNKNOWN,
+                list.getOrNull(1) ?: ParameterRating.UNKNOWN,
+                list.getOrNull(2) ?: ParameterRating.UNKNOWN,
+                list.getOrNull(3) ?: ParameterRating.UNKNOWN,
+                list.getOrNull(4) ?: ParameterRating.UNKNOWN,
+                list.getOrNull(5) ?: ParameterRating.UNKNOWN
+        )
     }
-
-    override fun describeContents() = 0
 }
