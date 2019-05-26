@@ -14,9 +14,8 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
 
     private val viewConfig = ViewConfiguration.get(context)
 
-    private var gradientsInitialized = false
-    private val hueGradient = createOvalGradient(GradientDrawable.SWEEP_GRADIENT)
-    private val saturationGradient = createOvalGradient(GradientDrawable.RADIAL_GRADIENT)
+    private val hueGradient = createOvalGradient(GradientDrawable.SWEEP_GRADIENT, calculateHueColors())
+    private val saturationGradient = createOvalGradient(GradientDrawable.RADIAL_GRADIENT, calculateSaturationColors())
 
     private val wheelCenter = PointF()
     private var wheelRadius = 0f
@@ -53,33 +52,16 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
     }
 
-    private fun createOvalGradient(type: Int) = GradientDrawable().apply {
+    private fun createOvalGradient(type: Int, gradientColors: IntArray) = GradientDrawable().apply {
         gradientType = type
         shape = GradientDrawable.OVAL
+        colors = gradientColors
     }
 
     fun setColor(argb: Int) {
         hsvColor.set(argb)
         fireColorListener()
         invalidate()
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        ensureGradientsInitialized()
-        calculateWheelProperties()
-        calculateThumbRect()
-        calculateGradientBounds()
-        hueGradient.draw(canvas)
-        saturationGradient.draw(canvas)
-        drawThumb(canvas)
-    }
-
-    private fun ensureGradientsInitialized() {
-        if (!gradientsInitialized) {
-            hueGradient.colors = calculateHueColors()
-            saturationGradient.colors = intArrayOf(Color.WHITE, Color.TRANSPARENT)
-            gradientsInitialized = true
-        }
     }
 
     private fun calculateHueColors(): IntArray {
@@ -97,6 +79,17 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         }
 
         return hueColors
+    }
+
+    private fun calculateSaturationColors() = intArrayOf(Color.WHITE, Color.TRANSPARENT)
+
+    override fun onDraw(canvas: Canvas) {
+        calculateWheelProperties()
+        calculateThumbRect()
+        calculateGradientBounds()
+        hueGradient.draw(canvas)
+        saturationGradient.draw(canvas)
+        drawThumb(canvas)
     }
 
     private fun calculateGradientBounds() {
