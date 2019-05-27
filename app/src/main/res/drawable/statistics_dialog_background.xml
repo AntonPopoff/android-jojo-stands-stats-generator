@@ -5,7 +5,7 @@
     android:insetBottom="@dimen/statistics_dialog_inset"
     android:insetTop="@dimen/statistics_dialog_inset">
 
-    <shape >
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
         <solid android:color="@color/white" />
         <corners android:radius="@dimen/dialog_corners_radius" />
     </shape>

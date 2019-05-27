@@ -19,7 +19,7 @@
 
     <style name="Base.Theme.AppCompat.Light.Dialog.Default">
         <item name="android:backgroundDimAmount">@dimen/dialog_dim_amount</item>
-        <item name="android:windowBackground">@drawable/statistics_dialog_background</item>
+        <item name="android:windowBackground">@null</item>
         <item name="android:windowAnimationStyle">@style/StatisticsDialogAnimationStyle</item>
     </style>
 

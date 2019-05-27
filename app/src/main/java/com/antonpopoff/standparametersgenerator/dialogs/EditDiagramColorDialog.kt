@@ -4,23 +4,23 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.DialogFragment
+import android.view.Gravity
+import android.view.View
+import android.view.WindowManager
 import com.antonpopoff.colorwheel.utils.setAlpha
 import com.antonpopoff.standparametersgenerator.R
+import com.antonpopoff.standparametersgenerator.common.SwipeableDialog
 import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 
-class EditDiagramColorDialog : DialogFragment() {
+class EditDiagramColorDialog : SwipeableDialog() {
 
     private val initialColor by lazy { arguments?.getInt(KEY_INITIAL_COLOR, Color.WHITE) ?: Color.WHITE }
+
+    override val layoutId = R.layout.dialog_fragment_edit_diagram_color
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dialog_fragment_edit_diagram_color, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,7 +74,7 @@ class EditDiagramColorDialog : DialogFragment() {
         val color = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
 
         (parentFragment as? Listener)?.onColorApplied(color)
-        
+
         dismiss()
     }
 
