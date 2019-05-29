@@ -22,8 +22,11 @@ import kotlinx.android.synthetic.main.fragment_diagram.*
 
 class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
-    private lateinit var appDataCache: AppDataCache
+    private val handler = Handler()
+
     private var polylineColorAnimator: ValueAnimator? = null
+
+    private lateinit var appDataCache: AppDataCache
 
     override val layoutId = R.layout.fragment_diagram
 
@@ -93,14 +96,20 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     private fun checkResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == EditDiagramFragment.STAND_PARAMETERS_CODE && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<StandParameters>(EditDiagramFragment.STAND_RATINGS)?.let {
-                standParametersDiagram.setParameters(it, true)
+                updateStandParameters(it)
                 appDataCache.saveStandRating(it)
             }
         }
     }
 
+    private fun updateStandParameters(parameters: StandParameters) {
+        handler.postDelayed({
+            standParametersDiagram.setParameters(parameters, true)
+        }, resources.getInteger(R.integer.fragments_transaction_duration).toLong())
+    }
+
     override fun onColorApplied(argb: Int) {
-        Handler().postDelayed({
+        handler.postDelayed({
             appDataCache.saveDiagramColor(argb)
             animateParametersPolylineColor(argb)
         }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
