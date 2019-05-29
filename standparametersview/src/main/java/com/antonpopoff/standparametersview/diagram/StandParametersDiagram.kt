@@ -1,18 +1,22 @@
 package com.antonpopoff.standparametersview.diagram
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.LinearInterpolator
 import com.antonpopoff.standparametersview.extensions.getTextHeight
 import com.antonpopoff.standparametersview.utils.PI
 import com.antonpopoff.standparametersview.utils.toRadians
 import com.antonpopoff.standparametersview.utils.xOnCircle
 import com.antonpopoff.standparametersview.utils.yOnCircle
 
-private const val POLYLINE_ANIMATION_DURATION = 1000L
+private const val PARAMETERS_ANIMATION_DURATION = 1000L
+private const val POLYLINE_COLOR_ANIMATION_DURATION = 750L
 
 class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
@@ -29,6 +33,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     private val polylineOffsets = FloatArray(ParameterName.count)
     private val polylineAnimators = createPolylineOffsetAnimators()
+    private val polylineColorAnimator = createPolylineColorAnimator()
 
     private val diagramValues = DiagramValues()
 
@@ -36,10 +41,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         private set
 
     var polylineColor = 0
-        set(value) {
-            field = value
-            invalidate()
-        }
+        private set
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
@@ -47,13 +49,25 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     private fun createPolylineOffsetAnimators() = (0 until ParameterName.count).map { index ->
         ValueAnimator.ofFloat(0f, 0f).apply {
-            addUpdateListener { animator -> onPolylineAnimatorUpdate(animator, index) }
-            duration = POLYLINE_ANIMATION_DURATION
+            addUpdateListener { animator -> onPolylineOffsetAnimatorUpdate(animator, index) }
+            duration = PARAMETERS_ANIMATION_DURATION
         }
     }
 
-    private fun onPolylineAnimatorUpdate(animator: ValueAnimator, index: Int) {
+    private fun onPolylineOffsetAnimatorUpdate(animator: ValueAnimator, index: Int) {
         polylineOffsets[index] = animator.animatedValue as Float
+        postInvalidateOnAnimation()
+    }
+
+    private fun createPolylineColorAnimator() = ObjectAnimator.ofInt(0, 0).also {
+        it.addUpdateListener(this::onPolylineColorAnimatorUpdate)
+        it.setEvaluator(ArgbEvaluator())
+        it.interpolator = LinearInterpolator()
+        it.duration = POLYLINE_COLOR_ANIMATION_DURATION
+    }
+
+    private fun onPolylineColorAnimatorUpdate(animator: ValueAnimator) {
+        polylineColor = animator.animatedValue as Int
         postInvalidateOnAnimation()
     }
 
@@ -82,11 +96,30 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         invalidate()
     }
 
+    fun setPolylineColor(color: Int, animated: Boolean = false) {
+        if (animated) {
+            updatePolylineColorAnimated(color)
+        } else {
+            updatePolylineColor(color)
+        }
+    }
+
+    private fun updatePolylineColorAnimated(color: Int) {
+        polylineColorAnimator.apply {
+            cancel()
+            setIntValues(polylineColor, color)
+            start()
+        }
+    }
+
+    private fun updatePolylineColor(color: Int) {
+        polylineColor = color
+        invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
         calculateBaseDiagramValues()
-
         drawBorderCircles(canvas)
         drawBorderNotches(canvas)
         drawParametersCircle(canvas)
