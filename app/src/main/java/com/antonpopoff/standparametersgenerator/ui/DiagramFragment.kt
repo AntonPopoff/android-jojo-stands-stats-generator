@@ -42,7 +42,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
         val defColor = ResourcesCompat.getColor(resources, R.color.magenta, context?.theme)
 
         standParametersDiagram.also {
-            it.standParameters = appDataCache.readStandRating(StandParameters.UNKNOWN)
+            it.setParameters(appDataCache.readStandRating(StandParameters.UNKNOWN))
             it.polylineColor = appDataCache.readDiagramColor(defColor)
         }
     }
@@ -93,7 +93,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     private fun checkResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == EditDiagramFragment.STAND_PARAMETERS_CODE && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<StandParameters>(EditDiagramFragment.STAND_RATINGS)?.let {
-                standParametersDiagram.standParameters = it
+                standParametersDiagram.setParameters(it, true)
                 appDataCache.saveStandRating(it)
             }
         }

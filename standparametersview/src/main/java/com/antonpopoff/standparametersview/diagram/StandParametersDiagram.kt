@@ -1,5 +1,6 @@
 package com.antonpopoff.standparametersview.diagram
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
@@ -8,8 +9,10 @@ import android.view.View
 import com.antonpopoff.standparametersview.extensions.getTextHeight
 import com.antonpopoff.standparametersview.utils.PI
 import com.antonpopoff.standparametersview.utils.toRadians
-import kotlin.math.cos
-import kotlin.math.sin
+import com.antonpopoff.standparametersview.utils.xOnCircle
+import com.antonpopoff.standparametersview.utils.yOnCircle
+
+private const val POLYLINE_ANIMATION_DURATION = 1000L
 
 class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
@@ -24,13 +27,13 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 
+    private val polylineOffsets = FloatArray(ParameterName.count)
+    private val polylineAnimators = createPolylineOffsetAnimators()
+
     private val diagramValues = DiagramValues()
 
     var standParameters = StandParameters.UNKNOWN
-        set(value) {
-            field = value
-            invalidate()
-        }
+        private set
 
     var polylineColor = 0
         set(value) {
@@ -41,6 +44,43 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context) : this(context, null)
+
+    private fun createPolylineOffsetAnimators() = (0 until ParameterName.count).map { index ->
+        ValueAnimator.ofFloat(0f, 0f).apply {
+            addUpdateListener { animator -> onPolylineAnimatorUpdate(animator, index) }
+            duration = POLYLINE_ANIMATION_DURATION
+        }
+    }
+
+    private fun onPolylineAnimatorUpdate(animator: ValueAnimator, index: Int) {
+        polylineOffsets[index] = animator.animatedValue as Float
+        postInvalidateOnAnimation()
+    }
+
+    fun setParameters(parameters: StandParameters, animated: Boolean = false) {
+        standParameters = parameters
+
+        if (animated) {
+            updatePolylineAnimated()
+        } else {
+            updatePolyline()
+        }
+    }
+
+    private fun updatePolylineAnimated() {
+        polylineAnimators.forEach(ValueAnimator::cancel)
+
+        standParameters.ratings.forEachIndexed { i, r ->
+            polylineAnimators[i].setFloatValues(polylineOffsets[i], r.mark.toFloat())
+        }
+
+        polylineAnimators.forEach(ValueAnimator::start)
+    }
+
+    private fun updatePolyline() {
+        standParameters.ratings.forEachIndexed { i, r -> polylineOffsets[i] = r.mark.toFloat() }
+        invalidate()
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -270,8 +310,8 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
                 val radians = toRadians(angle)
                 val charWidth = textPaint.measureText(char)
                 val charHeight = textPaint.getTextHeight(char, 0, char.length, rectF)
-                val charX = ratingLetterCircleRadius * cos(radians) + centerX - charWidth / 2
-                val charY = ratingLetterCircleRadius * sin(radians) + centerY + charHeight / 2
+                val charX = xOnCircle(radians, ratingLetterCircleRadius, centerX - charWidth / 2)
+                val charY = yOnCircle(radians, ratingLetterCircleRadius, centerY + charHeight / 2)
 
                 canvas.drawText(char, 0, char.length, charX, charY, textPaint)
                 angle += angleBetweenParameters
@@ -290,13 +330,13 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         diagramValues.apply {
             var angle = 270 - angleBetweenParameters
 
-            for (i in 0 until ParameterName.count) {
-                val ratingRadius = spaceBetweenRatings * standParameters.ratings[i].mark
+            polylineOffsets.forEachIndexed { index, value ->
+                val ratingRadius = spaceBetweenRatings * value
                 val radians = toRadians(angle)
-                val x = ratingRadius * cos(radians) + centerX
-                val y = ratingRadius * sin(radians) + centerY
+                val x = xOnCircle(radians, ratingRadius, centerX)
+                val y = yOnCircle(radians, ratingRadius, centerY)
 
-                if (i == 0) {
+                if (index == 0) {
                     ratingPolygonPath.moveTo(x, y)
                 } else {
                     ratingPolygonPath.lineTo(x, y)
