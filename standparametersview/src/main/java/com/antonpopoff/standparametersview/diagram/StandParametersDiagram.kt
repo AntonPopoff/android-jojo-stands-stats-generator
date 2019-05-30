@@ -45,7 +45,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        calculateBaseDiagramValues()
+        diagramValues.calculate(width, height, paddingLeft, paddingTop, paddingBottom, paddingRight)
 
         drawBorderCircles(canvas)
         drawBorderNotches(canvas)
@@ -54,37 +54,6 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         drawParametersNames(canvas)
         drawRatingsLetters(canvas)
         drawRatingPolyline(canvas)
-    }
-
-    private fun calculateBaseDiagramValues() {
-        val availableWidth = (width - paddingLeft - paddingRight)
-        val availableHeight = (height - paddingTop - paddingBottom)
-
-        diagramValues.apply {
-            centerX = availableWidth / 2f + paddingLeft
-            centerY = availableHeight / 2f + paddingTop
-
-            outerBorderRadius = minOf(availableWidth, availableHeight) / 2f
-            innerBorderRadius = outerBorderRadius * innerBorderRadiusToOuterRatio
-
-            outerBorderWidth = outerBorderRadius * outerBorderWidthToOuterRadiusRatio
-            innerBorderWidth = outerBorderRadius * innerBorderWidthToOuterRadiusRatio
-
-            borderNotchWidth = outerBorderRadius - innerBorderRadius
-            borderNotchRadius = innerBorderRadius + borderNotchWidth / 2
-
-            parametersCircleRadius = outerBorderRadius * parametersCircleRadiusToOuterRatio
-            parametersLinesWidth = outerBorderRadius * parametersCircleWidthToOuterRadiusRatio
-            parametersNameTextSize = (innerBorderRadius - parametersCircleRadius) / 3
-            parametersNameCircleRadius = innerBorderRadius - parametersNameTextSize
-            angleBetweenParameters = 360f / ParameterName.count
-
-            spaceBetweenRatings = parametersCircleRadius / (ParameterRating.letterRatings.size + 1)
-            ratingNotchLen = parametersCircleRadius * parametersNotchLenToRatingCircleRadiusRatio
-            ratingNotchLeft = centerX - ratingNotchLen / 2
-            ratingNotchRight = ratingNotchLeft + ratingNotchLen
-            ratingLetterCircleRadius = innerBorderRadius - parametersNameTextSize * 2
-        }
     }
 
     private fun drawBorderCircles(canvas: Canvas) {
