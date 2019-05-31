@@ -15,6 +15,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     private val rect = RectF()
     private val rectF = Rect()
+    private val diagramValues = DiagramValues()
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
@@ -23,8 +24,6 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-
-    private val diagramValues = DiagramValues()
 
     var standParameters = StandParameters.UNKNOWN
         set(value) {
@@ -62,19 +61,21 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
             color = Color.BLACK
         }
 
-        diagramValues.apply {
-            paint.strokeWidth = outerBorderWidth
-            drawCircleInCenterWithRadius(canvas, outerBorderRadius)
-
-            paint.strokeWidth = innerBorderWidth
-            drawCircleInCenterWithRadius(canvas, innerBorderRadius)
+        with(diagramValues) {
+            drawCircle(canvas, outerBorderRadius, outerBorderWidth)
+            drawCircle(canvas, innerBorderRadius, innerBorderWidth)
         }
     }
 
     private fun drawBorderNotches(canvas: Canvas) {
         paint.strokeWidth = diagramValues.borderNotchWidth
+        setupRectForBorderNotches()
+        drawSmallBorderNotches(canvas)
+        drawBigBorderNotches(canvas)
+    }
 
-        diagramValues.apply {
+    private fun setupRectForBorderNotches() {
+        with(diagramValues) {
             rect.apply {
                 left = centerX - borderNotchRadius
                 top = centerY - borderNotchRadius
@@ -82,45 +83,37 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
                 bottom = centerY + borderNotchRadius
             }
         }
-
-        drawBigBorderNotches(canvas)
-        drawSmallBorderNotches(canvas)
     }
 
     private fun drawBigBorderNotches(canvas: Canvas) {
-        diagramValues.apply {
-            var startAngle = 270 - bigBorderNotchAngle / 2
+        with(diagramValues) {
+            val startAngle = 270 - bigBorderNotchAngle / 2
 
             for (i in 0 until bigBorderNotchesCount) {
-                canvas.drawArc(rect, startAngle, bigBorderNotchAngle, false, paint)
-                startAngle += 180
+                canvas.drawArc(rect, startAngle + i * 180, bigBorderNotchAngle, false, paint)
             }
         }
     }
 
     private fun drawSmallBorderNotches(canvas: Canvas) {
-        diagramValues.apply {
-            val spaceBetweenNotches = (180 - bigBorderNotchAngle) / (smallBorderNotchesCount / 2 + 1)
-            var startAngle = 270 + (bigBorderNotchAngle - smallBorderNotchAngle) / 2 + spaceBetweenNotches
+        with(diagramValues) {
+            val angleBetweenNotches = (180 - bigBorderNotchAngle) / (smallBorderNotchesCount / 2 + 1)
+            val startAngle = 270 + (bigBorderNotchAngle - smallBorderNotchAngle) / 2 + angleBetweenNotches
 
-            for (i in 0 until smallBorderNotchesCount) {
-                if (i == smallBorderNotchesCount / 2) {
-                    startAngle += bigBorderNotchAngle + spaceBetweenNotches
-                }
-
-                canvas.drawArc(rect, startAngle, smallBorderNotchAngle, false, paint)
-                startAngle += spaceBetweenNotches
+            for (i in 0 until smallBorderNotchesCount / 2) {
+                canvas.drawArc(rect, startAngle + i * angleBetweenNotches, smallBorderNotchAngle, false, paint)
+                canvas.drawArc(rect, startAngle + i * angleBetweenNotches + 180, smallBorderNotchAngle, false, paint)
             }
         }
     }
 
     private fun drawParametersCircle(canvas: Canvas) {
-        paint.strokeWidth = diagramValues.parametersLinesWidth
-        drawCircleInCenterWithRadius(canvas, diagramValues.parametersCircleRadius)
+        with(diagramValues) { drawCircle(canvas, parametersCircleRadius, parametersLinesWidth) }
     }
 
-    private fun drawCircleInCenterWithRadius(canvas: Canvas, r: Float) {
-        diagramValues.apply { canvas.drawCircle(centerX, centerY, r, paint) }
+    private fun drawCircle(canvas: Canvas, r: Float, strokeWidth: Float) {
+        paint.strokeWidth = strokeWidth
+        with(diagramValues) { canvas.drawCircle(centerX, centerY, r, paint) }
     }
 
     private fun drawParameters(canvas: Canvas) {
