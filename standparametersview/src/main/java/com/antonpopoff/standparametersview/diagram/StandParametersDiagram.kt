@@ -49,7 +49,9 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         drawBorderCircles(canvas)
         drawBorderNotches(canvas)
         drawParametersCircle(canvas)
-        drawParameters(canvas)
+        drawParametersLines(canvas)
+        drawRatingNotches(canvas)
+        drawRatingLetters(canvas)
         drawParametersNames(canvas)
         drawRatingsLetters(canvas)
         drawRatingPolyline(canvas)
@@ -116,49 +118,45 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
         with(diagramValues) { canvas.drawCircle(centerX, centerY, r, paint) }
     }
 
-    private fun drawParameters(canvas: Canvas) {
-        paint.strokeWidth = diagramValues.parametersLinesWidth
-
-        textPaint.apply {
-            textSize = diagramValues.spaceBetweenRatings
-            typeface = boldFont
-        }
-
-        diagramValues.apply {
-            val y = centerY - parametersCircleRadius
-
-            canvas.save()
+    private fun drawParametersLines(canvas: Canvas) {
+        with(diagramValues) {
+            paint.strokeWidth = parametersLinesWidth
 
             for (i in 0 until ParameterName.count) {
-                canvas.drawLine(centerX, centerY, centerX, y, paint)
-                drawRatingNotches(canvas, i)
-                canvas.rotate(angleBetweenParameters, centerX, centerY)
+                val angle = toRadians(angleBetweenParameters * i - 90)
+                val x = parametersCircleRadius * cos(angle) + centerX
+                val y = parametersCircleRadius * sin(angle) + centerY
+                canvas.drawLine(centerX, centerY, x, y, paint)
             }
-
-            canvas.restore()
         }
     }
 
-    private fun drawRatingNotches(canvas: Canvas, parameterIndex: Int) {
-        diagramValues.apply {
-            for (i in 0 until ParameterRating.letterRatings.size) {
-                val notchY = centerY - spaceBetweenRatings * (i + 1)
-
-                canvas.drawLine(ratingNotchLeft, notchY, ratingNotchRight, notchY, paint)
-
-                if (parameterIndex == 0) {
-                    drawRatingLetter(canvas, notchY, i)
+    private fun drawRatingNotches(canvas: Canvas) {
+        for (i in 0 until ParameterName.count) {
+            for (j in 0 until ParameterRating.letterRatings.size) {
+                with(diagramValues) {
+                    val y = centerY - spaceBetweenRatings * (j + 1)
+                    canvas.drawLine(ratingNotchLeft, y, ratingNotchRight, y, paint)
+                    canvas.rotate(angleBetweenParameters, centerX, centerY)
                 }
             }
         }
     }
 
-    private fun drawRatingLetter(canvas: Canvas, notchY: Float, ratingIndex: Int) {
-        diagramValues.apply {
-            val char = ParameterRating.letterRatings[ParameterRating.letterRatings.size - ratingIndex - 1].char
-            val charX = ratingNotchRight + ratingNotchLen / 2
-            val charY = notchY + parametersLinesWidth / 2
-            canvas.drawText(char, charX, charY, textPaint)
+    private fun drawRatingLetters(canvas: Canvas) {
+        textPaint.apply {
+            textSize = diagramValues.spaceBetweenRatings
+            typeface = boldFont
+        }
+
+        for (i in 0 until ParameterRating.letterRatings.size) {
+            with(diagramValues) {
+                val y = centerY - spaceBetweenRatings * (i + 1)
+                val char = ParameterRating.letterRatings[ParameterRating.letterRatings.size - i - 1].char
+                val charX = ratingNotchRight + ratingNotchLen / 2
+                val charY = y + parametersLinesWidth / 2
+                canvas.drawText(char, charX, charY, textPaint)
+            }
         }
     }
 
