@@ -6,6 +6,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.antonpopoff.standparametersview.extensions.getTextHeight
+import com.antonpopoff.standparametersview.extensions.lineToIfNotEmpty
 import com.antonpopoff.standparametersview.utils.PI
 import com.antonpopoff.standparametersview.utils.toRadians
 import kotlin.math.cos
@@ -78,12 +79,12 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     private fun setupRectForBorderNotches() {
         with(diagramValues) {
-            rect.apply {
-                left = centerX - borderNotchRadius
-                top = centerY - borderNotchRadius
-                right = centerX + borderNotchRadius
-                bottom = centerY + borderNotchRadius
-            }
+            rect.set(
+                    centerX - borderNotchRadius,
+                    centerY - borderNotchRadius,
+                    centerX + borderNotchRadius,
+                    centerY + borderNotchRadius
+            )
         }
     }
 
@@ -103,8 +104,10 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
             val startAngle = 270 + (bigBorderNotchAngle - smallBorderNotchAngle) / 2 + angleBetweenNotches
 
             for (i in 0 until smallBorderNotchesCount / 2) {
-                canvas.drawArc(rect, startAngle + i * angleBetweenNotches, smallBorderNotchAngle, false, paint)
-                canvas.drawArc(rect, startAngle + i * angleBetweenNotches + 180, smallBorderNotchAngle, false, paint)
+                canvas.apply {
+                    drawArc(rect, startAngle + i * angleBetweenNotches, smallBorderNotchAngle, false, paint)
+                    drawArc(rect, startAngle + i * angleBetweenNotches + 180, smallBorderNotchAngle, false, paint)
+                }
             }
         }
     }
@@ -166,38 +169,34 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
             textSize = diagramValues.parametersNameTextSize
         }
 
-        canvas.save()
-
-        diagramValues.apply {
+        with(diagramValues) {
             for (i in 0 until ParameterName.count) {
                 val name = ParameterName.get(i).name
                 val textWidth = textPaint.measureText(name)
                 val textHeight = textPaint.getTextHeight(name, 0, name.length, rectF)
                 val textArcAngle = (textWidth * 180f) / (PI * parametersNameCircleRadius)
-                val sweepAngle = getSweepAngle(i, textArcAngle)
                 val pathTextRadius = getNameArcRadius(i, textHeight)
+                val sweepAngle = getSweepAngle(i, textArcAngle)
                 val startAngle = 270f - angleBetweenParameters - sweepAngle / 2f
 
-                rect.apply {
-                    left = centerX - pathTextRadius
-                    top = centerY - pathTextRadius
-                    right = centerX + pathTextRadius
-                    bottom = centerY + pathTextRadius
-                }
+                rect.set(
+                        centerX - pathTextRadius,
+                        centerY - pathTextRadius,
+                        centerX + pathTextRadius,
+                        centerY + pathTextRadius
+                )
 
                 parametersTextPath.apply {
-                    rewind()
-                    addArc(rect, startAngle, sweepAngle)
+                    parametersTextPath.rewind()
+                    parametersTextPath.addArc(rect, startAngle, sweepAngle)
                 }
 
                 canvas.apply {
-                    drawTextOnPath(name, parametersTextPath, 0f, 0f, textPaint)
-                    rotate(angleBetweenParameters, centerX, centerY)
+                    canvas.drawTextOnPath(name, parametersTextPath, 0f, 0f, textPaint)
+                    canvas.rotate(angleBetweenParameters, centerX, centerY)
                 }
             }
         }
-
-        canvas.restore()
     }
 
     private fun getSweepAngle(parameterIndex: Int, textArcAngle: Float): Float {
@@ -222,19 +221,17 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
             typeface = normalFont
         }
 
-        var angle = 270f - diagramValues.angleBetweenParameters
+        with(diagramValues) {
+            val startAngle = 270f - angleBetweenParameters
 
-        diagramValues.apply {
-            for (rating in standParameters.ratings) {
-                val char = rating.char
-                val radians = toRadians(angle)
+            for (i in 0 until ParameterName.count) {
+                val char = standParameters.ratings[i].char
+                val radians = toRadians(startAngle + angleBetweenParameters * i)
                 val charWidth = textPaint.measureText(char)
                 val charHeight = textPaint.getTextHeight(char, 0, char.length, rectF)
                 val charX = ratingLetterCircleRadius * cos(radians) + centerX - charWidth / 2
                 val charY = ratingLetterCircleRadius * sin(radians) + centerY + charHeight / 2
-
                 canvas.drawText(char, 0, char.length, charX, charY, textPaint)
-                angle += angleBetweenParameters
             }
         }
     }
@@ -245,28 +242,21 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
             color = polylineColor
         }
 
-        ratingPolygonPath.rewind()
+        with(diagramValues) {
+            val startAngle = 270 - angleBetweenParameters
 
-        diagramValues.apply {
-            var angle = 270 - angleBetweenParameters
+            ratingPolygonPath.rewind()
 
             for (i in 0 until ParameterName.count) {
                 val ratingRadius = spaceBetweenRatings * standParameters.ratings[i].mark
-                val radians = toRadians(angle)
+                val radians = toRadians(startAngle + i * angleBetweenParameters)
                 val x = ratingRadius * cos(radians) + centerX
                 val y = ratingRadius * sin(radians) + centerY
-
-                if (i == 0) {
-                    ratingPolygonPath.moveTo(x, y)
-                } else {
-                    ratingPolygonPath.lineTo(x, y)
-                }
-
-                angle += angleBetweenParameters
+                ratingPolygonPath.lineToIfNotEmpty(x, y)
             }
-        }
 
-        ratingPolygonPath.close()
+            ratingPolygonPath.close()
+        }
 
         canvas.drawPath(ratingPolygonPath, paint)
     }
