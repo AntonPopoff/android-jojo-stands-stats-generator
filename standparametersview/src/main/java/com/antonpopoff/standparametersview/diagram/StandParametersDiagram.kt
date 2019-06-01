@@ -11,10 +11,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import com.antonpopoff.standparametersview.extensions.getTextHeight
 import com.antonpopoff.standparametersview.extensions.lineToIfNotEmpty
-import com.antonpopoff.standparametersview.utils.PI
-import com.antonpopoff.standparametersview.utils.toRadians
-import com.antonpopoff.standparametersview.utils.xOnCircle
-import com.antonpopoff.standparametersview.utils.yOnCircle
+import com.antonpopoff.standparametersview.utils.*
 
 private const val PARAMETERS_ANIMATION_DURATION = 1000L
 private const val POLYLINE_COLOR_ANIMATION_DURATION = 750L
@@ -33,8 +30,10 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     private val normalFont = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldFont = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 
-    private val polylineOffsets = FloatArray(ParameterName.count)
-    private val polylineAnimators = createPolylineOffsetAnimators()
+    private var polylineOffsets = FloatArray(ParameterName.count)
+    private val polylineStartOffsets = FloatArray(polylineOffsets.size)
+    private val polylineEndOffsets = FloatArray(polylineOffsets.size)
+    private val polylineAnimator = createPolylineOffsetAnimators()
     private val polylineColorAnimator = createPolylineColorAnimator()
 
     var standParameters = StandParameters.UNKNOWN
@@ -47,15 +46,17 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     constructor(context: Context) : this(context, null)
 
-    private fun createPolylineOffsetAnimators() = (0 until ParameterName.count).map { index ->
-        ValueAnimator.ofFloat(0f, 0f).apply {
-            addUpdateListener { animator -> onPolylineOffsetAnimatorUpdate(animator, index) }
-            duration = PARAMETERS_ANIMATION_DURATION
-        }
+    private fun createPolylineOffsetAnimators() = ValueAnimator.ofObject(
+            FloatArrayEvaluator(polylineOffsets),
+            polylineStartOffsets,
+            polylineEndOffsets
+    ).also {
+        it.addUpdateListener(this::onPolylineOffsetAnimatorUpdate)
+        it.duration = PARAMETERS_ANIMATION_DURATION
     }
 
-    private fun onPolylineOffsetAnimatorUpdate(animator: ValueAnimator, index: Int) {
-        polylineOffsets[index] = animator.animatedValue as Float
+    private fun onPolylineOffsetAnimatorUpdate(animator: ValueAnimator) {
+        polylineOffsets = animator.animatedValue as FloatArray
         postInvalidateOnAnimation()
     }
 
@@ -82,13 +83,15 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     }
 
     private fun updatePolylineAnimated() {
-        polylineAnimators.forEach(ValueAnimator::cancel)
+        val endValues = standParameters.ratings.map { it.mark.toFloat() }.toFloatArray()
 
-        standParameters.ratings.forEachIndexed { i, r ->
-            polylineAnimators[i].setFloatValues(polylineOffsets[i], r.mark.toFloat())
+        polylineOffsets.copyInto(polylineStartOffsets)
+        endValues.copyInto(polylineEndOffsets)
+
+        polylineAnimator.apply {
+            cancel()
+            start()
         }
-
-        polylineAnimators.forEach(ValueAnimator::start)
     }
 
     private fun updatePolyline() {
