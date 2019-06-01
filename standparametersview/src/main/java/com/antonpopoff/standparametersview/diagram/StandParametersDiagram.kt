@@ -83,10 +83,8 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     }
 
     private fun updatePolylineAnimated() {
-        val endValues = standParameters.ratings.map { it.mark.toFloat() }.toFloatArray()
-
         polylineOffsets.copyInto(polylineStartOffsets)
-        endValues.copyInto(polylineEndOffsets)
+        standParameters.ratings.forEachIndexed { i, r -> polylineEndOffsets[i] = r.mark.toFloat() }
 
         polylineAnimator.apply {
             cancel()
