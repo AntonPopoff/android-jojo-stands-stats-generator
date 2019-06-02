@@ -33,7 +33,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
     private var polylineOffsets = FloatArray(ParameterName.count)
     private val polylineStartOffsets = FloatArray(polylineOffsets.size)
     private val polylineEndOffsets = FloatArray(polylineOffsets.size)
-    private val polylineAnimator = createPolylineOffsetAnimators()
+    private val polylineAnimator = createPolylineOffsetAnimator()
     private val polylineColorAnimator = createPolylineColorAnimator()
 
     var standParameters = StandParameters.UNKNOWN
@@ -46,7 +46,7 @@ class StandParametersDiagram(context: Context, attrs: AttributeSet?, defStyleAtt
 
     constructor(context: Context) : this(context, null)
 
-    private fun createPolylineOffsetAnimators() = ValueAnimator.ofObject(
+    private fun createPolylineOffsetAnimator() = ValueAnimator.ofObject(
             FloatArrayEvaluator(polylineOffsets),
             polylineStartOffsets,
             polylineEndOffsets
