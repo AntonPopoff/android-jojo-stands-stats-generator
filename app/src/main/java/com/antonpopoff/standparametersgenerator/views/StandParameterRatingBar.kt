@@ -16,7 +16,7 @@ import kotlin.math.roundToInt
 
 class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-    private val thumbXAnimator = ValueAnimator().apply {
+    private val internalRatingAnimator = ValueAnimator().apply {
         addUpdateListener(ThumbXAnimatorUpdateListener())
         duration = 200
     }
@@ -31,7 +31,6 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
     private val boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     private val totalRatingRect = RectF()
-    private val totalRatingRectCopy = RectF()
     private val actualRatingRect = RectF()
     private val textRect = Rect()
 
@@ -43,13 +42,11 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private var textOffset = 0f
     private val textSize get() = textPaint.textSize
 
-    private var thumbDestination = 0f
-    private var distanceBetweenNotches = 0f
     private var ratingBarOccupiedHeight = 0f
     private var sidesOffset = 0f
-    private var activeTouch = false
-    private var thumbX = 0f
     private var downX = 0f
+    private var offsetThumbX = 0f
+    private var internalRating = 0f
 
     var rating = ParameterRating.ratings.first()
         private set
@@ -81,12 +78,13 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun updateThumbPositionOnRatingChange(animate: Boolean) {
-        thumbDestination = getThumbDestination(rating.ordinal)
+        val distance = 1f / (ParameterRating.ratingsCount - 1)
+        val destination = distance * rating.ordinal
 
         if (animate) {
-            startThumbAnimation(thumbDestination)
+            startInternalRatingAnimator(destination)
         } else {
-            thumbX = thumbDestination
+            internalRating = destination
             invalidate()
         }
     }
@@ -110,9 +108,7 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     override fun onDraw(canvas: Canvas) {
         calcSidesOffset()
         calcTotalRatingBarRect()
-        adjustThumbPositionIfBoundsChanged()
-        calcDistanceBetweenNotches()
-        ensureThumbIsInCorrectPosition()
+        calcOffsetThumbX()
         calcActualRatingBarRect()
 
         drawRect(canvas, totalRatingRect, barColor)
@@ -143,47 +139,15 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
         }
     }
 
-    private fun adjustThumbPositionIfBoundsChanged() {
-        if (totalRatingRectCopy.isEmpty) {
-            totalRatingRectCopy.set(totalRatingRect)
-        } else if (totalRatingRect != totalRatingRectCopy) {
-            val relativePos = (thumbX - totalRatingRectCopy.left) / totalRatingRectCopy.width()
-            thumbX = relativePos * totalRatingRect.width() + totalRatingRect.left
-            totalRatingRectCopy.set(totalRatingRect)
-        }
-    }
-
     private fun calcActualRatingBarRect() {
         actualRatingRect.apply {
             set(totalRatingRect)
-            right = thumbX
+            right = internalRating * totalRatingRect.width() + totalRatingRect.left
         }
     }
 
-    private fun calcDistanceBetweenNotches() {
-        distanceBetweenNotches = totalRatingRect.width() / (ParameterRating.ratingsCount - 1)
-    }
-
-    private fun ensureThumbIsInCorrectPosition() {
-        if (!activeTouch && !thumbXAnimator.isRunning) {
-            thumbX = getThumbDestination(rating.ordinal)
-        } else if (thumbXAnimator.isRunning) {
-            adjustThumbAnimationIfNeed()
-        }
-    }
-
-    private fun adjustThumbAnimationIfNeed() {
-        val actualThumbDestination = getThumbDestination(rating.ordinal)
-
-        if (thumbDestination != actualThumbDestination) {
-            thumbDestination = actualThumbDestination
-
-            thumbXAnimator.apply {
-                cancel()
-                setFloatValues(thumbX, actualThumbDestination)
-                start()
-            }
-        }
+    private fun calcOffsetThumbX() {
+        offsetThumbX = totalRatingRect.left + internalRating * totalRatingRect.width()
     }
 
     private fun drawRect(canvas: Canvas, rectF: RectF, color: Int) {
@@ -193,61 +157,48 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
 
     private fun drawThumb(canvas: Canvas) {
         paint.color = selectedBarColor
-        canvas.drawCircle(thumbX, totalRatingRect.centerY(), thumbRadius, paint)
+        canvas.drawCircle(offsetThumbX, totalRatingRect.centerY(), thumbRadius, paint)
     }
 
     private fun drawNotches(canvas: Canvas) {
-        for (i in 0 until ParameterRating.ratingsCount) {
-            val notchX = totalRatingRect.left + i * distanceBetweenNotches
-            paint.color = getNotchColor(notchX)
-            canvas.drawCircle(notchX, totalRatingRect.centerY(), notchesRadius, paint)
-        }
-    }
+        val distanceBetweenNotches = totalRatingRect.width() / (ParameterRating.ratingsCount - 1)
 
-    private fun getNotchColor(notchX: Float) = if (notchX > thumbX) {
-        barColor
-    } else {
-        selectedBarColor
+        for (i in 0 until ParameterRating.ratingsCount) {
+            val x = totalRatingRect.left + i * distanceBetweenNotches
+            paint.color = if (x > offsetThumbX) barColor else selectedBarColor
+            canvas.drawCircle(x, totalRatingRect.centerY(), notchesRadius, paint)
+        }
     }
 
     private fun drawRatingText(canvas: Canvas) {
         val textTop = paddingTop + ratingBarOccupiedHeight + textOffset
+        val distanceBetweenLetters = totalRatingRect.width() / (ParameterRating.ratingsCount - 1)
+        val selectedLetterIndex = ((offsetThumbX - totalRatingRect.left) / distanceBetweenLetters).roundToInt()
 
         for (i in 0 until ParameterRating.ratingsCount) {
-            textPaint.apply {
-                color = getTextColor(i)
-                typeface = getTextTypeface(i)
-            }
-
             val char = ParameterRating.ratings[i].char
             val charWidth = textPaint.measureText(char)
             val charHeight = textPaint.getTextHeight(char, textRect)
-            val charX = totalRatingRect.left + distanceBetweenNotches * i - charWidth / 2
+            val charX = totalRatingRect.left + distanceBetweenLetters * i - charWidth / 2
             val charY = textTop + (textSize + charHeight) / 2
+
+            if (i == selectedLetterIndex) {
+                textPaint.color = selectedBarColor
+                textPaint.typeface = boldTypeface
+            } else {
+                textPaint.color = barColor
+                textPaint.typeface = defaultTypeface
+            }
 
             canvas.drawText(char, charX, charY, textPaint)
         }
     }
 
-    private fun getTextColor(ratingIndex: Int) = if (ratingIndex == getDestinationRatingIndex()) {
-        selectedBarColor
-    } else {
-        barColor
-    }
-
-    private fun getTextTypeface(ratingIndex: Int) = if (ratingIndex == getDestinationRatingIndex()) {
-        boldTypeface
-    } else {
-        defaultTypeface
-    }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        activeTouch = event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 downX = event.x
-                thumbXAnimator.cancel()
+                internalRatingAnimator.cancel()
                 updateThumbPositionOnMotionEvent(event.x)
                 return true
             }
@@ -277,37 +228,32 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun animateThumbToFinalPosition() {
-        val ratingIndex = getDestinationRatingIndex()
-        thumbDestination = getThumbDestination(ratingIndex)
+        val distanceBetweenRatings = 1f / (ParameterRating.ratingsCount - 1)
+        val ratingIndex = (internalRating / distanceBetweenRatings).roundToInt()
+        val internalRatingDestination = ratingIndex * distanceBetweenRatings
         rating = ParameterRating.ratings[ratingIndex]
-        startThumbAnimation(thumbDestination)
+        startInternalRatingAnimator(internalRatingDestination)
     }
 
-    private fun startThumbAnimation(destination: Float) {
-        thumbXAnimator.apply {
-            setFloatValues(thumbX, destination)
+    private fun startInternalRatingAnimator(destinationRating: Float) {
+        internalRatingAnimator.apply {
+            cancel()
+            setFloatValues(internalRating, destinationRating)
             start()
         }
     }
 
-    private fun getDestinationRatingIndex() = ((thumbX - sidesOffset - paddingLeft) / distanceBetweenNotches).roundToInt()
-
-    private fun getThumbDestination(ratingIndex: Int) = ratingIndex * distanceBetweenNotches + totalRatingRect.left
-
     private fun updateThumbPositionOnMotionEvent(x: Float) {
-        thumbX = when {
-            x < totalRatingRect.left -> totalRatingRect.left
-            x > totalRatingRect.right -> totalRatingRect.right
-            else -> x
-        }
-
+        internalRating = (x - totalRatingRect.left) / totalRatingRect.width()
+        internalRating = if (internalRating > 1) 1f else internalRating
+        internalRating = if (internalRating < 0) 0f else internalRating
         invalidate()
     }
 
     private inner class ThumbXAnimatorUpdateListener : ValueAnimator.AnimatorUpdateListener {
 
         override fun onAnimationUpdate(animation: ValueAnimator) {
-            thumbX = animation.animatedValue as Float
+            internalRating = animation.animatedValue as Float
             postInvalidateOnAnimation()
         }
     }
