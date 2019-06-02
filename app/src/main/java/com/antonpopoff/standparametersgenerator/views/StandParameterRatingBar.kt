@@ -16,20 +16,10 @@ import kotlin.math.roundToInt
 
 class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View(context, attrs, defStyleAttr) {
 
-    private val internalRatingAnimator = ValueAnimator().apply {
-        addUpdateListener(ThumbXAnimatorUpdateListener())
-        duration = 200
-    }
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-    }
-
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     private val viewConfiguration = ViewConfiguration.get(context)
-    private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-    private val boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     private val totalRatingRect = RectF()
     private val actualRatingRect = RectF()
     private val textRect = Rect()
@@ -47,6 +37,11 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     private var downX = 0f
     private var offsetThumbX = 0f
     private var internalRating = 0f
+
+    private val internalRatingAnimator = ValueAnimator().also {
+        it.addUpdateListener(this::onInternalRatingAnimatorUpdate)
+        it.duration = 200
+    }
 
     var rating = ParameterRating.ratings.first()
         private set
@@ -71,6 +66,11 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context) : this(context, null)
+
+    private fun onInternalRatingAnimatorUpdate(animator: ValueAnimator) {
+        internalRating = animator.animatedValue as Float
+        postInvalidateOnAnimation()
+    }
 
     fun setRating(rating: ParameterRating, animate: Boolean = true) {
         this.rating = rating
@@ -119,7 +119,7 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun calcSidesOffset() {
-        textPaint.typeface = boldTypeface
+        textPaint.typeface = Typeface.DEFAULT_BOLD
 
         val firstRatingCharWidth = textPaint.measureText(ParameterRating.ratings.first().char) / 2
         val lastRatingCharWidth = textPaint.measureText(ParameterRating.ratings.last().char) / 2
@@ -129,25 +129,24 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun calcTotalRatingBarRect() {
-        val availableHeight = height - paddingTop - paddingBottom - textSize - textOffset
+        val vSpace = height - paddingTop - paddingBottom - textSize - textOffset
+        val left = paddingLeft + sidesOffset
+        val right = width - paddingRight - sidesOffset
+        val top = paddingTop + (vSpace - barHeight) / 2
+        val bottom = top + barHeight
 
-        totalRatingRect.apply {
-            left = paddingLeft + sidesOffset
-            right = width - paddingRight - sidesOffset
-            top = paddingTop + (availableHeight - barHeight) / 2
-            bottom = top + barHeight
-        }
+        totalRatingRect.set(left, top, right, bottom)
+    }
+
+    private fun calcOffsetThumbX() {
+        offsetThumbX = totalRatingRect.left + internalRating * totalRatingRect.width()
     }
 
     private fun calcActualRatingBarRect() {
         actualRatingRect.apply {
             set(totalRatingRect)
-            right = internalRating * totalRatingRect.width() + totalRatingRect.left
+            right = offsetThumbX
         }
-    }
-
-    private fun calcOffsetThumbX() {
-        offsetThumbX = totalRatingRect.left + internalRating * totalRatingRect.width()
     }
 
     private fun drawRect(canvas: Canvas, rectF: RectF, color: Int) {
@@ -182,15 +181,20 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
             val charX = totalRatingRect.left + distanceBetweenLetters * i - charWidth / 2
             val charY = textTop + (textSize + charHeight) / 2
 
-            if (i == selectedLetterIndex) {
-                textPaint.color = selectedBarColor
-                textPaint.typeface = boldTypeface
-            } else {
-                textPaint.color = barColor
-                textPaint.typeface = defaultTypeface
-            }
-
+            setupTextPaint(i, selectedLetterIndex)
             canvas.drawText(char, charX, charY, textPaint)
+        }
+    }
+
+    private fun setupTextPaint(currentLetterIndex: Int, selectedLetterIndex: Int) {
+        textPaint.apply {
+            if (currentLetterIndex == selectedLetterIndex) {
+                color = selectedBarColor
+                typeface = Typeface.DEFAULT_BOLD
+            } else {
+                color = barColor
+                typeface = Typeface.DEFAULT
+            }
         }
     }
 
@@ -244,17 +248,12 @@ class StandParameterRatingBar(context: Context, attrs: AttributeSet?, defStyleAt
     }
 
     private fun updateThumbPositionOnMotionEvent(x: Float) {
-        internalRating = (x - totalRatingRect.left) / totalRatingRect.width()
-        internalRating = if (internalRating > 1) 1f else internalRating
-        internalRating = if (internalRating < 0) 0f else internalRating
+        internalRating = (when {
+            x < totalRatingRect.left -> totalRatingRect.left
+            x > totalRatingRect.right -> totalRatingRect.right
+            else -> x
+        } - totalRatingRect.left) / totalRatingRect.width()
+
         invalidate()
-    }
-
-    private inner class ThumbXAnimatorUpdateListener : ValueAnimator.AnimatorUpdateListener {
-
-        override fun onAnimationUpdate(animation: ValueAnimator) {
-            internalRating = animation.animatedValue as Float
-            postInvalidateOnAnimation()
-        }
     }
 }
