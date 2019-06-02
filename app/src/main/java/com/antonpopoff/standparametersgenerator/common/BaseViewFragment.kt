@@ -19,7 +19,7 @@ abstract class BaseViewFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        activity?.requestedOrientation = preferredOrientation
+        activity?.requestedOrientation = preferredOrientation
         view?.isClickable = true
     }
 
