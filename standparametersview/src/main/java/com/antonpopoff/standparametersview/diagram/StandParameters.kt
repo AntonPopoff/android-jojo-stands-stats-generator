@@ -64,4 +64,5 @@ class StandParameters(
                 list.getOrNull(5) ?: ParameterRating.UNKNOWN
         )
     }
+
 }
