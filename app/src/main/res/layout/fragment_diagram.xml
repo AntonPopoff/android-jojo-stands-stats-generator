@@ -13,7 +13,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Stand" />
+        app:title="ジョジョ"
+        app:titleTextAppearance="@style/DiagramFragmentToolbarTextAppearance"/>
 
     <com.antonpopoff.standparametersview.diagram.StandParametersDiagram
         android:id="@+id/standParametersDiagram"
