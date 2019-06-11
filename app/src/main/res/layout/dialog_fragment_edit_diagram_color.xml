@@ -1,86 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#25000000">
 
-    <Button
-        android:id="@+id/applyButton"
-        style="@style/EditDiagramColorDialogButtonBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/apply"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/resetButton"
-        style="@style/EditDiagramColorDialogButtonBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reset"
-        app:layout_constraintBottom_toBottomOf="@id/applyButton"
-        app:layout_constraintEnd_toStartOf="@id/applyButton"
-        app:layout_constraintTop_toTopOf="@id/applyButton" />
-
-    <Button
-        android:id="@+id/cancelButton"
-        style="@style/EditDiagramColorDialogButtonBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/cancel"
-        app:layout_constraintBottom_toBottomOf="@id/applyButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/applyButton" />
-
-    <View
-        android:id="@+id/shadowView"
-        android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="@drawable/shadow"
-        app:layout_constraintBottom_toTopOf="@id/applyButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.antonpopoff.colorwheel.ColorWheel
-        android:id="@+id/colorWheel"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/shadowView"
-        app:layout_constraintDimensionRatio="1:0.85"
-        app:layout_constraintEnd_toStartOf="@id/alphaSeekBar"
-        app:layout_constraintStart_toStartOf="@id/selectedColorView" />
-
-    <com.antonpopoff.colorwheel.AlphaSeekBar
-        android:id="@+id/alphaSeekBar"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/colorWheel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/colorWheel" />
-
-    <View
-        android:id="@+id/selectedColorView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@id/colorWheel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#ffffff"
+        app:layout_behavior="com.antonpopoff.standparametersgenerator.dialogs.TestBehavior">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/applyButton"
+            style="@style/EditDiagramColorDialogButtonBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/apply"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/resetButton"
+            style="@style/EditDiagramColorDialogButtonBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reset"
+            app:layout_constraintBottom_toBottomOf="@id/applyButton"
+            app:layout_constraintEnd_toStartOf="@id/applyButton"
+            app:layout_constraintTop_toTopOf="@id/applyButton" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/EditDiagramColorDialogButtonBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/cancel"
+            app:layout_constraintBottom_toBottomOf="@id/applyButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/applyButton" />
+
+        <View
+            android:id="@+id/shadowView"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/shadow"
+            app:layout_constraintBottom_toTopOf="@id/applyButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.antonpopoff.colorwheel.ColorWheel
+            android:id="@+id/colorWheel"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="16dp"
+            app:layout_constraintBottom_toTopOf="@id/shadowView"
+            app:layout_constraintDimensionRatio="1:0.85"
+            app:layout_constraintEnd_toStartOf="@id/alphaSeekBar"
+            app:layout_constraintStart_toStartOf="@id/selectedColorView" />
+
+        <com.antonpopoff.colorwheel.AlphaSeekBar
+            android:id="@+id/alphaSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/colorWheel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/colorWheel" />
+
+        <View
+            android:id="@+id/selectedColorView"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@id/colorWheel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

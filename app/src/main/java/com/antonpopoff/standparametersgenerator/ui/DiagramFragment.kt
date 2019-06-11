@@ -64,9 +64,16 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     private fun showEditColorDiagramFragment() {
-        EditDiagramColorDialog
-                .create(standParametersDiagram.polylineColor)
-                .show(childFragmentManager, null)
+//        EditDiagramColorDialog
+//                .create(standParametersDiagram.polylineColor)
+//                .show(childFragmentManager, null)
+
+        fragmentManager?.beginTransaction()?.apply {
+//            setCustomAnimations(R.anim.fragment_enter, 0, 0, R.anim.fragment_pop_exit)
+            add(R.id.container, EditDiagramColorDialog())
+            addToBackStack(null)
+            commit()
+        }
     }
 
     private fun pushEditFragment() {

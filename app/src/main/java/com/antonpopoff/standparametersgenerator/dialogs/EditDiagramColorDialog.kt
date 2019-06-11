@@ -1,37 +1,49 @@
 package com.antonpopoff.standparametersgenerator.dialogs
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.*
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.antonpopoff.colorwheel.utils.setAlpha
 import com.antonpopoff.standparametersgenerator.R
 import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 
-class EditDiagramColorDialog : DialogFragment() {
+class EditDiagramColorDialog : Fragment() {
 
     private val initialColor by lazy { arguments?.getInt(KEY_INITIAL_COLOR, Color.WHITE) ?: Color.WHITE }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default)
+//        setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dialog_fragment_edit_diagram_color, container, false)
+        val view = inflater.inflate(R.layout.dialog_fragment_edit_diagram_color, container, false) as ViewGroup
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resetButton.setOnClickListener { resetColors() }
         applyButton.setOnClickListener { onApplyButtonClick() }
-        cancelButton.setOnClickListener { dismiss() }
+//        cancelButton.setOnClickListener { dismiss() }
         setupSelectedColorView()
         setupColorWheel()
         setupAlphaSeekBar()
+
+        ((content.layoutParams as CoordinatorLayout.LayoutParams).behavior as TestBehavior).expand()
+
+//        view.setOnClickListener {
+//            ((content.layoutParams as CoordinatorLayout.LayoutParams).behavior as TestBehavior).expand()
+//        }
     }
 
     private fun resetColors() {
@@ -76,7 +88,7 @@ class EditDiagramColorDialog : DialogFragment() {
 
         (parentFragment as? Listener)?.onColorApplied(color)
         
-        dismiss()
+//        dismiss()
     }
 
     override fun onStart() {
@@ -84,11 +96,16 @@ class EditDiagramColorDialog : DialogFragment() {
         setupDialogWindow()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+    }
+
     private fun setupDialogWindow() {
-        dialog?.window?.apply {
-            setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-            setGravity(Gravity.BOTTOM)
-        }
+//        dialog?.window?.apply {
+//            setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+//            setGravity(Gravity.BOTTOM)
+//        }
     }
 
     interface Listener {
