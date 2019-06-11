@@ -72,10 +72,12 @@ class ColorWheel(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Vi
         val vSpace = w - paddingTop - paddingBottom
 
         wheelRadius = minOf(hSpace, vSpace) / 2f
-        wheelCenter.set(w / 2f, h / 2f)
 
-        huePaint.shader = SweepGradient(wheelCenter.x, wheelCenter.y, hueColors, null)
-        saturationPaint.shader = RadialGradient(wheelCenter.x, wheelCenter.y, wheelRadius, saturationColors, null, Shader.TileMode.CLAMP)
+        if (wheelRadius >= 0) {
+            wheelCenter.set(w / 2f, h / 2f)
+            huePaint.shader = SweepGradient(wheelCenter.x, wheelCenter.y, hueColors, null)
+            saturationPaint.shader = RadialGradient(wheelCenter.x, wheelCenter.y, wheelRadius, saturationColors, null, Shader.TileMode.CLAMP)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
