@@ -3,6 +3,7 @@ package com.antonpopoff.standparametersgenerator.ui
 import android.os.Bundle
 import com.antonpopoff.standparametersgenerator.R
 import com.antonpopoff.standparametersgenerator.common.BaseViewActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseViewActivity() {
 
@@ -10,7 +11,10 @@ class MainActivity : BaseViewActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addDiagramFragmentIfAbsent()
+
+        container.setOnClickListener {
+            container.addView(TestDialog(container).layout)
+        }
     }
 
     private fun addDiagramFragmentIfAbsent() {
@@ -18,6 +22,14 @@ class MainActivity : BaseViewActivity() {
             supportFragmentManager.beginTransaction()
                     .add(R.id.container, DiagramFragment())
                     .commit()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (container.childCount > 0) {
+            container.removeViewAt(0)
+        } else {
+            super.onBackPressed()
         }
     }
 }

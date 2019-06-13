@@ -39,7 +39,7 @@ class EditDiagramColorDialog : Fragment() {
         setupColorWheel()
         setupAlphaSeekBar()
 
-        ((content.layoutParams as CoordinatorLayout.LayoutParams).behavior as TestBehavior).expand()
+//        ((content.layoutParams as CoordinatorLayout.LayoutParams).behavior as TestBehavior).expand()
 
 //        view.setOnClickListener {
 //            ((content.layoutParams as CoordinatorLayout.LayoutParams).behavior as TestBehavior).expand()

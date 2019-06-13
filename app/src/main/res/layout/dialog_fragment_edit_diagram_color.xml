@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#25000000">
+    android:background="#10000000">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="#ffffff"
-        app:layout_behavior="com.antonpopoff.standparametersgenerator.dialogs.TestBehavior">
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
 
         <Button
             android:id="@+id/applyButton"
             style="@style/EditDiagramColorDialogButtonBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
             android:text="@string/apply"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -74,8 +73,8 @@
             android:id="@+id/alphaSeekBar"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
             app:layout_constraintBottom_toBottomOf="@id/colorWheel"
@@ -97,4 +96,4 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>
