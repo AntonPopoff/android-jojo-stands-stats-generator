@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:insetLeft="@dimen/statistics_dialog_inset"
-    android:insetRight="@dimen/statistics_dialog_inset"
-    android:insetBottom="@dimen/statistics_dialog_inset"
-    android:insetTop="@dimen/statistics_dialog_inset">
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <shape >
-        <solid android:color="@color/white" />
-        <corners android:radius="@dimen/dialog_corners_radius" />
-    </shape>
+    <solid android:color="@color/white" />
 
-</inset>
+    <corners
+        android:topLeftRadius="@dimen/dialog_corners_radius"
+        android:topRightRadius="@dimen/dialog_corners_radius" />
+
+</shape>

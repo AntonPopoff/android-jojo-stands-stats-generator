@@ -13,7 +13,7 @@ class MainActivity : BaseViewActivity() {
         super.onCreate(savedInstanceState)
 
         container.setOnClickListener {
-            container.addView(TestDialog(container).layout)
+            TestDialog(this).show()
         }
     }
 
