@@ -16,7 +16,7 @@ import com.antonpopoff.standparametersgenerator.storage.AppDataPreferencesCache
 import com.antonpopoff.standparametersview.diagram.StandParameters
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
-class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
+class DiagramFragment : BaseViewFragment() {
 
     private val handler = Handler()
 
@@ -64,16 +64,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     private fun showEditColorDiagramFragment() {
-//        EditDiagramColorDialog
-//                .create(standParametersDiagram.polylineColor)
-//                .show(childFragmentManager, null)
-
-        fragmentManager?.beginTransaction()?.apply {
-//            setCustomAnimations(R.anim.fragment_enter, 0, 0, R.anim.fragment_pop_exit)
-            add(R.id.container, EditDiagramColorDialog())
-            addToBackStack(null)
-            commit()
-        }
+        context?.let { EditDiagramColorDialog(it).show() }
     }
 
     private fun pushEditFragment() {
@@ -109,11 +100,11 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
         }, resources.getInteger(R.integer.fragments_transaction_duration).toLong())
     }
 
-    override fun onColorApplied(argb: Int) {
-        appDataCache.saveDiagramColor(argb)
-
-        handler.postDelayed({
-            standParametersDiagram?.setPolylineColor(argb, true)
-        }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
-    }
+//    override fun onColorApplied(argb: Int) {
+//        appDataCache.saveDiagramColor(argb)
+//
+//        handler.postDelayed({
+//            standParametersDiagram?.setPolylineColor(argb, true)
+//        }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
+//    }
 }
