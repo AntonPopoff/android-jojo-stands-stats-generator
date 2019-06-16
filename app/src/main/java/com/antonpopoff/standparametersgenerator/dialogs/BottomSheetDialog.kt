@@ -14,6 +14,7 @@ import com.antonpopoff.standparametersgenerator.utils.*
 
 abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
+    private var dismissing = false
     private val decelerateInterpolator = DecelerateInterpolator()
 
     private lateinit var container: ViewGroup
@@ -22,20 +23,23 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window?.requestFeature(Window.FEATURE_NO_TITLE)
-
-        container = createContainer()
-        containerBackground = createDialogBackgroundView()
-        dialogContentView = provideDialogContentView(layoutInflater, container)
-
-        container.addView(containerBackground, frameLayoutParams(MATCH_PARENT, MATCH_PARENT))
-        container.addView(dialogContentView, frameLayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { gravity = Gravity.BOTTOM })
-
+        setupDialogViews()
         setContentView(container)
         setupDialogWindow()
     }
 
+    private fun setupDialogViews() {
+        container = createContainer()
+        containerBackground = createDialogBackgroundView()
+        dialogContentView = provideDialogContentView(layoutInflater, container)
+
+        dialogContentView.isClickable = true
+        container.addView(containerBackground, frameLayoutParams(MATCH_PARENT, MATCH_PARENT))
+        container.addView(dialogContentView, frameLayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { gravity = Gravity.BOTTOM })
+    }
+
     private fun createContainer() = FrameLayout(context).apply {
-        setOnClickListener { startDismissAnimation() }
+        setOnClickListener { dismiss() }
         setOnApplyWindowInsetsListener { v, insets -> onContainerInsets(v, insets) }
         systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     }
@@ -76,7 +80,7 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     private fun handleBackKey(keyCode: Int, event: KeyEvent): Boolean {
         return if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
-            startDismissAnimation()
+            dismiss()
             true
         } else {
             false
@@ -116,10 +120,21 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         }
     }
 
-    private class DismissAnimationListener(private val dialog: Dialog) : EmptyAnimationListener {
+    override fun dismiss() {
+        if (!dismissing) {
+            dismissing = true
+            startDismissAnimation()
+        }
+    }
+
+    private fun realDismiss() {
+        super.dismiss()
+    }
+
+    private class DismissAnimationListener(private val dialog: BottomSheetDialog) : EmptyAnimationListener {
 
         override fun onAnimationEnd(animation: Animation) {
-            dialog.dismiss()
+            dialog.realDismiss()
         }
     }
 
@@ -127,7 +142,7 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     companion object {
 
-        private const val TRANSITION_ANIM_DURATION = 275L
+        private const val TRANSITION_ANIM_DURATION = 350L
 
         private const val DIALOG_BACKGROUND_COLOR = 0x45000000
     }
