@@ -127,12 +127,10 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
             duration: Long,
             interpolator: Interpolator,
             listener: Animation.AnimationListener?
-    ): Animation {
-        return selfRelativeTranslateAnimation(0f, 0f, yFrom, yTo).also {
-            it.setAnimationListener(listener)
-            it.interpolator = interpolator
-            it.duration = duration
-        }
+    ) = selfRelativeTranslateAnimation(0f, 0f, yFrom, yTo).also {
+        it.setAnimationListener(listener)
+        it.interpolator = interpolator
+        it.duration = duration
     }
 
     private fun createAlphaAnimation(
@@ -140,11 +138,9 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
             alphaTo: Float,
             duration: Long,
             interpolator: Interpolator
-    ): Animation {
-        return AlphaAnimation(alphaFrom, alphaTo).also {
-            it.interpolator = interpolator
-            it.duration = duration
-        }
+    ) = AlphaAnimation(alphaFrom, alphaTo).also {
+        it.interpolator = interpolator
+        it.duration = duration
     }
 
     override fun dismiss() {
@@ -158,9 +154,9 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         super.dismiss()
     }
 
-    open fun onDismissed() { }
+    open fun onDismissed() {}
 
-    open fun onViewAddedToDialog(view: View) { }
+    open fun onViewAddedToDialog(view: View) {}
 
     abstract fun provideDialogContentView(inflater: LayoutInflater, container: ViewGroup): View
 
