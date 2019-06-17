@@ -150,7 +150,7 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     companion object {
 
-        private const val TRANSITION_ANIM_DURATION = 450L
+        private const val TRANSITION_ANIM_DURATION = 550L
 
         private const val DIALOG_BACKGROUND_COLOR = 0x30000000
     }
