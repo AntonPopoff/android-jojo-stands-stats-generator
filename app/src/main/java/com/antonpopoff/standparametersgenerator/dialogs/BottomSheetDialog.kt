@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import com.antonpopoff.standparametersgenerator.utils.MATCH_PARENT
 import com.antonpopoff.standparametersgenerator.utils.WRAP_CONTENT
@@ -97,31 +98,50 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         startShowAnimation()
     }
 
-    private fun startDismissAnimation() {
-        startTransitionAnimation(0f, 1f, 1f, 0f, DismissAnimationListener())
-    }
-
     private fun startShowAnimation() {
-        startTransitionAnimation(1f, 0f, 0f, 1f)
+        startDialogTransitionAnimation(1f, 0f, 0f, 1f, TRANSITION_ANIM_IN_DURATION, CUBIC_BEZIER_EASY_OUTINT)
     }
 
-    private fun startTransitionAnimation(yFrom: Float, yTo: Float, alphaFrom: Float, alphaTo: Float, listener: Animation.AnimationListener? = null) {
-        dialogContentView.startAnimation(createTranslateAnimation(yFrom, yTo, listener))
-        containerBackground.startAnimation(createAlphaAnimation(alphaFrom, alphaTo))
+    private fun startDismissAnimation() {
+        startDialogTransitionAnimation(0f, 1f, 1f, 0f, TRANSITION_ANIM_OUT_DURATION, CUBIC_BEZIER_EASY_OUT, DismissAnimationListener())
     }
 
-    private fun createTranslateAnimation(yFrom: Float, yTo: Float, listener: Animation.AnimationListener?): Animation {
-        return selfRelativeTranslateAnimation(0f, 0f, yFrom, yTo).apply {
-            setAnimationListener(listener)
-            interpolator = CUBIC_BEZIER_EASY_OUTINT
-            duration = TRANSITION_ANIM_DURATION
+    private fun startDialogTransitionAnimation(
+            yFrom: Float,
+            yTo: Float,
+            alphaFrom: Float,
+            alphaTo: Float,
+            duration: Long,
+            interpolator: Interpolator,
+            listener: Animation.AnimationListener? = null
+    ) {
+        dialogContentView.startAnimation(createTranslateAnimation(yFrom, yTo, duration, interpolator, listener))
+        containerBackground.startAnimation(createAlphaAnimation(alphaFrom, alphaTo, duration, interpolator))
+    }
+
+    private fun createTranslateAnimation(
+            yFrom: Float,
+            yTo: Float,
+            duration: Long,
+            interpolator: Interpolator,
+            listener: Animation.AnimationListener?
+    ): Animation {
+        return selfRelativeTranslateAnimation(0f, 0f, yFrom, yTo).also {
+            it.setAnimationListener(listener)
+            it.interpolator = interpolator
+            it.duration = duration
         }
     }
 
-    private fun createAlphaAnimation(alphaFrom: Float, alphaTo: Float): Animation {
-        return AlphaAnimation(alphaFrom, alphaTo).apply {
-            interpolator = CUBIC_BEZIER_EASY_OUT
-            duration = TRANSITION_ANIM_DURATION
+    private fun createAlphaAnimation(
+            alphaFrom: Float,
+            alphaTo: Float,
+            duration: Long,
+            interpolator: Interpolator
+    ): Animation {
+        return AlphaAnimation(alphaFrom, alphaTo).also {
+            it.interpolator = interpolator
+            it.duration = duration
         }
     }
 
@@ -138,7 +158,9 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     open fun onDismissed() { }
 
-    private inner class DismissAnimationListener() : EmptyAnimationListener {
+    abstract fun provideDialogContentView(inflater: LayoutInflater, container: ViewGroup): View
+
+    private inner class DismissAnimationListener : EmptyAnimationListener {
 
         override fun onAnimationEnd(animation: Animation) {
             realDismiss()
@@ -146,11 +168,11 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         }
     }
 
-    abstract fun provideDialogContentView(inflater: LayoutInflater, container: ViewGroup): View
-
     companion object {
 
-        private const val TRANSITION_ANIM_DURATION = 550L
+        private const val TRANSITION_ANIM_IN_DURATION = 550L
+
+        private const val TRANSITION_ANIM_OUT_DURATION = 250L
 
         private const val DIALOG_BACKGROUND_COLOR = 0x30000000
     }
