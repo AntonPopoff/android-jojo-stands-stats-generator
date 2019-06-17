@@ -1,25 +1,13 @@
 package com.antonpopoff.standparametersgenerator.dialogs
 
-import android.animation.Animator
-import android.animation.ValueAnimator
-import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
-import android.os.Bundle
 import android.view.*
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import com.antonpopoff.colorwheel.utils.setAlpha
 import com.antonpopoff.standparametersgenerator.R
-import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 
 class EditDiagramColorDialog(context: Context) : BottomSheetDialog(context) {
 
     override fun provideDialogContentView(inflater: LayoutInflater, container: ViewGroup): View {
-        return inflater.inflate(R.layout.dialog_fragment_edit_diagram_color, container, false)
+        return inflater.inflate(R.layout.dialog_edit_diagram_color, container, false)
     }
 
 //    private val initialColor by lazy { arguments?.getInt(KEY_INITIAL_COLOR, Color.WHITE) ?: Color.WHITE }
@@ -30,7 +18,7 @@ class EditDiagramColorDialog(context: Context) : BottomSheetDialog(context) {
 //    }
 //
 //    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        val view = inflater.inflate(R.layout.dialog_fragment_edit_diagram_color, container, false) as ViewGroup
+//        val view = inflater.inflate(R.layout.dialog_edit_diagram_color, container, false) as ViewGroup
 //
 //        return view
 //    }

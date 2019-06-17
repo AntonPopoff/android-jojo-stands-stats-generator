@@ -8,14 +8,18 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
-import com.antonpopoff.standparametersgenerator.utils.*
+import com.antonpopoff.standparametersgenerator.utils.MATCH_PARENT
+import com.antonpopoff.standparametersgenerator.utils.WRAP_CONTENT
+import com.antonpopoff.standparametersgenerator.utils.animation.CUBIC_BEZIER_EASY_OUT
+import com.antonpopoff.standparametersgenerator.utils.animation.CUBIC_BEZIER_EASY_OUTINT
+import com.antonpopoff.standparametersgenerator.utils.animation.EmptyAnimationListener
+import com.antonpopoff.standparametersgenerator.utils.animation.selfRelativeTranslateAnimation
+import com.antonpopoff.standparametersgenerator.utils.frameLayoutParams
 
 abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     private var dismissing = false
-    private val decelerateInterpolator = DecelerateInterpolator()
 
     private lateinit var container: ViewGroup
     private lateinit var containerBackground: View
@@ -109,14 +113,14 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
     private fun createTranslateAnimation(yFrom: Float, yTo: Float, listener: Animation.AnimationListener?): Animation {
         return selfRelativeTranslateAnimation(0f, 0f, yFrom, yTo).apply {
             setAnimationListener(listener)
-            interpolator = decelerateInterpolator
+            interpolator = CUBIC_BEZIER_EASY_OUTINT
             duration = TRANSITION_ANIM_DURATION
         }
     }
 
     private fun createAlphaAnimation(alphaFrom: Float, alphaTo: Float): Animation {
         return AlphaAnimation(alphaFrom, alphaTo).apply {
-            interpolator = decelerateInterpolator
+            interpolator = CUBIC_BEZIER_EASY_OUT
             duration = TRANSITION_ANIM_DURATION
         }
     }
@@ -146,8 +150,8 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     companion object {
 
-        private const val TRANSITION_ANIM_DURATION = 350L
+        private const val TRANSITION_ANIM_DURATION = 450L
 
-        private const val DIALOG_BACKGROUND_COLOR = 0x45000000
+        private const val DIALOG_BACKGROUND_COLOR = 0x30000000
     }
 }

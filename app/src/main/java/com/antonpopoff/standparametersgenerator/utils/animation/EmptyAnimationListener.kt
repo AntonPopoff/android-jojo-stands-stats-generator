@@ -1,4 +1,4 @@
-package com.antonpopoff.standparametersgenerator.utils
+package com.antonpopoff.standparametersgenerator.utils.animation
 
 import android.view.animation.Animation
 
