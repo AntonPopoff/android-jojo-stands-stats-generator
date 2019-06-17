@@ -16,7 +16,7 @@ import com.antonpopoff.standparametersgenerator.storage.AppDataPreferencesCache
 import com.antonpopoff.standparametersview.diagram.StandParameters
 import kotlinx.android.synthetic.main.fragment_diagram.*
 
-class DiagramFragment : BaseViewFragment() {
+class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     private val handler = Handler()
 
@@ -64,7 +64,7 @@ class DiagramFragment : BaseViewFragment() {
     }
 
     private fun showEditColorDiagramFragment() {
-        context?.let { EditDiagramColorDialog(it).show() }
+        context?.let { EditDiagramColorDialog(it, standParametersDiagram.polylineColor, this).show() }
     }
 
     private fun pushEditFragment() {
@@ -100,11 +100,8 @@ class DiagramFragment : BaseViewFragment() {
         }, resources.getInteger(R.integer.fragments_transaction_duration).toLong())
     }
 
-//    override fun onColorApplied(argb: Int) {
-//        appDataCache.saveDiagramColor(argb)
-//
-//        handler.postDelayed({
-//            standParametersDiagram?.setPolylineColor(argb, true)
-//        }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
-//    }
+    override fun onColorApplied(argb: Int) {
+        appDataCache.saveDiagramColor(argb)
+        standParametersDiagram?.setPolylineColor(argb, true)
+    }
 }

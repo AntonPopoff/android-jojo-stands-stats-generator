@@ -41,6 +41,8 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         dialogContentView.isClickable = true
         container.addView(containerBackground, frameLayoutParams(MATCH_PARENT, MATCH_PARENT))
         container.addView(dialogContentView, frameLayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { gravity = Gravity.BOTTOM })
+
+        onViewAddedToDialog(dialogContentView)
     }
 
     private fun createContainer() = FrameLayout(context).apply {
@@ -157,6 +159,8 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
     }
 
     open fun onDismissed() { }
+
+    open fun onViewAddedToDialog(view: View) { }
 
     abstract fun provideDialogContentView(inflater: LayoutInflater, container: ViewGroup): View
 
