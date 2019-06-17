@@ -65,6 +65,7 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         window?.apply {
             setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setWindowAnimations(0)
             clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
@@ -93,7 +94,7 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
     }
 
     private fun startDismissAnimation() {
-        startTransitionAnimation(0f, 1f, 1f, 0f, DismissAnimationListener(this))
+        startTransitionAnimation(0f, 1f, 1f, 0f, DismissAnimationListener())
     }
 
     private fun startShowAnimation() {
@@ -131,10 +132,13 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
         super.dismiss()
     }
 
-    private class DismissAnimationListener(private val dialog: BottomSheetDialog) : EmptyAnimationListener {
+    open fun onDismissed() { }
+
+    private inner class DismissAnimationListener() : EmptyAnimationListener {
 
         override fun onAnimationEnd(animation: Animation) {
-            dialog.realDismiss()
+            realDismiss()
+            onDismissed()
         }
     }
 
