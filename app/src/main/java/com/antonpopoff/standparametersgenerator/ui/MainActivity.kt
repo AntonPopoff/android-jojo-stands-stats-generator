@@ -10,10 +10,10 @@ class MainActivity : BaseViewActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addDiagramFragmentIfAbsent()
+        addDiagramFragmentIfActivityEmpty()
     }
 
-    private fun addDiagramFragmentIfAbsent() {
+    private fun addDiagramFragmentIfActivityEmpty() {
         if (supportFragmentManager.fragments.isEmpty()) {
             supportFragmentManager.beginTransaction()
                     .add(R.id.container, DiagramFragment())

@@ -96,9 +96,7 @@ class EditDiagramFragment : BaseViewFragment() {
         private const val KEY_STAND_RATING = "stand_rating"
 
         fun create(rating: StandParameters) = EditDiagramFragment().apply {
-            arguments = Bundle().apply {
-                putParcelable(KEY_STAND_RATING, rating)
-            }
+            arguments = Bundle().apply { putParcelable(KEY_STAND_RATING, rating) }
         }
     }
 }

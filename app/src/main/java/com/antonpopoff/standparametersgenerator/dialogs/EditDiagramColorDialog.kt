@@ -1,54 +1,67 @@
 package com.antonpopoff.standparametersgenerator.dialogs
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.DialogFragment
+import com.antonpopoff.colorwheel.AlphaSeekBar
+import com.antonpopoff.colorwheel.ColorWheel
 import com.antonpopoff.colorwheel.utils.setAlpha
 import com.antonpopoff.standparametersgenerator.R
-import kotlinx.android.synthetic.main.dialog_fragment_edit_diagram_color.*
 
-class EditDiagramColorDialog : DialogFragment() {
+class EditDiagramColorDialog(
+        context: Context,
+        private var diagramColor: Int,
+        private val listener: Listener
+) : BottomSheetDialog(context) {
 
-    private val initialColor by lazy { arguments?.getInt(KEY_INITIAL_COLOR, Color.WHITE) ?: Color.WHITE }
+    private lateinit var colorWheel: ColorWheel
+    private lateinit var alphaSeekBar: AlphaSeekBar
+    private lateinit var selectedColorView: View
+    private lateinit var resetButton: View
+    private lateinit var applyButton: View
+    private lateinit var cancelButton: View
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        setStyle(STYLE_NORMAL, R.style.Base_Theme_AppCompat_Light_Dialog_Default)
+    override fun provideDialogContentView(inflater: LayoutInflater, container: ViewGroup): View {
+        return inflater.inflate(R.layout.dialog_edit_diagram_color, container, false)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dialog_fragment_edit_diagram_color, container, false)
-    }
+    override fun onViewAddedToDialog(view: View) {
+        findViews(view)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         resetButton.setOnClickListener { resetColors() }
         applyButton.setOnClickListener { onApplyButtonClick() }
         cancelButton.setOnClickListener { dismiss() }
+
         setupSelectedColorView()
         setupColorWheel()
         setupAlphaSeekBar()
     }
 
+    private fun findViews(view: View) {
+        colorWheel = view.findViewById(R.id.colorWheel)
+        alphaSeekBar = view.findViewById(R.id.alphaSeekBar)
+        selectedColorView = view.findViewById(R.id.selectedColorView)
+        resetButton = view.findViewById(R.id.resetButton)
+        applyButton = view.findViewById(R.id.applyButton)
+        cancelButton = view.findViewById(R.id.cancelButton)
+    }
+
     private fun resetColors() {
-        colorWheel.setColor(initialColor)
-        alphaSeekBar.setAlpha(Color.alpha(initialColor))
+        colorWheel.setColor(diagramColor)
+        alphaSeekBar.setAlpha(Color.alpha(diagramColor))
     }
 
     private fun setupSelectedColorView() {
         selectedColorView.background = GradientDrawable().apply {
-            cornerRadius = resources.getDimension(R.dimen.dialog_corners_radius)
-            setColor(initialColor)
+            cornerRadius = context.resources.getDimension(R.dimen.dialog_corners_radius)
+            setColor(diagramColor)
         }
     }
 
     private fun setupColorWheel() {
         colorWheel.also {
-            it.setColor(setAlpha(initialColor, 255))
+            it.setColor(setAlpha(diagramColor, 255))
             it.colorChangeListener = this::onColorChanged
         }
     }
@@ -60,8 +73,8 @@ class EditDiagramColorDialog : DialogFragment() {
 
     private fun setupAlphaSeekBar() {
         alphaSeekBar.apply {
-            setOriginColor(initialColor)
-            setAlpha(Color.alpha(initialColor))
+            setOriginColor(diagramColor)
+            setAlpha(Color.alpha(diagramColor))
             alphaChangeListener = { updateSelectedColorViewBackground() }
         }
     }
@@ -72,38 +85,16 @@ class EditDiagramColorDialog : DialogFragment() {
     }
 
     private fun onApplyButtonClick() {
-        val color = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
-
-        (parentFragment as? Listener)?.onColorApplied(color)
-        
+        diagramColor = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
         dismiss()
     }
 
-    override fun onStart() {
-        super.onStart()
-        setupDialogWindow()
-    }
-
-    private fun setupDialogWindow() {
-        dialog?.window?.apply {
-            setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-            setGravity(Gravity.BOTTOM)
-        }
+    override fun onDismissed() {
+        listener.onColorApplied(diagramColor)
     }
 
     interface Listener {
 
         fun onColorApplied(argb: Int)
-    }
-
-    companion object {
-
-        private const val KEY_INITIAL_COLOR = "initial_color"
-
-        fun create(initialColor: Int) = EditDiagramColorDialog().apply {
-            arguments = Bundle().apply {
-                putInt(KEY_INITIAL_COLOR, initialColor)
-            }
-        }
     }
 }

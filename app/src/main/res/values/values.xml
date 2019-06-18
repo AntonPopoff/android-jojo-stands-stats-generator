@@ -4,7 +4,7 @@
     <dimen name="dialog_dim_amount">0.275</dimen>
     <dimen name="dialog_corners_radius">16dp</dimen>
 
-    <integer name="statistics_dialog_anim_duration">300</integer>
+    <integer name="statistics_dialog_anim_duration">400</integer>
     <integer name="fragments_transaction_duration">200</integer>
 
 </resources>

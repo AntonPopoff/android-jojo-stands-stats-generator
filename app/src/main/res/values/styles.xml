@@ -17,21 +17,6 @@
 
     <style name="Toolbar.Base.Default" />
 
-    <style name="Base.Theme.AppCompat.Light.Dialog.Default">
-        <item name="android:backgroundDimAmount">@dimen/dialog_dim_amount</item>
-        <item name="android:windowBackground">@drawable/statistics_dialog_background</item>
-        <item name="android:windowAnimationStyle">@style/StatisticsDialogAnimationStyle</item>
-    </style>
-
-    <style name="Base.Theme.AppCompat.Light.Dialog.Default.Statistics">
-
-    </style>
-
-    <style name="StatisticsDialogAnimationStyle">
-        <item name="android:windowEnterAnimation">@anim/statistics_dialog_in</item>
-        <item name="android:windowExitAnimation">@anim/statistics_dialog_out</item>
-    </style>
-
     <style name="ParametersRatingBarDefaultStyle">
         <item name="rb_barHeight">3dp</item>
         <item name="rb_thumbRadius">6dp</item>

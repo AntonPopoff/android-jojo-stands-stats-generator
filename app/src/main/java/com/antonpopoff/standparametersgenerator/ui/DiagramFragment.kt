@@ -64,9 +64,7 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
     }
 
     private fun showEditColorDiagramFragment() {
-        EditDiagramColorDialog
-                .create(standParametersDiagram.polylineColor)
-                .show(childFragmentManager, null)
+        context?.let { EditDiagramColorDialog(it, standParametersDiagram.polylineColor, this).show() }
     }
 
     private fun pushEditFragment() {
@@ -104,9 +102,6 @@ class DiagramFragment : BaseViewFragment(), EditDiagramColorDialog.Listener {
 
     override fun onColorApplied(argb: Int) {
         appDataCache.saveDiagramColor(argb)
-
-        handler.postDelayed({
-            standParametersDiagram?.setPolylineColor(argb, true)
-        }, resources.getInteger(R.integer.statistics_dialog_anim_duration).toLong())
+        standParametersDiagram?.setPolylineColor(argb, true)
     }
 }
