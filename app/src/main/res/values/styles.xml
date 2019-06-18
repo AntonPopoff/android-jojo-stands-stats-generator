@@ -17,20 +17,6 @@
 
     <style name="Toolbar.Base.Default" />
 
-    <style name="Base.Theme.AppCompat.Light.Dialog.Default">
-        <item name="android:backgroundDimAmount">@dimen/dialog_dim_amount</item>
-        <item name="android:windowAnimationStyle">@style/StatisticsDialogAnimationStyle</item>
-    </style>
-
-    <style name="Base.Theme.AppCompat.Light.Dialog.Default.Statistics">
-
-    </style>
-
-    <style name="StatisticsDialogAnimationStyle">
-        <item name="android:windowEnterAnimation">@anim/statistics_dialog_in</item>
-        <item name="android:windowExitAnimation">@anim/statistics_dialog_out</item>
-    </style>
-
     <style name="ParametersRatingBarDefaultStyle">
         <item name="rb_barHeight">3dp</item>
         <item name="rb_thumbRadius">6dp</item>
@@ -70,16 +56,6 @@
 
     <style name="DiagramFragmentToolbarTextAppearance" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="T" parent="Base.Theme.AppCompat.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:background">@null</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowFullscreen">false</item>
     </style>
 
 </resources>
