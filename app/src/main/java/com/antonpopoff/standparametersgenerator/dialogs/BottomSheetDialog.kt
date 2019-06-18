@@ -170,7 +170,7 @@ abstract class BottomSheetDialog(context: Context) : Dialog(context) {
 
     companion object {
 
-        private const val TRANSITION_ANIM_IN_DURATION = 550L
+        private const val TRANSITION_ANIM_IN_DURATION = 600L
 
         private const val TRANSITION_ANIM_OUT_DURATION = 250L
 
