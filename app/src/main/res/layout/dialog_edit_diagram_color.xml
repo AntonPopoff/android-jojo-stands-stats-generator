@@ -81,7 +81,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.antonpopoff.colorwheel.ColorWheel
+    <com.apandroid.colorwheel.ColorWheel
         android:id="@+id/colorWheel"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -91,7 +91,7 @@
         app:layout_constraintEnd_toStartOf="@id/alphaSeekBar"
         app:layout_constraintStart_toStartOf="@id/selectedColorView" />
 
-    <com.antonpopoff.colorwheel.AlphaSeekBar
+    <com.apandroid.colorwheel.gradientseekbar.GradientSeekBar
         android:id="@+id/alphaSeekBar"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

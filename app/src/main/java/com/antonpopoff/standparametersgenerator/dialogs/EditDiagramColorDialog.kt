@@ -1,13 +1,16 @@
 package com.antonpopoff.standparametersgenerator.dialogs
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.view.*
-import com.antonpopoff.colorwheel.AlphaSeekBar
-import com.antonpopoff.colorwheel.ColorWheel
-import com.antonpopoff.colorwheel.utils.setAlpha
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.antonpopoff.standparametersgenerator.R
+import com.apandroid.colorwheel.ColorWheel
+import com.apandroid.colorwheel.gradientseekbar.GradientSeekBar
+import com.apandroid.colorwheel.gradientseekbar.setAlphaArgb
+import com.apandroid.colorwheel.gradientseekbar.setAlphaListener
+import com.apandroid.colorwheel.gradientseekbar.setAlphaRgb
 
 class EditDiagramColorDialog(
         context: Context,
@@ -16,7 +19,7 @@ class EditDiagramColorDialog(
 ) : BottomSheetDialog(context) {
 
     private lateinit var colorWheel: ColorWheel
-    private lateinit var alphaSeekBar: AlphaSeekBar
+    private lateinit var alphaSeekBar: GradientSeekBar
     private lateinit var selectedColorView: View
     private lateinit var resetButton: View
     private lateinit var applyButton: View
@@ -48,8 +51,8 @@ class EditDiagramColorDialog(
     }
 
     private fun resetColors() {
-        colorWheel.setColor(diagramColor)
-        alphaSeekBar.setAlpha(Color.alpha(diagramColor))
+        colorWheel.rgb = diagramColor
+        alphaSeekBar.setAlphaArgb(diagramColor)
     }
 
     private fun setupSelectedColorView() {
@@ -61,31 +64,29 @@ class EditDiagramColorDialog(
 
     private fun setupColorWheel() {
         colorWheel.also {
-            it.setColor(setAlpha(diagramColor, 255))
-            it.colorChangeListener = this::onColorChanged
+            it.rgb = diagramColor
+            it.colorChangeListener = this::onColorWheelColorChanged
         }
     }
 
-    private fun onColorChanged(rgb: Int) {
-        alphaSeekBar.setOriginColor(rgb)
+    private fun onColorWheelColorChanged(rgb: Int) {
+        alphaSeekBar.setAlphaRgb(rgb)
         updateSelectedColorViewBackground()
     }
 
     private fun setupAlphaSeekBar() {
         alphaSeekBar.apply {
-            setOriginColor(diagramColor)
-            setAlpha(Color.alpha(diagramColor))
-            alphaChangeListener = { updateSelectedColorViewBackground() }
+            setAlphaArgb(diagramColor)
+            setAlphaListener { _, _, _ -> updateSelectedColorViewBackground() }
         }
     }
 
     private fun updateSelectedColorViewBackground() {
-        val argb = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
-        (selectedColorView.background as GradientDrawable).setColor(argb)
+        (selectedColorView.background as GradientDrawable).setColor(alphaSeekBar.currentColor)
     }
 
     private fun onApplyButtonClick() {
-        diagramColor = setAlpha(colorWheel.argb, alphaSeekBar.colorAlpha)
+        diagramColor = alphaSeekBar.currentColor
         dismiss()
     }
 
