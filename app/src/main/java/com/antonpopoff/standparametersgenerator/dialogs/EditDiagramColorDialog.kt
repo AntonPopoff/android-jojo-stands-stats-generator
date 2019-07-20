@@ -82,11 +82,11 @@ class EditDiagramColorDialog(
     }
 
     private fun updateSelectedColorViewBackground() {
-        (selectedColorView.background as GradientDrawable).setColor(alphaSeekBar.currentColor)
+        (selectedColorView.background as GradientDrawable).setColor(alphaSeekBar.argb)
     }
 
     private fun onApplyButtonClick() {
-        diagramColor = alphaSeekBar.currentColor
+        diagramColor = alphaSeekBar.argb
         dismiss()
     }
 
